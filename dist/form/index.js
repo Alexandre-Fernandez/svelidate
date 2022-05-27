@@ -1,7 +1,10 @@
-import { createNaked$Form, dispatch, forEachFormField, getFormFieldValues, } from "./utils";
-export function svelidate(initialForm) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.svelidate = void 0;
+const utils_1 = require("./utils");
+function svelidate(initialForm) {
     const subscribers = [];
-    const $form = Object.assign(Object.assign({}, createNaked$Form(initialForm)), { $st: {
+    const $form = Object.assign(Object.assign({}, (0, utils_1.createNaked$Form)(initialForm)), { $st: {
             invalid: true,
             submitted: false,
             initial: Object.freeze(initialForm),
@@ -19,17 +22,17 @@ export function svelidate(initialForm) {
                     updateFormField($form[key]);
                 }
                 updateFormState($form);
-                dispatch(subscribers, $form);
+                (0, utils_1.dispatch)(subscribers, $form);
             },
             untouch: () => {
-                forEachFormField($form, formField => (formField.touched = false));
-                dispatch(subscribers, $form);
+                (0, utils_1.forEachFormField)($form, formField => (formField.touched = false));
+                (0, utils_1.dispatch)(subscribers, $form);
             },
         }, $on: { submit: (e) => { } } });
     // init
-    forEachFormField($form, formField => updateFormField(formField));
+    (0, utils_1.forEachFormField)($form, formField => updateFormField(formField));
     updateFormState($form);
-    let lastValues = getFormFieldValues($form);
+    let lastValues = (0, utils_1.getFormFieldValues)($form);
     return {
         subscribe(fn) {
             fn($form);
@@ -37,7 +40,7 @@ export function svelidate(initialForm) {
             return () => subscribers.splice(subscribers.indexOf(fn), 1);
         },
         set(newForm) {
-            forEachFormField(newForm, (formField, key) => {
+            (0, utils_1.forEachFormField)(newForm, (formField, key) => {
                 if (lastValues[key] === undefined)
                     return;
                 if (lastValues[key] !== formField.value) {
@@ -47,14 +50,15 @@ export function svelidate(initialForm) {
                 }
             });
             updateFormState(newForm);
-            dispatch(subscribers, newForm);
-            lastValues = getFormFieldValues(newForm);
+            (0, utils_1.dispatch)(subscribers, newForm);
+            lastValues = (0, utils_1.getFormFieldValues)(newForm);
         },
     };
 }
+exports.svelidate = svelidate;
 function updateFormState(newForm) {
     let isInvalid = false;
-    forEachFormField(newForm, formField => {
+    (0, utils_1.forEachFormField)(newForm, formField => {
         if (formField.invalid)
             isInvalid = true;
     });

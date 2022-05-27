@@ -1,9 +1,12 @@
-export const isRequired = createValidator(value => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createValidator = exports.isOutOfRange = exports.isInRange = exports.isLesserThanOrEqualTo = exports.isLesserThan = exports.isGreaterThanOrEqualTo = exports.isGreaterThan = exports.isEqualTo = exports.isRegexMatched = exports.isEmail = exports.isRequired = void 0;
+exports.isRequired = createValidator(value => {
     if (!value && value !== 0)
         return false;
     return true;
 });
-export const isEmail = createValidator(value => {
+exports.isEmail = createValidator(value => {
     if (typeof value !== "string")
         return false;
     let email = value.toLowerCase().split("@");
@@ -46,13 +49,15 @@ export const isEmail = createValidator(value => {
     }
     return true;
 });
-export const isRegexMatched = (regex) => createValidator(value => {
+const isRegexMatched = (regex) => createValidator(value => {
     if (typeof value !== "string")
         return false;
     return regex.test(value);
 });
-export const isEqualTo = (value) => createValidator(val => val === value);
-export const isGreaterThan = (number) => createValidator(value => {
+exports.isRegexMatched = isRegexMatched;
+const isEqualTo = (value) => createValidator(val => val === value);
+exports.isEqualTo = isEqualTo;
+const isGreaterThan = (number) => createValidator(value => {
     if (typeof value === "number")
         return value > number;
     if (typeof value === "string" || Array.isArray(value)) {
@@ -60,7 +65,8 @@ export const isGreaterThan = (number) => createValidator(value => {
     }
     return false;
 });
-export const isGreaterThanOrEqualTo = (number) => createValidator(value => {
+exports.isGreaterThan = isGreaterThan;
+const isGreaterThanOrEqualTo = (number) => createValidator(value => {
     if (typeof value === "number")
         return value > number;
     if (typeof value === "string" || Array.isArray(value)) {
@@ -68,7 +74,8 @@ export const isGreaterThanOrEqualTo = (number) => createValidator(value => {
     }
     return false;
 });
-export const isLesserThan = (number) => createValidator(value => {
+exports.isGreaterThanOrEqualTo = isGreaterThanOrEqualTo;
+const isLesserThan = (number) => createValidator(value => {
     if (typeof value === "number")
         return value < number;
     if (typeof value === "string" || Array.isArray(value)) {
@@ -76,7 +83,8 @@ export const isLesserThan = (number) => createValidator(value => {
     }
     return false;
 });
-export const isLesserThanOrEqualTo = (number) => createValidator(value => {
+exports.isLesserThan = isLesserThan;
+const isLesserThanOrEqualTo = (number) => createValidator(value => {
     if (typeof value === "number")
         return value <= number;
     if (typeof value === "string" || Array.isArray(value)) {
@@ -84,7 +92,8 @@ export const isLesserThanOrEqualTo = (number) => createValidator(value => {
     }
     return false;
 });
-export const isInRange = (min, max) => createValidator(value => {
+exports.isLesserThanOrEqualTo = isLesserThanOrEqualTo;
+const isInRange = (min, max) => createValidator(value => {
     if (typeof value === "number")
         return value >= min && value <= max;
     if (typeof value === "string" || Array.isArray(value)) {
@@ -92,7 +101,8 @@ export const isInRange = (min, max) => createValidator(value => {
     }
     return false;
 });
-export const isOutOfRange = (min, max) => createValidator(value => {
+exports.isInRange = isInRange;
+const isOutOfRange = (min, max) => createValidator(value => {
     if (typeof value === "number")
         return value < min && value > max;
     if (typeof value === "string" || Array.isArray(value)) {
@@ -100,11 +110,13 @@ export const isOutOfRange = (min, max) => createValidator(value => {
     }
     return false;
 });
-export function createValidator(callback, defaultErrorMessage = "") {
+exports.isOutOfRange = isOutOfRange;
+function createValidator(callback, defaultErrorMessage = "") {
     return (errorMessage = defaultErrorMessage) => (value) => {
         if (callback(value))
             return undefined; // no error
         return errorMessage;
     };
 }
+exports.createValidator = createValidator;
 //# sourceMappingURL=index.js.map
