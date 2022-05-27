@@ -15,5 +15,9 @@
 	"license": "GPL v3",
 	"dependencies": {
 		"typescript": "^4.7.2"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Alexandre-Fernandez/svelidate"
 	}
 }
