@@ -4,68 +4,28 @@ exports.date = void 0;
 const utils_1 = require("./utils");
 exports.date = {
     afterThe(date) {
-        return (0, utils_1.createValidator)(value => {
-            const val = (0, utils_1.getDate)(value);
-            if (!val)
-                return false;
-            return val > date;
-        });
+        return (0, utils_1.createDateValidator)(value => value > date);
     },
     afterTheOrEqualTo(date) {
-        return (0, utils_1.createValidator)(value => {
-            const val = (0, utils_1.getDate)(value);
-            if (!val)
-                return false;
-            return val >= date;
-        });
+        return (0, utils_1.createDateValidator)(value => value >= date);
     },
     beforeThe(date) {
-        return (0, utils_1.createValidator)(value => {
-            const val = (0, utils_1.getDate)(value);
-            if (!val)
-                return false;
-            return val < date;
-        });
+        return (0, utils_1.createDateValidator)(value => value < date);
     },
     beforeTheOrEqualTo(date) {
-        return (0, utils_1.createValidator)(value => {
-            const val = (0, utils_1.getDate)(value);
-            if (!val)
-                return false;
-            return val <= date;
-        });
+        return (0, utils_1.createDateValidator)(value => value <= date);
     },
     inRange(min, max) {
-        return (0, utils_1.createValidator)(value => {
-            const date = (0, utils_1.getDate)(value);
-            if (!date)
-                return false;
-            return min <= date && date <= max;
-        });
+        return (0, utils_1.createDateValidator)(value => min <= value && value <= max);
     },
     outOfRange(min, max) {
-        return (0, utils_1.createValidator)(value => {
-            const date = (0, utils_1.getDate)(value);
-            if (!date)
-                return false;
-            return date < min || date > max;
-        });
+        return (0, utils_1.createDateValidator)(value => value < min || value > max);
     },
     differentFrom(date) {
-        return (0, utils_1.createValidator)(value => {
-            const val = (0, utils_1.getDate)(value);
-            if (!val)
-                return false;
-            return val !== date;
-        });
+        return (0, utils_1.createDateValidator)(value => value !== date);
     },
     equalTo(date) {
-        return (0, utils_1.createValidator)(value => {
-            const val = (0, utils_1.getDate)(value);
-            if (!val)
-                return false;
-            return val === date;
-        });
+        return (0, utils_1.createDateValidator)(value => value === date);
     },
 };
 //# sourceMappingURL=date.js.map

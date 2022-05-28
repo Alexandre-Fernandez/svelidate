@@ -5,9 +5,7 @@ const utils_1 = require("./utils");
 const NUMBERS = Object.freeze("0123456789".split(""));
 const SYMBOLS = Object.freeze(" !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~".split(""));
 exports.string = {
-    isEmail: (0, utils_1.createValidator)(value => {
-        if (typeof value !== "string")
-            return false;
+    isEmail: (0, utils_1.createStringValidator)(value => {
         let email = value.toLowerCase().split("@");
         if (email.length !== 2)
             return false;
@@ -51,19 +49,9 @@ exports.string = {
         }
         return true;
     }),
-    hasUpperCaseLetter: (0, utils_1.createValidator)(value => {
-        if (typeof value !== "string")
-            return false;
-        return value.toLowerCase() !== value;
-    }),
-    hasLowerCaseLetter: (0, utils_1.createValidator)(value => {
-        if (typeof value !== "string")
-            return false;
-        return value.toUpperCase() !== value;
-    }),
-    hasNumber: (0, utils_1.createValidator)(value => {
-        if (typeof value !== "string")
-            return false;
+    hasUpperCaseLetter: (0, utils_1.createStringValidator)(value => value.toLowerCase() !== value),
+    hasLowerCaseLetter: (0, utils_1.createStringValidator)(value => value.toUpperCase() !== value),
+    hasNumber: (0, utils_1.createStringValidator)(value => {
         for (const char of value) {
             if (NUMBERS.includes(char))
                 return true;
@@ -71,9 +59,7 @@ exports.string = {
         return false;
     }),
     hasSymbol(symbols = SYMBOLS) {
-        return (0, utils_1.createValidator)(value => {
-            if (typeof value !== "string")
-                return false;
+        return (0, utils_1.createStringValidator)(value => {
             for (const char of value) {
                 if (symbols.includes(char))
                     return true;
@@ -82,81 +68,37 @@ exports.string = {
         });
     },
     matchesRegex(regex) {
-        return (0, utils_1.createValidator)(value => {
-            if (typeof value !== "string")
-                return false;
-            return regex.test(value);
-        });
+        return (0, utils_1.createStringValidator)(value => regex.test(value));
     },
     longerThan(length) {
-        return (0, utils_1.createValidator)(value => {
-            if (typeof value !== "string")
-                return false;
-            return value.length > length;
-        });
+        return (0, utils_1.createStringValidator)(value => value.length > length);
     },
     longerThanOrEqualTo(length) {
-        return (0, utils_1.createValidator)(value => {
-            if (typeof value !== "string")
-                return false;
-            return value.length >= length;
-        });
+        return (0, utils_1.createStringValidator)(value => value.length >= length);
     },
     shorterThan(length) {
-        return (0, utils_1.createValidator)(value => {
-            if (typeof value !== "string")
-                return false;
-            return value.length < length;
-        });
+        return (0, utils_1.createStringValidator)(value => value.length < length);
     },
     shorterThanOrEqualTo(length) {
-        return (0, utils_1.createValidator)(value => {
-            if (typeof value !== "string")
-                return false;
-            return value.length <= length;
-        });
+        return (0, utils_1.createStringValidator)(value => value.length <= length);
     },
     lengthInRange(min, max) {
-        return (0, utils_1.createValidator)(value => {
-            if (typeof value !== "string")
-                return false;
-            return value.length >= min && value.length <= max;
-        });
+        return (0, utils_1.createStringValidator)(value => value.length >= min && value.length <= max);
     },
     lengthOutOfRange(min, max) {
-        return (0, utils_1.createValidator)(value => {
-            if (typeof value !== "string")
-                return false;
-            return value.length < min && value.length > max;
-        });
+        return (0, utils_1.createStringValidator)(value => value.length < min && value.length > max);
     },
     lengthDifferentFrom(length) {
-        return (0, utils_1.createValidator)(value => {
-            if (typeof value !== "string")
-                return false;
-            return value.length !== length;
-        });
+        return (0, utils_1.createStringValidator)(value => value.length !== length);
     },
     lengthEqualTo(length) {
-        return (0, utils_1.createValidator)(value => {
-            if (typeof value !== "string")
-                return false;
-            return value.length === length;
-        });
+        return (0, utils_1.createStringValidator)(value => value.length === length);
     },
     equalTo(string) {
-        return (0, utils_1.createValidator)(value => {
-            if (typeof value !== "string")
-                return false;
-            return value === string;
-        });
+        return (0, utils_1.createStringValidator)(value => value === string);
     },
     differentFrom(string) {
-        return (0, utils_1.createValidator)(value => {
-            if (typeof value !== "string")
-                return false;
-            return value !== string;
-        });
+        return (0, utils_1.createStringValidator)(value => value !== string);
     },
 };
 //# sourceMappingURL=string.js.map

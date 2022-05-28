@@ -26,6 +26,7 @@ export declare type $State = {
 export declare type $Events = {
     $on: {
         submit: (e?: SubmitEvent) => void;
+        touch: (key: string) => void;
     };
 };
 export declare type $Functions = {
@@ -33,6 +34,7 @@ export declare type $Functions = {
         submit: (e?: SubmitEvent) => void;
         reset: () => void;
         untouch: () => void;
+        getErrors: () => string[];
     };
 };
 declare type SvelteStore<T> = {

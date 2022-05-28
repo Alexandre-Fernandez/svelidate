@@ -28,7 +28,16 @@ function svelidate(initialForm) {
                 (0, utils_1.forEachFormField)($form, formField => (formField.touched = false));
                 (0, utils_1.dispatch)(subscribers, $form);
             },
-        }, $on: { submit: (e) => { } } });
+            getErrors: () => {
+                let errors = [];
+                (0, utils_1.forEachFormField)($form, formField => {
+                    if (formField.errors.length > 0) {
+                        errors = [...errors, ...formField.errors];
+                    }
+                });
+                return errors;
+            },
+        }, $on: { submit: (e) => { }, touch: (key) => { } } });
     // init
     (0, utils_1.forEachFormField)($form, formField => updateFormField(formField));
     updateFormState($form);
@@ -44,8 +53,10 @@ function svelidate(initialForm) {
                 if (lastValues[key] === undefined)
                     return;
                 if (lastValues[key] !== formField.value) {
-                    formField.touched = true; // outside the update function
-                    // ...to be able to use it without setting touched to true
+                    if (!formField.touched) {
+                        formField.touched = true;
+                        newForm.$on.touch(key);
+                    }
                     updateFormField(formField);
                 }
             });
