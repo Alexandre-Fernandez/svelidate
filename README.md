@@ -47,19 +47,24 @@ pnpm add svelidate
 
 <form on:submit={$form.$fn.submit}>
 	<div>
+		<!-- displaying email errors -->
 		<ul>
 			{#each $form.email.errors as error}
 				<li>{error}</li>
 			{/each}
 		</ul>
+
 		<input type="text" bind:value={$form.email.value} />
 	</div>
+
 	<div>
+		<!-- displaying password errors -->
 		<ul>
 			{#each $form.password.errors as error}
 				<li>{error}</li>
 			{/each}
 		</ul>
+
 		<input type="password" bind:value={$form.password.value} />
 	</div>
 	<button disabled={$form.$st.invalid}>Submit</button>
@@ -68,41 +73,44 @@ pnpm add svelidate
 
 ## Form
 
-To create a svelidate form just use `svelidate(yourFormObject)` with an object representing your form, see the next form fields section for more information.
+To create a svelidate form just use `svelidate(yourFormObject)` with an object representing your form, see the [form fields](#form-fields) section for more information.
 Svelidate adds 3 top level properties to the initial form, `$st` for global form state, `$fn` for form functions and `$on` to subscribe to a form event.
 
-### `$st`
-
-```ts
+<details>
+	<summary><h3><code>`$st`</code></h3></summary>
+<pre lang="ts">
 const $st = {
 	invalid: boolean // true if any form field is invalid
 	submitted: boolean // true once `$fn.submit` has been called
 	initial: Readonly<Form> // the original form passed to `svelidate()`
 }
-```
+</pre>
+</details>
 
-### `$fn`
-
-```ts
+<details>
+	<summary><h3><code>`$fn`</code></h3></summary>
+<pre lang="ts">
 const $fn = {
 	submit: (e?: SubmitEvent) =>  void // handles submit and then calls `$on.submit`
 	reset: () =>  void // resets all the form fields to their initial values
 	untouch: () =>  void // resets all the form fields `touched` values to false
 }
-```
+</pre>
+</details>
 
-### `$on`
-
-```ts
+<details>
+	<summary><h3><code>`$on`</code></h3></summary>
+<pre lang="ts">
 const $on = {
 	submit: (e?: SubmitEvent) =>  void // called after submitting with `$fn.submit`
 }
-```
+</pre>
+</details>
 
 ## Form fields
 
-Only `value` is mandatory when creating a form field but you can also set all the other properties.
-Here are all the available props per form field, after using `svelidate()` all of them will exist:
+The argument passed to `svelidate()` is an object having form field names as keys and form fields objects as values.
+Here are all the available properties a form field object can have (after using `svelidate()` all of them will exist, undefined ones will be created by the function).
 
 ```ts,
 const field = {
@@ -114,15 +122,18 @@ const field = {
 }
 ```
 
+Only `value` is mandatory when creating a form field.
+If your form field object is invalid (for example having `invalid === false` and `errors.length > 0`) it will be corrected by `svelidate()`.
+
 ## Validators
 
 ### Default validators
 
-Svelidate comes with multiple validators that you can use, they are grouped by category, `general` when they can be used for many value types (e.g. `required` or `truthy`), `string` to validate strings, `number` for numbers and `date` for dates.
+Svelidate comes with multiple validators that you can use, they are grouped by category (object): `general` when they can be used for many value types (e.g. `required` or `truthy`), `string` to validate strings, `number` for numbers and `date` for dates.
 
-#### `general`
-
-```ts
+<details>
+	<summary><h4><code>`general`</code></h4></summary>
+<pre lang="ts">
 const general = {
 	truthy, // value is truthy (can be used to validate booleans/checkboxes).
 	falsy, // value is falsy (can be used to validate booleans/checkboxes).
@@ -130,11 +141,12 @@ const general = {
 	equalTo, // value is strictly equal to argument.
 	differentFrom, // value is strictly different from argument.
 }
-```
+</pre>
+</details>
 
-#### `string`
-
-```ts
+<details>
+	<summary><h4><code>`string`</code></h4></summary>
+<pre lang="ts">
 // value must be a string
 const string = {
 	isEmail, // value is an e-mail.
@@ -154,11 +166,12 @@ const string = {
 	equalTo, // value is equal to the given string.
 	differentFrom, // value is different from the given string.,
 }
-```
+</pre>
+</details>
 
-#### `number`
-
-```ts
+<details>
+	<summary><h4><code>`number`</code></h4></summary>
+<pre lang="ts">
 // value must be a number
 const number = {
 	greaterThan, // value is greater than the given number.
@@ -170,11 +183,12 @@ const number = {
 	differentFrom, // value is different from the given number.
 	equalTo, // value is equal to the given number.
 }
-```
+</pre>
+</details>
 
-#### `date`
-
-```ts
+<details>
+	<summary><h4><code>`date`</code></h4></summary>
+<pre lang="ts">
 // value must be a string or a date, if it's a string it will be parsed using the `Date` constructor.
 const date = {
 	afterThe, // value is after the given date.
@@ -186,7 +200,8 @@ const date = {
 	differentFrom, // value is not the given date.
 	equalTo, // value is the given date.
 }
-```
+</pre>
+</details>
 
 ### Custom validators
 
@@ -202,18 +217,22 @@ import {
 	createDateValidator, // will return an error if value is not a date (it will try to parse it as a date first using the `Date` constructor).
 } from "svelidate"
 
+//
 const isObject = createValidator(
 	value => typeof value === "object",
 	"This is not an object !"
 )
+
 const objectValidator = isObject() // this is what you use in form fields (`isObject()`)
 objectValidator({}) // return undefined
 objectValidator("string") // returns "This is not an object !"
 
+//
 // you can also pass params by wrapping it in another function:
 const isNumberEqualTo = (number: number) => {
 	return createNumberValidator(value => value === number)
 }
+
 const threeValidator = isNumberEqualTo(3)("This is not equal to 3 !")
 threeValidator(3) // return undefined
 threeValidator(69) // return "This is not equal to 3 !"
