@@ -39,8 +39,17 @@ export function svelidate<F extends Form>(initialForm: F) {
 				)
 				dispatch(subscribers, $form)
 			},
+			getErrors: () => {
+				let errors: string[] = []
+				forEachFormField($form, formField => {
+					if (formField.errors.length > 0) {
+						errors = [...errors, ...formField.errors]
+					}
+				})
+				return errors
+			},
 		},
-		$on: { submit: (e?: SubmitEvent) => {} },
+		$on: { submit: (e?: SubmitEvent) => {}, touch: (key: string) => {} },
 	}
 
 	// init
@@ -58,8 +67,10 @@ export function svelidate<F extends Form>(initialForm: F) {
 			forEachFormField(newForm, (formField, key) => {
 				if (lastValues[key] === undefined) return
 				if (lastValues[key] !== formField.value) {
-					formField.touched = true // outside the update function
-					// ...to be able to use it without setting touched to true
+					if (!formField.touched) {
+						formField.touched = true
+						newForm.$on.touch(key)
+					}
 					updateFormField(formField)
 				}
 			})

@@ -29,6 +29,7 @@ export type $State = {
 export type $Events = {
 	$on: {
 		submit: (e?: SubmitEvent) => void
+		touch: (key: string) => void
 	}
 }
 export type $Functions = {
@@ -36,6 +37,7 @@ export type $Functions = {
 		submit: (e?: SubmitEvent) => void
 		reset: () => void
 		untouch: () => void
+		getErrors: () => string[]
 	}
 }
 
