@@ -64,6 +64,7 @@ pnpm add svelidate
 
 ## Form
 
+To create a svelidate form just use `svelidate(yourFormObject)` with an object representing your form, see the next form fields section for more information.
 Svelidate adds 3 top level properties to the initial form, `$st` for global form state, `$fn` for form functions and `$on` to subscribe to a form event.
 
 ### `$st`
@@ -97,7 +98,7 @@ const $on = {
 ## Form fields
 
 Only `value` is mandatory when creating a form field but you can also set all the other properties.
-Here are all the available props per form field has been used, after using `svelidate()` all of them will exist :
+Here are all the available props per form field, after using `svelidate()` all of them will exist:
 
 ```ts,
 const field = {
