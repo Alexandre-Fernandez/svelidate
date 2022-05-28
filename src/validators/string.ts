@@ -1,11 +1,10 @@
-import { createValidator } from "./utils"
+import { createStringValidator, createValidator } from "./utils"
 
 const NUMBERS = Object.freeze("0123456789".split(""))
 const SYMBOLS = Object.freeze(" !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~".split(""))
 
 export const string = {
-	isEmail: createValidator(value => {
-		if (typeof value !== "string") return false
+	isEmail: createStringValidator(value => {
 		let email = value.toLowerCase().split("@")
 		if (email.length !== 2) return false
 		const [localPart, domain, extension] = [
@@ -38,24 +37,20 @@ export const string = {
 		}
 		return true
 	}),
-	hasUpperCaseLetter: createValidator(value => {
-		if (typeof value !== "string") return false
-		return value.toLowerCase() !== value
-	}),
-	hasLowerCaseLetter: createValidator(value => {
-		if (typeof value !== "string") return false
-		return value.toUpperCase() !== value
-	}),
-	hasNumber: createValidator(value => {
-		if (typeof value !== "string") return false
+	hasUpperCaseLetter: createStringValidator(
+		value => value.toLowerCase() !== value
+	),
+	hasLowerCaseLetter: createStringValidator(
+		value => value.toUpperCase() !== value
+	),
+	hasNumber: createStringValidator(value => {
 		for (const char of value) {
 			if (NUMBERS.includes(char)) return true
 		}
 		return false
 	}),
 	hasSymbol(symbols = SYMBOLS) {
-		return createValidator(value => {
-			if (typeof value !== "string") return false
+		return createStringValidator(value => {
 			for (const char of value) {
 				if (symbols.includes(char)) return true
 			}
@@ -63,69 +58,40 @@ export const string = {
 		})
 	},
 	matchesRegex(regex: RegExp) {
-		return createValidator(value => {
-			if (typeof value !== "string") return false
-			return regex.test(value)
-		})
+		return createStringValidator(value => regex.test(value))
 	},
 	longerThan(length: number) {
-		return createValidator(value => {
-			if (typeof value !== "string") return false
-			return value.length > length
-		})
+		return createStringValidator(value => value.length > length)
 	},
 	longerThanOrEqualTo(length: number) {
-		return createValidator(value => {
-			if (typeof value !== "string") return false
-			return value.length >= length
-		})
+		return createStringValidator(value => value.length >= length)
 	},
 	shorterThan(length: number) {
-		return createValidator(value => {
-			if (typeof value !== "string") return false
-			return value.length < length
-		})
+		return createStringValidator(value => value.length < length)
 	},
 	shorterThanOrEqualTo(length: number) {
-		return createValidator(value => {
-			if (typeof value !== "string") return false
-			return value.length <= length
-		})
+		return createStringValidator(value => value.length <= length)
 	},
 	lengthInRange(min: number, max: number) {
-		return createValidator(value => {
-			if (typeof value !== "string") return false
-			return value.length >= min && value.length <= max
-		})
+		return createStringValidator(
+			value => value.length >= min && value.length <= max
+		)
 	},
 	lengthOutOfRange(min: number, max: number) {
-		return createValidator(value => {
-			if (typeof value !== "string") return false
-			return value.length < min && value.length > max
-		})
+		return createStringValidator(
+			value => value.length < min && value.length > max
+		)
 	},
 	lengthDifferentFrom(length: number) {
-		return createValidator(value => {
-			if (typeof value !== "string") return false
-			return value.length !== length
-		})
+		return createStringValidator(value => value.length !== length)
 	},
 	lengthEqualTo(length: number) {
-		return createValidator(value => {
-			if (typeof value !== "string") return false
-			return value.length === length
-		})
+		return createStringValidator(value => value.length === length)
 	},
 	equalTo(string: string) {
-		return createValidator(value => {
-			if (typeof value !== "string") return false
-			return value === string
-		})
+		return createStringValidator(value => value === string)
 	},
 	differentFrom(string: string) {
-		return createValidator(value => {
-			if (typeof value !== "string") return false
-			return value !== string
-		})
+		return createStringValidator(value => value !== string)
 	},
 }

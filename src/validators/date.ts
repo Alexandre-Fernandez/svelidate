@@ -1,60 +1,28 @@
-import { createValidator, getDate } from "./utils"
+import { createDateValidator, createValidator, getDate } from "./utils"
 
 export const date = {
 	afterThe(date: Date) {
-		return createValidator(value => {
-			const val = getDate(value)
-			if (!val) return false
-			return val > date
-		})
+		return createDateValidator(value => value > date)
 	},
 	afterTheOrEqualTo(date: Date) {
-		return createValidator(value => {
-			const val = getDate(value)
-			if (!val) return false
-			return val >= date
-		})
+		return createDateValidator(value => value >= date)
 	},
 	beforeThe(date: Date) {
-		return createValidator(value => {
-			const val = getDate(value)
-			if (!val) return false
-			return val < date
-		})
+		return createDateValidator(value => value < date)
 	},
 	beforeTheOrEqualTo(date: Date) {
-		return createValidator(value => {
-			const val = getDate(value)
-			if (!val) return false
-			return val <= date
-		})
+		return createDateValidator(value => value <= date)
 	},
 	inRange(min: Date, max: Date) {
-		return createValidator(value => {
-			const date = getDate(value)
-			if (!date) return false
-			return min <= date && date <= max
-		})
+		return createDateValidator(value => min <= value && value <= max)
 	},
 	outOfRange(min: Date, max: Date) {
-		return createValidator(value => {
-			const date = getDate(value)
-			if (!date) return false
-			return date < min || date > max
-		})
+		return createDateValidator(value => value < min || value > max)
 	},
 	differentFrom(date: Date) {
-		return createValidator(value => {
-			const val = getDate(value)
-			if (!val) return false
-			return val !== date
-		})
+		return createDateValidator(value => value !== date)
 	},
 	equalTo(date: Date) {
-		return createValidator(value => {
-			const val = getDate(value)
-			if (!val) return false
-			return val === date
-		})
+		return createDateValidator(value => value === date)
 	},
 }

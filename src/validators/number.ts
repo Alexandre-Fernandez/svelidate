@@ -1,52 +1,28 @@
-import { createValidator } from "./utils"
+import { createNumberValidator, createValidator } from "./utils"
 
 export const number = {
 	greaterThan(number: number) {
-		return createValidator(value => {
-			if (typeof value !== "number") return false
-			return value > number
-		})
+		return createNumberValidator(value => value > number)
 	},
 	greaterThanorEqualTo(number: number) {
-		return createValidator(value => {
-			if (typeof value !== "number") return false
-			return value >= number
-		})
+		return createNumberValidator(value => value >= number)
 	},
 	lesserThan(number: number) {
-		return createValidator(value => {
-			if (typeof value !== "number") return false
-			return value < number
-		})
+		return createNumberValidator(value => value < number)
 	},
 	lesserThanOrEqualTo(number: number) {
-		return createValidator(value => {
-			if (typeof value !== "number") return false
-			return value <= number
-		})
+		return createNumberValidator(value => value <= number)
 	},
 	inInterval(min: number, max: number) {
-		return createValidator(value => {
-			if (typeof value !== "number") return false
-			return value >= min && value <= max
-		})
+		return createNumberValidator(value => value >= min && value <= max)
 	},
 	outOfInterval(min: number, max: number) {
-		return createValidator(value => {
-			if (typeof value !== "number") return false
-			return value < min && value > max
-		})
+		return createNumberValidator(value => value < min && value > max)
 	},
 	differentFrom(number: number) {
-		return createValidator(value => {
-			if (typeof value !== "number") return false
-			return value !== number
-		})
+		return createNumberValidator(value => value !== number)
 	},
 	equalTo(number: number) {
-		return createValidator(value => {
-			if (typeof value !== "number") return false
-			return value === number
-		})
+		return createNumberValidator(value => value === number)
 	},
 }
