@@ -156,7 +156,7 @@ const string = {
 }
 ```
 
-#### `string`
+#### `number`
 
 ```ts
 // value must be a number
@@ -172,7 +172,7 @@ const number = {
 }
 ```
 
-#### `string`
+#### `date`
 
 ```ts
 // value must be a string or a date, if it's a string it will be parsed using the `Date` constructor.
