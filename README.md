@@ -39,6 +39,10 @@ pnpm add svelidate
 			],
 		},
 	})
+
+	$form.$on.submit = () => {
+		// handle submit...
+	}
 </script>
 
 <form on:submit={$form.$fn.submit}>
