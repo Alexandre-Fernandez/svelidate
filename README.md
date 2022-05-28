@@ -94,6 +94,7 @@ const $fn = {
 	submit: (e?: SubmitEvent) =>  void // handles submit and then calls `$on.submit`
 	reset: () =>  void // resets all the form fields to their initial values
 	untouch: () =>  void // resets all the form fields `touched` values to false
+	getErrors: () => string[] // returns all the current errors
 }
 </pre>
 </details>
@@ -103,6 +104,7 @@ const $fn = {
 <pre lang="ts">
 const $on = {
 	submit: (e?: SubmitEvent) =>  void // called after submitting with `$fn.submit`
+	touch: (key: string) => void // called when an input is touched
 }
 </pre>
 </details>
