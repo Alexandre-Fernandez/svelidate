@@ -15,7 +15,7 @@ pnpm add svelidate
 
 ## Usage
 
-```ts
+```tsx
 <script lang="ts">
 	import { svelidate, string as s, general as g } from "svelidate"
 
