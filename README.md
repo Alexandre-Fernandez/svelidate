@@ -16,48 +16,50 @@ pnpm add svelidate
 ## Usage
 
 ```ts
-<script  lang="ts">
-	import { svelidate } from "svelidate"
-	import { isEmail, isRequired } from "svelidate"
+<script lang="ts">
+	import { svelidate, string as s, general as g } from "svelidate"
 
-	let form = svelidate({
+	const form = svelidate({
 		email: {
-		value:  "default value",
-		validators: [
-			isRequired("Your custom error message."),
-			isEmail("Please enter a valid e-mail.")
-		],
+			value: "",
+			validators: [
+				g.required("This field is required."),
+				s.isEmail("Please enter a valid email."),
+			],
 		},
-		// other fields...
+		password: {
+			value: "",
+			validators: [
+				g.required("This field is required."),
+				s.hasLowerCaseLetter("Password needs to have atleast one lower case letter."),
+				s.hasUpperCaseLetter("Password needs to have atleast one upper case letter."),
+				s.hasNumber("Password needs to have atleast one number."),
+				s.hasSymbol()("Password needs to have one symbol."),
+				s.longerThan(6)("Password needs to have more than 6 characters."),
+			],
+		},
 	})
-
-	$form.$on.submit = (e) => {
-		// handleSubmit
-	}
 </script>
 
 <form on:submit={$form.$fn.submit}>
-	<ul>
-		{#each $form.email.errors as error}
-		<li>{error}</li>
-		{/each}
-	</ul>
-	<input type="text" bind:value={$form.email.value}/>
+	<div>
+		<ul>
+			{#each $form.email.errors as error}
+				<li>{error}</li>
+			{/each}
+		</ul>
+		<input type="text" bind:value={$form.email.value} />
+	</div>
+	<div>
+		<ul>
+			{#each $form.password.errors as error}
+				<li>{error}</li>
+			{/each}
+		</ul>
+		<input type="password" bind:value={$form.password.value} />
+	</div>
+	<button disabled={$form.$st.invalid}>Submit</button>
 </form>
-```
-
-## Fields
-
-Only `value` is mandatory when declaring your form field. Here are all the available props per form field once `svelidate()` has been used :
-
-```ts,
-const field = {
-	value: T // the value to bind to the input
-	validators: FormFieldValidator<T>[] // you can either import them or make your own
-	errors: string[] // an array of errors messages returned by the failed validators
-	touched: boolean // true if `value` got modified (submitting the form resets it to false)
-	invalid: boolean // true if `errors.length` > 0
-}
 ```
 
 ## Form
@@ -92,41 +94,122 @@ const $on = {
 }
 ```
 
+## Form fields
+
+Only `value` is mandatory when creating a form field but you can also set all the other properties.
+Here are all the available props per form field has been used, after using `svelidate()` all of them will exist :
+
+```ts,
+const field = {
+	value: T // the value to bind to the input
+	validators: FormFieldValidator<T>[] // you can either import them or make your own
+	errors: string[] // an array of errors messages returned by the failed validators
+	touched: boolean // true if `value` got modified (submitting the form resets it to false)
+	invalid: boolean // true if `errors.length` > 0
+}
+```
+
 ## Validators
 
 ### Default validators
 
-Svelidate comes with multiple validators that you can use :
+Svelidate comes with multiple validators that you can use, they are grouped by category, `general` when they can be used for many value types (e.g. `required` or `truthy`), `string` to validate strings, `number` for numbers and `date` for dates.
 
--   `isRequired`: Invalid when value is falsy and not equal to 0.
--   `isEmail`: Invalid when value is not a string and an e-mail.
--   `isRegexMatched`: Invalid when value is not a string and doesn't match the regex.
--   `isEqualTo`: Invalid when values are not strictly equal.
--   `isGreaterThan`: Invalid if value is lesser or equal. [^1]
--   `isGreaterThanOrEqualTo`: Invalid if value is lesser. [^1]
--   `isLesserThan`: Invalid if value is greater or equal. [^1]
--   `isLesserThanOrEqualTo`: Invalid if value is greater. [^1]
--   `isInRange`: Invalid if value is outside the given range. [^1]
--   `isOutOfRange`: Invalid if value is inside the given range. [^1]
+#### `general`
 
-[^1]: Works with `number`, `string` (based on `.length`) and `array` (based on `.length`)
+```ts
+const general = {
+	truthy, // value is truthy (can be used to validate booleans/checkboxes).
+	falsy, // value is falsy (can be used to validate booleans/checkboxes).
+	required:, // value is truthy or strictly equal to 0.
+	equalTo, // value is strictly equal to argument.
+	differentFrom, // value is strictly different from argument.
+}
+```
+
+#### `string`
+
+```ts
+// value must be a string
+const string = {
+	isEmail, // value is an e-mail.
+	hasUpperCaseLetter, // value has atleast one upper case letter.
+	hasLowerCaseLetter, // value has atleast one lower case letter.
+	hasNumber, // value has atleast one number.
+	hasSymbol, // value has atleast one symbol ( !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~), a custom symbol array can be given.
+	matchesRegex, // value matches the given regex.
+	longerThan, // value is longer than the given length.
+	longerThanOrEqualTo, // value is longer than or equal to the given length.
+	shorterThan, // value is shorter than the given length.
+	shorterThanOrEqualTo, // value is shorter than or equal to the given length.
+	lengthInRange, // value length is included in the given range.
+	lengthOutOfRange, // value length is excluded from the given range.
+	lengthDifferentFrom, // value length is different from the given one.
+	lengthEqualTo, // value length is equal to the given one.
+	equalTo, // value is equal to the given string.
+	differentFrom, // value is different from the given string.,
+}
+```
+
+#### `string`
+
+```ts
+// value must be a number
+const number = {
+	greaterThan, // value is greater than the given number.
+	greaterThanorEqualTo, // value is greater than or equal to the given number.
+	lesserThan, // value is lesser than the given number.
+	lesserThanOrEqualTo, // value is lesser than or equal to the given number.
+	inInterval, // value is in included in the given interval.
+	outOfInterval, // value is in excluded from the given interval.
+	differentFrom, // value is different from the given number.
+	equalTo, // value is equal to the given number.
+}
+```
+
+#### `string`
+
+```ts
+// value must be a string or a date, if it's a string it will be parsed using the `Date` constructor.
+const date = {
+	afterThe, // value is after the given date.
+	afterTheOrEqualTo, // value is after the or is the given date.
+	beforeThe, // value is before the given date.
+	beforeTheOrEqualTo, // value is before the or is the given date.
+	inRange, // value is between the given date range.
+	outOfRange, // value is outside the given date range.
+	differentFrom, // value is not the given date.
+	equalTo, // value is the given date.
+}
+```
 
 ### Custom validators
 
-You can also create your own validator, a validator takes an unknown `value` as an argument and needs to return `undefined` if it's valid or an error message `string` if there's an error.
-Svelidate provides a helper function to create validator called `createValidator`, here's how to use it :
+You can also create your own validator, a validator takes the binded input `value` has an argument and returns `undefined` if there are no errors or a `string` containing the error message.
+Because the error message may change (for example if using translation keys), svelidate provide helper functions to create a validator factory that can take custom error messages.
+These helper functions take, a `callback` that must return `true` if the value is valid or `false` if it's not, and a `string` for the default error message (optional).
 
 ```ts
-const isRequired = createValidator(value => {
-	if (!value && value !== 0) return false
-	return true
-}, "default message")
-const requiredValidator = isRequired() // will return "default message" on not valid
+import {
+	createValidator,
+	createStringValidator, // will return an error if value is not a string.
+	createNumberValidator, // will return an error if value is not a number.
+	createDateValidator, // will return an error if value is not a date (it will try to parse it as a date first using the `Date` constructor).
+} from "svelidate"
 
-const isRegexMatched = (regex: RegExp) =>
-	createValidator(value => {
-		if (typeof value !== "string") return false
-		return regex.test(value)
-	})
-const regexMatchedValidator = isRegexMatched(/[a-z]/)("custom message") // will return "custom message" on not valid
+const isObject = createValidator(
+	value => typeof value === "object",
+	"This is not an object !"
+)
+const objectValidator = isObject() // this is what you use in form fields (`isObject()`)
+objectValidator({}) // return undefined
+objectValidator("string") // returns "This is not an object !"
+
+// you can also pass params by wrapping it in another function:
+const isNumberEqualTo = (number: number) => {
+	return createNumberValidator(value => value === number)
+}
+const threeValidator = isNumberEqualTo(3)("This is not equal to 3 !")
+threeValidator(3) // return undefined
+threeValidator(69) // return "This is not equal to 3 !"
 ```
