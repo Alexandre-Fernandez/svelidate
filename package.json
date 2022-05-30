@@ -18,7 +18,7 @@
 		"validator"
 	],
 	"author": "",
-	"license": "GPL v3",
+	"license": "MIT",
 	"dependencies": {
 		"typescript": "^4.7.2"
 	},
