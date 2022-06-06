@@ -1,7 +1,7 @@
-export declare type FormFieldValidator<T = any> = (value: T) => string | undefined;
+import { Validator } from "@svelidate/validation";
 export declare type FormField<T = unknown> = {
     value: T;
-    validators?: FormFieldValidator<T>[];
+    validators?: Validator<T>[];
     errors?: string[];
     touched?: boolean;
     invalid?: boolean;

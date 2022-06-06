@@ -17,5 +17,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.svelidate = void 0;
 var form_1 = require("./form/");
 Object.defineProperty(exports, "svelidate", { enumerable: true, get: function () { return form_1.svelidate; } });
-__exportStar(require("./validators"), exports);
+__exportStar(require("@svelidate/validation"), exports);
 //# sourceMappingURL=index.js.map
