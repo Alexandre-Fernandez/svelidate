@@ -4,7 +4,7 @@ export const number = {
 	greaterThan(number: number) {
 		return createNumberValidator(value => value > number)
 	},
-	greaterThanorEqualTo(number: number) {
+	greaterThanOrEqualTo(number: number) {
 		return createNumberValidator(value => value >= number)
 	},
 	lesserThan(number: number) {
