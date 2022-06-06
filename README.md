@@ -15,7 +15,7 @@ pnpm add svelidate
 
 ## Usage
 
--   Star the [github repo](https://github.com/Alexandre-Fernandez/svelidate) 😎
+-   Star the [github repo](https://github.com/svelidate/svelidate) 😎
 
 ```tsx
 <script lang="ts">
@@ -141,9 +141,9 @@ Svelidate comes with multiple validators that you can use, they are grouped by c
 const general = {
 	truthy, // value is truthy (can be used to validate booleans/checkboxes).
 	falsy, // value is falsy (can be used to validate booleans/checkboxes).
-	required:, // value is truthy or strictly equal to 0.
-	equalTo, // value is strictly equal to argument.
-	differentFrom, // value is strictly different from argument.
+	required, // value is truthy or strictly equal to 0.
+	eq(value: any), // value is strictly equal to argument.
+	neq(value: any), // value is strictly different from argument.
 }
 </pre>
 </details>
@@ -153,22 +153,24 @@ const general = {
 <pre lang="ts">
 // value must be a string
 const string = {
-	isEmail, // value is an e-mail.
-	hasUpperCaseLetter, // value has atleast one upper case letter.
-	hasLowerCaseLetter, // value has atleast one lower case letter.
-	hasNumber, // value has atleast one number.
-	hasSymbol, // value has atleast one symbol ( !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~), a custom symbol array can be given.
-	matchesRegex, // value matches the given regex.
-	longerThan, // value is longer than the given length.
-	longerThanOrEqualTo, // value is longer than or equal to the given length.
-	shorterThan, // value is shorter than the given length.
-	shorterThanOrEqualTo, // value is shorter than or equal to the given length.
-	lengthInRange, // value length is included in the given range.
-	lengthOutOfRange, // value length is excluded from the given range.
-	lengthDifferentFrom, // value length is different from the given one.
-	lengthEqualTo, // value length is equal to the given one.
-	equalTo, // value is equal to the given string.
-	differentFrom, // value is different from the given string.,
+	email, // value is an e-mail.
+	upperCase, // value has atleast one upper case letter.
+	lowerCase, // value has atleast one lower case letter.
+	number, // value has atleast one number.
+	symbol(symbols: string[]), // value has atleast one symbol ( !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~), a custom symbol array can be given.
+	regex(regex: RegExp), // value matches the given regex.
+	eq(string: string), // value is equal to the given string.
+	neq(string: string), // value is different from the given string.,
+	length: {
+		gt(length: number), // value length is longer than the given length.
+		gte(length: number), // value length is longer than or equal to the given length.
+		lt(length: number), // value length is shorter than the given length.
+		lte(length: number), // value length is shorter than or equal to the given length.
+		inside(min: number, max: number), // value length is included in the given range.
+		outside(min: number, max: number), // value length is excluded from the given range.
+		neq(length: number), // value length is different from the given one.
+		eq(length: number), // value length is equal to the given one.
+	},
 }
 </pre>
 </details>
@@ -178,14 +180,14 @@ const string = {
 <pre lang="ts">
 // value must be a number
 const number = {
-	greaterThan, // value is greater than the given number.
-	greaterThanorEqualTo, // value is greater than or equal to the given number.
-	lesserThan, // value is lesser than the given number.
-	lesserThanOrEqualTo, // value is lesser than or equal to the given number.
-	inInterval, // value is in included in the given interval.
-	outOfInterval, // value is in excluded from the given interval.
-	differentFrom, // value is different from the given number.
-	equalTo, // value is equal to the given number.
+	gt(number: number), // value is greater than the given number.
+	gte(number: number), // value is greater than or equal to the given number.
+	lt(number: number), // value is lesser than the given number.
+	lte(number: number), // value is lesser than or equal to the given number.
+	inside(min: number, max: number), // value is in included in the given interval.
+	outside(min: number, max: number), // value is in excluded from the given interval.
+	neq(number: number), // value is different from the given number.
+	eq(number: number), // value is equal to the given number.
 }
 </pre>
 </details>
@@ -195,14 +197,14 @@ const number = {
 <pre lang="ts">
 // value must be a string or a date, if it's a string it will be parsed using the `Date` constructor.
 const date = {
-	afterThe, // value is after the given date.
-	afterTheOrEqualTo, // value is after the or is the given date.
-	beforeThe, // value is before the given date.
-	beforeTheOrEqualTo, // value is before the or is the given date.
-	inRange, // value is between the given date range.
-	outOfRange, // value is outside the given date range.
-	differentFrom, // value is not the given date.
-	equalTo, // value is the given date.
+	gt(date: Date), // value is after the given date.
+	gte(date: Date), // value is after the or is the given date.
+	lt(date: Date),  // value is before the given date.
+	lte(date: Date), // value is before the or is the given date.
+	inside(min: Date, max: Date), // value is between the given date range.
+	outside(min: Date, max: Date), // value is outside the given date range.
+	neq(date: Date), // value is not the given date.
+	eq(date: Date), // value is the given date.
 }
 </pre>
 </details>
@@ -241,3 +243,27 @@ const threeValidator = isNumberEqualTo(3)("This is not equal to 3 !")
 threeValidator(3) // return undefined
 threeValidator(69) // return "This is not equal to 3 !"
 ```
+
+### Conditional validation
+
+You can make any validator or array of validator only validate if a condition is true/undefined by using the `validateIf(predicate: Validator | ValidatorPredicate, validators: Validator | Validator[] )` function.
+
+```ts
+import { validateIf, general } from "svelidate"
+
+const value = undefined
+
+// if the predicate returns true or undefined the general.required() will be run as normal
+validateIf(() => true, general.required("error"))(value) // returns "error"
+
+// else it won't return any errors, even if the value is not valid
+validateIf(() => false, general.required("error"))(value) // returns undefined
+
+// validateIf can also be used to validate arrays
+validateIf(
+	() => false,
+	[general.required("error1"), general.truthy("error2")]
+).map(validator => validator(value)) // returns [undefined, undefined]
+```
+
+If you want to make a custom validator conditional you can use `createConditionalValidator(predicate: Validator | ValidatorPredicate, validator: Validator)`. Same usage, except it doesn't take arrays.
