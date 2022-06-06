@@ -15,6 +15,8 @@ pnpm add svelidate
 
 ## Usage
 
+-   Star the [github repo](https://github.com/Alexandre-Fernandez/svelidate) 😎
+
 ```tsx
 <script lang="ts">
 	import { svelidate, string as s, general as g } from "svelidate"
@@ -77,18 +79,18 @@ To create a svelidate form just use `svelidate(yourFormObject)` with an object r
 Svelidate adds 3 top level properties to the initial form, `$st` for global form state, `$fn` for form functions and `$on` to subscribe to a form event.
 
 <details>
-	<summary><h3><code>`$st`</code></h3></summary>
+	<summary><h3><code>$st</code></h3></summary>
 <pre lang="ts">
 const $st = {
 	invalid: boolean // true if any form field is invalid
 	submitted: boolean // true once `$fn.submit` has been called
-	initial: Readonly<Form> // the original form passed to `svelidate()`
+	initial: Readonly≺Form≻ // the original form passed to `svelidate()` 
 }
 </pre>
 </details>
 
 <details>
-	<summary><h3><code>`$fn`</code></h3></summary>
+	<summary><h3><code>$fn</code></h3></summary>
 <pre lang="ts">
 const $fn = {
 	submit: (e?: SubmitEvent) =>  void // handles submit and then calls `$on.submit`
@@ -100,7 +102,7 @@ const $fn = {
 </details>
 
 <details>
-	<summary><h3><code>`$on`</code></h3></summary>
+	<summary><h3><code>$on</code></h3></summary>
 <pre lang="ts">
 const $on = {
 	submit: (e?: SubmitEvent) =>  void // called after submitting with `$fn.submit`
@@ -134,7 +136,7 @@ If your form field object is invalid (for example having `invalid === false` and
 Svelidate comes with multiple validators that you can use, they are grouped by category (object): `general` when they can be used for many value types (e.g. `required` or `truthy`), `string` to validate strings, `number` for numbers and `date` for dates.
 
 <details>
-	<summary><h4><code>`general`</code></h4></summary>
+	<summary><h4><code>general</code></h4></summary>
 <pre lang="ts">
 const general = {
 	truthy, // value is truthy (can be used to validate booleans/checkboxes).
@@ -147,7 +149,7 @@ const general = {
 </details>
 
 <details>
-	<summary><h4><code>`string`</code></h4></summary>
+	<summary><h4><code>string</code></h4></summary>
 <pre lang="ts">
 // value must be a string
 const string = {
@@ -172,7 +174,7 @@ const string = {
 </details>
 
 <details>
-	<summary><h4><code>`number`</code></h4></summary>
+	<summary><h4><code>number</code></h4></summary>
 <pre lang="ts">
 // value must be a number
 const number = {
@@ -189,7 +191,7 @@ const number = {
 </details>
 
 <details>
-	<summary><h4><code>`date`</code></h4></summary>
+	<summary><h4><code>date</code></h4></summary>
 <pre lang="ts">
 // value must be a string or a date, if it's a string it will be parsed using the `Date` constructor.
 const date = {
