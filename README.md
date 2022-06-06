@@ -26,18 +26,18 @@ pnpm add svelidate
 			value: "",
 			validators: [
 				g.required("This field is required."),
-				s.isEmail("Please enter a valid email."),
+				s.email("Please enter a valid email."),
 			],
 		},
 		password: {
 			value: "",
 			validators: [
 				g.required("This field is required."),
-				s.hasLowerCaseLetter("Password needs to have atleast one lower case letter."),
-				s.hasUpperCaseLetter("Password needs to have atleast one upper case letter."),
-				s.hasNumber("Password needs to have atleast one number."),
-				s.hasSymbol()("Password needs to have one symbol."),
-				s.longerThan(6)("Password needs to have more than 6 characters."),
+				s.lowerCase("Password needs to have atleast one lower case letter."),
+				s.upperCase("Password needs to have atleast one upper case letter."),
+				s.number("Password needs to have atleast one number."),
+				s.symbol()("Password needs to have one symbol."),
+				s.length.gt(6)("Password needs to have more than 6 characters."),
 			],
 		},
 	})
