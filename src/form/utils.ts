@@ -25,6 +25,7 @@ export function createNaked$Form<F extends Form>(form: F) {
 			touched: false,
 			validators: [],
 			invalid: false,
+			ref: null,
 			...value,
 		}
 		return {
@@ -40,4 +41,15 @@ export function isFormStateKey(key: string) {
 
 export function dispatch<F extends Form>(to: Subscriber[], form: $Form<F>) {
 	to.forEach(subscriber => subscriber(form))
+}
+
+export function getParentForm(input: HTMLInputElement) {
+	let current: HTMLElement = input
+	while (current !== null) {
+		if (current.tagName === "FORM") {
+			return current as HTMLFormElement
+		}
+		current = current.parentElement
+	}
+	return null
 }

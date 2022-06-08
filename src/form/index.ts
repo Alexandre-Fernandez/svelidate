@@ -4,6 +4,7 @@ import {
 	dispatch,
 	forEachFormField,
 	getFormFieldValues,
+	getParentForm,
 } from "./utils"
 
 export function svelidate<F extends Form>(initialForm: F) {
@@ -15,6 +16,7 @@ export function svelidate<F extends Form>(initialForm: F) {
 			invalid: true,
 			submitted: false,
 			initial: Object.freeze(initialForm),
+			form: null,
 		},
 		$fn: {
 			submit: (e?: SubmitEvent) => {
@@ -53,7 +55,12 @@ export function svelidate<F extends Form>(initialForm: F) {
 	}
 
 	// init
-	forEachFormField($form, formField => updateFormField(formField))
+	forEachFormField($form, formField => {
+		updateFormField(formField)
+		if (!$form.$st.form && formField.ref) {
+			$form.$st.form = getParentForm(formField.ref)
+		}
+	})
 	updateFormState($form as $Form<F>)
 
 	let lastValues = getFormFieldValues($form)

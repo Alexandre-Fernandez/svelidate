@@ -6,6 +6,7 @@ export type FormField<T = unknown> = {
 	errors?: string[]
 	touched?: boolean
 	invalid?: boolean
+	ref?: HTMLInputElement | null
 }
 
 export type Form = {
@@ -25,6 +26,7 @@ export type $State = {
 		invalid: boolean
 		submitted: boolean
 		initial: Readonly<Form>
+		form: HTMLFormElement | null
 	}
 }
 export type $Events = {
