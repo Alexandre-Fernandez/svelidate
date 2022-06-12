@@ -1,16 +1,21 @@
-import { $Form, Form, FormField, Subscriber, Svelidate$Form } from "../types"
 import {
 	createNaked$Form,
 	dispatch,
 	forEachFormField,
 	getFormFieldValues,
-	getParentForm,
-} from "./utils"
+} from "../utilities"
+import type {
+	SvelidateForm,
+	UninitializedForm,
+	Field,
+	Subscriber,
+	SvelidateFormStore,
+} from "../types"
 
-export function svelidate<F extends Form>(initialForm: F) {
+export function svelidate<F extends UninitializedForm>(initialForm: F) {
 	const subscribers: Subscriber[] = []
 
-	const $form: $Form<F> = {
+	const $form: SvelidateForm<F> = {
 		...createNaked$Form(initialForm),
 		$st: {
 			invalid: true,
@@ -55,18 +60,13 @@ export function svelidate<F extends Form>(initialForm: F) {
 	}
 
 	// init
-	forEachFormField($form, formField => {
-		updateFormField(formField)
-		if (!$form.$st.form && formField.ref) {
-			$form.$st.form = getParentForm(formField.ref)
-		}
-	})
-	updateFormState($form as $Form<F>)
+	forEachFormField($form, formField => updateFormField(formField))
+	updateFormState($form as SvelidateForm<F>)
 
 	let lastValues = getFormFieldValues($form)
 	return {
 		subscribe(fn) {
-			fn($form as $Form<F>)
+			fn($form as SvelidateForm<F>)
 			subscribers.push(fn)
 			return () => subscribers.splice(subscribers.indexOf(fn), 1)
 		},
@@ -85,10 +85,12 @@ export function svelidate<F extends Form>(initialForm: F) {
 			dispatch(subscribers, newForm)
 			lastValues = getFormFieldValues(newForm)
 		},
-	} as Svelidate$Form<F>
+	} as SvelidateFormStore<F>
 }
 
-function updateFormState<F extends Form>(newForm: $Form<F>) {
+function updateFormState<F extends UninitializedForm>(
+	newForm: SvelidateForm<F>
+) {
 	let isInvalid = false
 	forEachFormField(newForm, formField => {
 		if (formField.invalid) isInvalid = true
@@ -96,8 +98,8 @@ function updateFormState<F extends Form>(newForm: $Form<F>) {
 	newForm.$st.invalid = isInvalid
 }
 
-function updateFormField<F extends Form>(
-	formField: Required<FormField>,
+function updateFormField<F extends UninitializedForm>(
+	formField: Required<Field>,
 	newValue: F[string]["value"] = formField.value
 ) {
 	formField.errors = formField.validators.reduce((errors, validator) => {
