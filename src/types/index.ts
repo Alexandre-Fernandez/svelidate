@@ -1,23 +1,30 @@
-import { Validator } from "@svelidate/validation"
+export type UninitializedForm = {
+	[key: PropertyKey]: Field
+}
 
-export type FormField<T = unknown> = {
+export type Field<T = unknown> = {
 	value: T
-	validators?: Validator<T>[]
+	validators?: ValidatorCollection<T>[]
 	errors?: string[]
 	touched?: boolean
 	invalid?: boolean
-	ref?: HTMLInputElement | null
+}
+type FormFieldAttributes = {
+	name?: string
+	title?: string
+	required?: boolean
+	pattern?: string
+	minLength?: number
+	maxLength?: number
+	min?: number
+	max?: number
 }
 
-export type Form = {
-	[key: PropertyKey]: FormField
-}
-
-export type Naked$Form<F extends Form> = {
-	[K in keyof F]: Required<FormField<F[K]["value"]>>
+export type NakedSvelidateForm<F extends UninitializedForm> = {
+	[K in keyof F]: Required<Field<F[K]["value"]>>
 } & Partial<$Meta>
-export type $Form<F extends Form> = {
-	[K in keyof F]: Required<FormField<F[K]["value"]>>
+export type SvelidateForm<F extends UninitializedForm> = {
+	[K in keyof F]: Required<Field<F[K]["value"]>>
 } & $Meta
 
 export type $Meta = $State & $Events & $Functions
@@ -25,8 +32,8 @@ export type $State = {
 	$st: {
 		invalid: boolean
 		submitted: boolean
-		initial: Readonly<Form>
-		form: HTMLFormElement | null
+		initial: Readonly<UninitializedForm>
+		form: HTMLFormElement
 	}
 }
 export type $Events = {
@@ -47,8 +54,74 @@ export type $Functions = {
 type SvelteStore<T> = {
 	subscribe: (run: (value: T) => any, invalidate?: any) => any
 }
-export type Svelidate$Form<F extends Form, T = $Form<F>> = SvelteStore<T> & {
+export type SvelidateFormStore<
+	F extends UninitializedForm,
+	T = SvelidateForm<F>
+> = SvelteStore<T> & {
 	set: (value: T) => void
 }
 
-export type Subscriber = <F extends Form>(form: $Form<F>) => void
+export type Subscriber = <F extends UninitializedForm>(
+	form: SvelidateForm<F>
+) => void
+
+export type ValidatorCollection<JS = unknown> = Readonly<{
+	js: JsValidator<JS>
+	html: HtmlValidator
+}>
+
+export type JsValidator<T = unknown> = (
+	value: T,
+	inputType?: HtmlInputType
+) => string | undefined
+export type JsValidatorPredicate<T = unknown> = (value: T) => boolean
+
+export type HtmlValidator = (inputType?: HtmlInputType) => {
+	required?: boolean
+	lookahead?: string
+	minLength?: number
+	maxLength?: number
+	min?: number | string
+	max?: number | string
+}
+
+export type HtmlInputType =
+	| "select"
+	| "textarea"
+	| "checkbox"
+	| "color"
+	| "date"
+	| "datetime-local"
+	| "email"
+	| "file"
+	| "hidden"
+	| "month"
+	| "number"
+	| "password"
+	| "radio"
+	| "range"
+	| "reset"
+	| "search"
+	| "submit"
+	| "tel"
+	| "text"
+	| "time"
+	| "url"
+	| "week"
+
+export type HtmlDateTimeInput =
+	| "datetime-local" // YYYY-MM-DDThh:mm
+	| "date" // YYYY-MM-DD
+	| "month" // YYYY-MM
+	| "week" // YYYY-Www
+	| "time" // hh:mm
+
+export type HtmlNumberInput = "number" | "range"
+
+export type HtmlStringInput =
+	| "text"
+	| "tel"
+	| "email"
+	| "url"
+	| "password"
+	| "search"
