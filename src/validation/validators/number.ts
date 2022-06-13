@@ -1,35 +1,50 @@
-import { isNumberInput } from "../../utilities/input"
+import { getMatchingHtmlValidator } from "../../utilities/input"
 import { createNumberValidatorCollectionFactory } from "../factories/validatorCollectionFactory"
 
 const number = {
 	gt(number: number) {
 		return createNumberValidatorCollectionFactory(
 			value => value > number,
-			inputType => (isNumberInput(inputType) ? { min: number + 1 } : {})
+			inputType =>
+				getMatchingHtmlValidator(inputType, {
+					numbers: { min: number + 1 },
+				})
 		)
 	},
 	gte(number: number) {
 		return createNumberValidatorCollectionFactory(
 			value => value >= number,
-			inputType => (isNumberInput(inputType) ? { min: number } : {})
+			inputType =>
+				getMatchingHtmlValidator(inputType, {
+					numbers: { min: number },
+				})
 		)
 	},
 	lt(number: number) {
 		return createNumberValidatorCollectionFactory(
 			value => value < number,
-			inputType => (isNumberInput(inputType) ? { max: number - 1 } : {})
+			inputType =>
+				getMatchingHtmlValidator(inputType, {
+					numbers: { max: number - 1 },
+				})
 		)
 	},
 	lte(number: number) {
 		return createNumberValidatorCollectionFactory(
 			value => value <= number,
-			inputType => (isNumberInput(inputType) ? { max: number } : {})
+			inputType =>
+				getMatchingHtmlValidator(inputType, {
+					numbers: { max: number },
+				})
 		)
 	},
 	inside(min: number, max: number) {
 		return createNumberValidatorCollectionFactory(
 			value => value >= min && value <= max,
-			inputType => (isNumberInput(inputType) ? { min, max } : {})
+			inputType =>
+				getMatchingHtmlValidator(inputType, {
+					numbers: { min, max },
+				})
 		)
 	},
 	outside(min: number, max: number) {
@@ -44,7 +59,9 @@ const number = {
 		return createNumberValidatorCollectionFactory(
 			value => value === number,
 			inputType =>
-				isNumberInput(inputType) ? { min: number, max: number } : {}
+				getMatchingHtmlValidator(inputType, {
+					numbers: { min: number, max: number },
+				})
 		)
 	},
 }
