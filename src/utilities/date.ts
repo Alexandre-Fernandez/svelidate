@@ -1,4 +1,4 @@
-import { HtmlDateTimeInputType } from "../types"
+import { HtmlDateTimeInputType, SvelidateInputType } from "../types"
 
 const MINUTE = 60000
 const DAY = MINUTE * 60 * 24
@@ -23,7 +23,7 @@ export function getDate(value: unknown) {
  */
 export function getExcludedDate(
 	date: Date,
-	inputType: HtmlDateTimeInputType,
+	inputType: SvelidateInputType,
 	mode: keyof typeof addSubstract
 ) {
 	switch (inputType) {
