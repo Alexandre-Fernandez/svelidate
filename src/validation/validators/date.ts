@@ -8,11 +8,13 @@ const date = {
 		return createDateValidatorCollectionFactory(
 			value => value > date,
 			inputType => {
-				if (!isDateInput(inputType)) return {}
+				if (!inputType || !isDateInput(inputType)) return {}
 				const input = inputType as HtmlDateTimeInputType
+				const excludedDate = getExcludedDate(date, input, "+")
+				if (!excludedDate) return {}
 				return {
 					min: getFormattedDate(
-						getExcludedDate(date, input, "+"),
+						excludedDate,
 						input as HtmlDateTimeInputType
 					),
 				}
@@ -23,7 +25,7 @@ const date = {
 		return createDateValidatorCollectionFactory(
 			value => value >= date,
 			inputType => {
-				if (!isDateInput(inputType)) return {}
+				if (!inputType || !isDateInput(inputType)) return {}
 				const input = inputType as HtmlDateTimeInputType
 				return {
 					min: getFormattedDate(date, input as HtmlDateTimeInputType),
@@ -35,11 +37,13 @@ const date = {
 		return createDateValidatorCollectionFactory(
 			value => value < date,
 			inputType => {
-				if (!isDateInput(inputType)) return {}
+				if (!inputType || !isDateInput(inputType)) return {}
 				const input = inputType as HtmlDateTimeInputType
+				const excludedDate = getExcludedDate(date, input, "-")
+				if (!excludedDate) return {}
 				return {
 					max: getFormattedDate(
-						getExcludedDate(date, input, "-"),
+						excludedDate,
 						input as HtmlDateTimeInputType
 					),
 				}
@@ -50,7 +54,7 @@ const date = {
 		return createDateValidatorCollectionFactory(
 			value => value <= date,
 			inputType => {
-				if (!isDateInput(inputType)) return {}
+				if (!inputType || !isDateInput(inputType)) return {}
 				const input = inputType as HtmlDateTimeInputType
 				return {
 					max: getFormattedDate(date, input as HtmlDateTimeInputType),
@@ -62,7 +66,7 @@ const date = {
 		return createDateValidatorCollectionFactory(
 			value => min <= value && value <= max,
 			inputType => {
-				if (!isDateInput(inputType)) return {}
+				if (!inputType || !isDateInput(inputType)) return {}
 				const input = inputType as HtmlDateTimeInputType
 				return {
 					min: getFormattedDate(min, input),
@@ -83,7 +87,7 @@ const date = {
 		return createDateValidatorCollectionFactory(
 			value => value === date,
 			inputType => {
-				if (!isDateInput(inputType)) return {}
+				if (!inputType || !isDateInput(inputType)) return {}
 				const input = inputType as HtmlDateTimeInputType
 				return {
 					min: getFormattedDate(date, input),
