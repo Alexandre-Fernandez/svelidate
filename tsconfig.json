@@ -6,7 +6,8 @@
 		"outDir": "./dist",
 		"noImplicitAny": true,
 		"declaration": true,
-		"moduleResolution": "Node"
+		"moduleResolution": "Node",
+		"strict": true
 	},
 	"include": ["src/**/*"],
 	"exclude": ["node_modules"]
