@@ -1,4 +1,4 @@
-import { createConditionalValidator } from "../validation/factories/validatorCollectionFactory"
+import { createConditionalValidatorCollection } from "../validation/factories/validatorCollection"
 import type {
 	SvelidateForm,
 	UninitializedForm,
@@ -8,17 +8,6 @@ import type {
 	ValidatorCollection,
 	JsValidatorPredicate,
 } from "../types"
-
-export function validateIf<
-	T extends ValidatorCollection | ValidatorCollection[]
->(predicate: JsValidatorPredicate, validators: T) {
-	if (typeof validators === "function") {
-		return createConditionalValidator(predicate, validators) as T
-	}
-	return validators.map(validator =>
-		createConditionalValidator(predicate, validator)
-	) as T
-}
 
 export function getFormFieldValues<F extends UninitializedForm>(
 	form: SvelidateForm<F>
@@ -40,31 +29,8 @@ export function forEachFormField<F extends UninitializedForm>(
 	}
 }
 
-export function createNaked$Form<F extends UninitializedForm>(form: F) {
-	return Object.entries(form).reduce((prev, [key, value]) => {
-		const formField: Required<Field> = {
-			errors: [],
-			touched: false,
-			validators: [],
-			invalid: false,
-			...value,
-		}
-		return {
-			...prev,
-			[key]: formField,
-		}
-	}, {} as NakedSvelidateForm<F>)
-}
-
 export function isFormStateKey(key: string) {
 	return key && key[0] === "$" ? true : false
-}
-
-export function dispatch<F extends UninitializedForm>(
-	to: Subscriber[],
-	form: SvelidateForm<F>
-) {
-	to.forEach(subscriber => subscriber(form))
 }
 
 export function getParentForm(input: HTMLInputElement) {
@@ -76,4 +42,11 @@ export function getParentForm(input: HTMLInputElement) {
 		current = current.parentElement
 	}
 	return null
+}
+
+export function storeDispatch<F extends UninitializedForm>(
+	to: Subscriber[],
+	form: SvelidateForm<F>
+) {
+	to.forEach(subscriber => subscriber(form))
 }

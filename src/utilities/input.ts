@@ -1,20 +1,25 @@
 import {
-	HtmlDateTimeInput,
-	HtmlInputType,
+	HtmlDateTimeInputType,
+	SvelidateInputType,
 	HtmlNumberInput,
 	HtmlStringInput,
+	HtmlPseudoInputType,
 } from "../types"
 
-const input: { [key: string]: HtmlInputType[] } = {
+const inputGroup: Record<
+	"numbers" | "dates" | "strings" | "textarea",
+	SvelidateInputType[]
+> = {
+	textarea: ["textarea"] as HtmlPseudoInputType[],
 	numbers: ["number", "range"] as HtmlNumberInput[],
-	date: [
+	dates: [
 		"date",
 		"datetime-local",
 		"month",
 		"time",
 		"week",
-	] as HtmlDateTimeInput[],
-	string: [
+	] as HtmlDateTimeInputType[],
+	strings: [
 		"email",
 		"password",
 		"search",
@@ -24,14 +29,30 @@ const input: { [key: string]: HtmlInputType[] } = {
 	] as HtmlStringInput[],
 }
 
-export function isNumberInput(inputType: HtmlInputType) {
-	return input.numbers.includes(inputType)
+export function isNumberInput(inputType: SvelidateInputType) {
+	return inputGroup.numbers.includes(inputType)
 }
 
-export function isDateInput(inputType: HtmlInputType) {
-	return input.date.includes(inputType)
+export function isDateInput(inputType: SvelidateInputType) {
+	return inputGroup.dates.includes(inputType)
 }
 
-export function isStringInput(inputType: HtmlInputType) {
-	return input.string.includes(inputType)
+export function isStringInput(inputType: SvelidateInputType) {
+	return inputGroup.strings.includes(inputType)
+}
+
+export function isTextareaInput(inputType: SvelidateInputType) {
+	return inputGroup.textarea.includes(inputType)
+}
+
+// remake function (~ get htmlvalidator)
+export function mapInputTypeToGroup<
+	T extends any,
+	D extends any,
+	K extends keyof typeof inputGroup
+>(type: SvelidateInputType, map: Record<K, T>, notFound: D = {} as any) {
+	for (const group in map) {
+		if (inputGroup[group as K].includes(type)) return map[group]
+	}
+	return notFound
 }

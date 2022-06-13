@@ -1,22 +1,22 @@
 import {
-	createNaked$Form,
-	dispatch,
+	storeDispatch,
 	forEachFormField,
 	getFormFieldValues,
-} from "../utilities"
+} from "../utilities/form"
 import type {
 	SvelidateForm,
 	UninitializedForm,
 	Field,
 	Subscriber,
 	SvelidateFormStore,
+	NakedSvelidateForm,
 } from "../types"
 
 export function svelidate<F extends UninitializedForm>(initialForm: F) {
 	const subscribers: Subscriber[] = []
 
 	const $form: SvelidateForm<F> = {
-		...createNaked$Form(initialForm),
+		...createNakedSvelidateForm(initialForm),
 		$st: {
 			invalid: true,
 			submitted: false,
@@ -37,14 +37,14 @@ export function svelidate<F extends UninitializedForm>(initialForm: F) {
 					updateFormField($form[key])
 				}
 				updateFormState($form)
-				dispatch(subscribers, $form)
+				storeDispatch(subscribers, $form)
 			},
 			untouch: () => {
 				forEachFormField(
 					$form,
 					formField => (formField.touched = false)
 				)
-				dispatch(subscribers, $form)
+				storeDispatch(subscribers, $form)
 			},
 			getErrors: () => {
 				let errors: string[] = []
@@ -82,7 +82,7 @@ export function svelidate<F extends UninitializedForm>(initialForm: F) {
 				}
 			})
 			updateFormState(newForm)
-			dispatch(subscribers, newForm)
+			storeDispatch(subscribers, newForm)
 			lastValues = getFormFieldValues(newForm)
 		},
 	} as SvelidateFormStore<F>
@@ -98,15 +98,45 @@ function updateFormState<F extends UninitializedForm>(
 	newForm.$st.invalid = isInvalid
 }
 
-function updateFormField<F extends UninitializedForm>(
-	formField: Required<Field>,
-	newValue: F[string]["value"] = formField.value
-) {
-	formField.errors = formField.validators.reduce((errors, validator) => {
-		const error = validator(newValue)
+function updateFormField(formField: Required<Field>) {
+	const pattern = ""
+	const errors = []
+	for (const validator of formField.validators) {
+		const error = validator.js(formField.value)
 		if (error !== undefined) errors.push(error)
-		return errors
-	}, [] as string[])
+		const attrs = validator.html()
+	}
+
+	formField.errors = errors
 	if (formField.errors.length > 0) formField.invalid = true
 	else formField.invalid = false
+
+	formField.errors = formField.validators.reduce(
+		(errors, validatorCollection) => {
+			const error = validatorCollection.js(formField.value)
+			if (error !== undefined) errors.push(error)
+			return errors
+		},
+		[] as string[]
+	)
+	if (formField.errors.length > 0) formField.invalid = true
+	else formField.invalid = false
+}
+
+function createNakedSvelidateForm<F extends UninitializedForm>(form: F) {
+	return Object.entries(form).reduce((prev, [key, value]) => {
+		const formField: Required<Field> = {
+			errors: [],
+			touched: false,
+			validators: [],
+			invalid: false,
+			attributes: {},
+			...value,
+		}
+		formField.attributes.name = key
+		return {
+			...prev,
+			[key]: formField,
+		}
+	}, {} as NakedSvelidateForm<F>)
 }

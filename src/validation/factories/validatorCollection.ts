@@ -13,3 +13,14 @@ export function createConditionalValidatorCollection(
 		html: validator.html,
 	}
 }
+
+// export function validateIf<
+// 	T extends ValidatorCollection | ValidatorCollection[]
+// >(predicate: JsValidatorPredicate, validators: T) {
+// 	if (typeof validators === "function") {
+// 		return createConditionalValidatorCollection(predicate, validators) as T
+// 	}
+// 	return validators.map(validator =>
+// 		createConditionalValidatorCollection(predicate, validator)
+// 	) as T
+// }

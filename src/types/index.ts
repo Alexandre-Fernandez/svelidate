@@ -8,6 +8,7 @@ export type Field<T = unknown> = {
 	errors?: string[]
 	touched?: boolean
 	invalid?: boolean
+	attributes?: FormFieldAttributes
 }
 type FormFieldAttributes = {
 	name?: string
@@ -70,13 +71,10 @@ export type ValidatorCollection<JS = unknown> = Readonly<{
 	html: HtmlValidator
 }>
 
-export type JsValidator<T = unknown> = (
-	value: T,
-	inputType?: HtmlInputType
-) => string | undefined
+export type JsValidator<T = unknown> = (value: T) => string | undefined
 export type JsValidatorPredicate<T = unknown> = (value: T) => boolean
 
-export type HtmlValidator = (inputType?: HtmlInputType) => {
+export type HtmlValidator = (inputType?: SvelidateInputType) => {
 	required?: boolean
 	lookahead?: string
 	minLength?: number
@@ -85,39 +83,14 @@ export type HtmlValidator = (inputType?: HtmlInputType) => {
 	max?: number | string
 }
 
-export type HtmlInputType =
-	| "select"
-	| "textarea"
-	| "checkbox"
-	| "color"
-	| "date"
-	| "datetime-local"
-	| "email"
-	| "file"
-	| "hidden"
-	| "month"
-	| "number"
-	| "password"
-	| "radio"
-	| "range"
-	| "reset"
-	| "search"
-	| "submit"
-	| "tel"
-	| "text"
-	| "time"
-	| "url"
-	| "week"
-
-export type HtmlDateTimeInput =
+export type HtmlPseudoInputType = "select" | "textarea"
+export type HtmlNumberInput = "number" | "range"
+export type HtmlDateTimeInputType =
 	| "datetime-local" // YYYY-MM-DDThh:mm
 	| "date" // YYYY-MM-DD
 	| "month" // YYYY-MM
 	| "week" // YYYY-Www
 	| "time" // hh:mm
-
-export type HtmlNumberInput = "number" | "range"
-
 export type HtmlStringInput =
 	| "text"
 	| "tel"
@@ -125,3 +98,15 @@ export type HtmlStringInput =
 	| "url"
 	| "password"
 	| "search"
+export type HtmlInputType =
+	| HtmlDateTimeInputType
+	| HtmlNumberInput
+	| HtmlStringInput
+	| "checkbox"
+	| "color"
+	| "file"
+	| "hidden"
+	| "radio"
+	| "reset"
+	| "submit"
+export type SvelidateInputType = HtmlInputType | HtmlPseudoInputType | "custom"
