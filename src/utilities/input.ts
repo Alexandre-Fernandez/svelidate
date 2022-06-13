@@ -4,6 +4,7 @@ import {
 	HtmlNumberInput,
 	HtmlStringInput,
 	HtmlPseudoInputType,
+	HtmlValidator,
 } from "../types"
 
 const inputGroup: Record<
@@ -45,14 +46,12 @@ export function isTextareaInput(inputType: SvelidateInputType) {
 	return inputGroup.textarea.includes(inputType)
 }
 
-// remake function (~ get htmlvalidator)
-export function mapInputTypeToGroup<
-	T extends any,
-	D extends any,
-	K extends keyof typeof inputGroup
->(type: SvelidateInputType, map: Record<K, T>, notFound: D = {} as any) {
-	for (const group in map) {
-		if (inputGroup[group as K].includes(type)) return map[group]
+export function getMatchingHtmlValidator<K extends keyof typeof inputGroup>(
+	inputTypeToMatch: SvelidateInputType,
+	validatorMap: Record<K, ReturnType<HtmlValidator>>
+): ReturnType<HtmlValidator> {
+	for (const key in validatorMap) {
+		if (inputGroup[key].includes(inputTypeToMatch)) return validatorMap[key]
 	}
-	return notFound
+	return {}
 }
