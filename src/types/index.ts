@@ -74,7 +74,9 @@ export type ValidatorCollection<JS = unknown> = Readonly<{
 export type JsValidator<T = unknown> = (value: T) => string | undefined
 export type JsValidatorPredicate<T = unknown> = (value: T) => boolean
 
-export type HtmlValidator = (inputType?: SvelidateInputType) => {
+export type HtmlValidator<T extends SvelidateInputType = SvelidateInputType> = (
+	inputType?: T
+) => {
 	required?: boolean
 	lookahead?: string
 	minLength?: number
