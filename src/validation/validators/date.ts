@@ -1,4 +1,4 @@
-import { HtmlDateTimeInput } from "../../types"
+import { HtmlDateTimeInputType } from "../../types"
 import { getExcludedDate, getFormattedDate } from "../../utilities/date"
 import { isDateInput } from "../../utilities/input"
 import { createDateValidatorCollectionFactory } from "../factories/validatorCollectionFactory"
@@ -9,11 +9,11 @@ const date = {
 			value => value > date,
 			inputType => {
 				if (!isDateInput(inputType)) return {}
-				const input = inputType as HtmlDateTimeInput
+				const input = inputType as HtmlDateTimeInputType
 				return {
 					min: getFormattedDate(
 						getExcludedDate(date, input, "+"),
-						input as HtmlDateTimeInput
+						input as HtmlDateTimeInputType
 					),
 				}
 			}
@@ -24,9 +24,9 @@ const date = {
 			value => value >= date,
 			inputType => {
 				if (!isDateInput(inputType)) return {}
-				const input = inputType as HtmlDateTimeInput
+				const input = inputType as HtmlDateTimeInputType
 				return {
-					min: getFormattedDate(date, input as HtmlDateTimeInput),
+					min: getFormattedDate(date, input as HtmlDateTimeInputType),
 				}
 			}
 		)
@@ -36,11 +36,11 @@ const date = {
 			value => value < date,
 			inputType => {
 				if (!isDateInput(inputType)) return {}
-				const input = inputType as HtmlDateTimeInput
+				const input = inputType as HtmlDateTimeInputType
 				return {
 					max: getFormattedDate(
 						getExcludedDate(date, input, "-"),
-						input as HtmlDateTimeInput
+						input as HtmlDateTimeInputType
 					),
 				}
 			}
@@ -51,9 +51,9 @@ const date = {
 			value => value <= date,
 			inputType => {
 				if (!isDateInput(inputType)) return {}
-				const input = inputType as HtmlDateTimeInput
+				const input = inputType as HtmlDateTimeInputType
 				return {
-					max: getFormattedDate(date, input as HtmlDateTimeInput),
+					max: getFormattedDate(date, input as HtmlDateTimeInputType),
 				}
 			}
 		)
@@ -63,7 +63,7 @@ const date = {
 			value => min <= value && value <= max,
 			inputType => {
 				if (!isDateInput(inputType)) return {}
-				const input = inputType as HtmlDateTimeInput
+				const input = inputType as HtmlDateTimeInputType
 				return {
 					min: getFormattedDate(min, input),
 					max: getFormattedDate(max, input),
@@ -84,7 +84,7 @@ const date = {
 			value => value === date,
 			inputType => {
 				if (!isDateInput(inputType)) return {}
-				const input = inputType as HtmlDateTimeInput
+				const input = inputType as HtmlDateTimeInputType
 				return {
 					min: getFormattedDate(date, input),
 					max: getFormattedDate(date, input),

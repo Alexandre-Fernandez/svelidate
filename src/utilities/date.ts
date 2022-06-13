@@ -1,4 +1,4 @@
-import { HtmlDateTimeInput } from "../types"
+import { HtmlDateTimeInputType } from "../types"
 
 const MINUTE = 60000
 const DAY = MINUTE * 60 * 24
@@ -23,7 +23,7 @@ export function getDate(value: unknown) {
  */
 export function getExcludedDate(
 	date: Date,
-	inputType: HtmlDateTimeInput,
+	inputType: HtmlDateTimeInputType,
 	mode: keyof typeof addSubstract
 ) {
 	switch (inputType) {
@@ -43,7 +43,7 @@ export function getExcludedDate(
 /**
  * Returns a string corresponding to the correct date format for the given `inputType`.
  */
-export function getFormattedDate(date: Date, inputType: HtmlDateTimeInput) {
+export function getFormattedDate(date: Date, inputType: HtmlDateTimeInputType) {
 	switch (inputType) {
 		case "date":
 			return `${yyyyMm(date)}-${getDays(date)}`
