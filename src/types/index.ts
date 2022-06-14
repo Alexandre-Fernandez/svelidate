@@ -28,7 +28,7 @@ export type $State = {
 		invalid: boolean
 		submitted: boolean
 		initial: Readonly<UninitializedForm>
-		form: HTMLFormElement
+		form: HTMLFormElement | null
 	}
 }
 export type $Events = {
