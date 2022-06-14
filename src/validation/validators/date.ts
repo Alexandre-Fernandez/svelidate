@@ -1,78 +1,79 @@
 import { HtmlDateTimeInputType } from "../../types"
 import { getExcludedDate, getFormattedDate } from "../../utilities/date"
-import { isDateInput } from "../../utilities/input"
+import { getMatchingHtmlValidator, isDateInput } from "../../utilities/input"
 import { createDateValidatorCollectionFactory } from "../factories/validatorCollectionFactory"
 
 const date = {
 	gt(date: Date) {
 		return createDateValidatorCollectionFactory(
 			value => value > date,
-			inputType => {
-				if (!inputType || !isDateInput(inputType)) return {}
-				const input = inputType as HtmlDateTimeInputType
-				const excludedDate = getExcludedDate(date, input, "+")
-				if (!excludedDate) return {}
-				return {
-					min: getFormattedDate(
-						excludedDate,
-						input as HtmlDateTimeInputType
-					),
-				}
-			}
+			inputType =>
+				getMatchingHtmlValidator(inputType, {
+					dates: dateInput => {
+						const excludedDate = getExcludedDate(
+							date,
+							dateInput,
+							"+"
+						)
+						if (!excludedDate) return {}
+						return {
+							min: getFormattedDate(excludedDate, dateInput),
+						}
+					},
+				})
 		)
 	},
 	gte(date: Date) {
 		return createDateValidatorCollectionFactory(
 			value => value >= date,
-			inputType => {
-				if (!inputType || !isDateInput(inputType)) return {}
-				const input = inputType as HtmlDateTimeInputType
-				return {
-					min: getFormattedDate(date, input as HtmlDateTimeInputType),
-				}
-			}
+			inputType =>
+				getMatchingHtmlValidator(inputType, {
+					dates: dateInput => ({
+						min: getFormattedDate(date, dateInput),
+					}),
+				})
 		)
 	},
 	lt(date: Date) {
 		return createDateValidatorCollectionFactory(
 			value => value < date,
-			inputType => {
-				if (!inputType || !isDateInput(inputType)) return {}
-				const input = inputType as HtmlDateTimeInputType
-				const excludedDate = getExcludedDate(date, input, "-")
-				if (!excludedDate) return {}
-				return {
-					max: getFormattedDate(
-						excludedDate,
-						input as HtmlDateTimeInputType
-					),
-				}
-			}
+			inputType =>
+				getMatchingHtmlValidator(inputType, {
+					dates: dateInput => {
+						const excludedDate = getExcludedDate(
+							date,
+							dateInput,
+							"-"
+						)
+						if (!excludedDate) return {}
+						return {
+							max: getFormattedDate(excludedDate, dateInput),
+						}
+					},
+				})
 		)
 	},
 	lte(date: Date) {
 		return createDateValidatorCollectionFactory(
 			value => value <= date,
-			inputType => {
-				if (!inputType || !isDateInput(inputType)) return {}
-				const input = inputType as HtmlDateTimeInputType
-				return {
-					max: getFormattedDate(date, input as HtmlDateTimeInputType),
-				}
-			}
+			inputType =>
+				getMatchingHtmlValidator(inputType, {
+					dates: dateInput => ({
+						max: getFormattedDate(date, dateInput),
+					}),
+				})
 		)
 	},
 	inside(min: Date, max: Date) {
 		return createDateValidatorCollectionFactory(
 			value => min <= value && value <= max,
-			inputType => {
-				if (!inputType || !isDateInput(inputType)) return {}
-				const input = inputType as HtmlDateTimeInputType
-				return {
-					min: getFormattedDate(min, input),
-					max: getFormattedDate(max, input),
-				}
-			}
+			inputType =>
+				getMatchingHtmlValidator(inputType, {
+					dates: dateInput => ({
+						min: getFormattedDate(min, dateInput),
+						max: getFormattedDate(max, dateInput),
+					}),
+				})
 		)
 	},
 	outside(min: Date, max: Date) {
@@ -86,14 +87,13 @@ const date = {
 	eq(date: Date) {
 		return createDateValidatorCollectionFactory(
 			value => value === date,
-			inputType => {
-				if (!inputType || !isDateInput(inputType)) return {}
-				const input = inputType as HtmlDateTimeInputType
-				return {
-					min: getFormattedDate(date, input),
-					max: getFormattedDate(date, input),
-				}
-			}
+			inputType =>
+				getMatchingHtmlValidator(inputType, {
+					dates: dateInput => ({
+						min: getFormattedDate(date, dateInput),
+						max: getFormattedDate(date, dateInput),
+					}),
+				})
 		)
 	},
 }

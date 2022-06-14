@@ -8,15 +8,18 @@ import {
 	HtmlValidator,
 } from "../types"
 
+type MapperMapFunction<T extends HtmlValidatorMapper<any>> = (
+	inputType: NonNullable<Parameters<T>[0]>
+) => ReturnType<T>
 type HtmlValidatorMapperMap = {
-	textarea: HtmlValidatorMapper<HtmlPseudoInputType>
-	numbers: HtmlValidatorMapper<HtmlNumberInput>
-	dates: HtmlValidatorMapper<HtmlDateTimeInputType>
-	strings: HtmlValidatorMapper<HtmlStringInput>
+	textarea: MapperMapFunction<HtmlValidatorMapper<HtmlPseudoInputType>>
+	numbers: MapperMapFunction<HtmlValidatorMapper<HtmlNumberInput>>
+	dates: MapperMapFunction<HtmlValidatorMapper<HtmlDateTimeInputType>>
+	strings: MapperMapFunction<HtmlValidatorMapper<HtmlStringInput>>
 }
 const inputGroupMap: {
 	[K in keyof HtmlValidatorMapperMap]: NonNullable<
-		Parameters<Required<HtmlValidatorMapperMap>[K]>[0] // TODO make function param (inputType) non nullable
+		Parameters<Required<HtmlValidatorMapperMap>[K]>[0]
 	>[]
 } = {
 	textarea: ["textarea"],
@@ -25,29 +28,20 @@ const inputGroupMap: {
 	strings: ["email", "password", "search", "tel", "text", "url"],
 }
 
-// make htmlvalidator obj lookahead named "pattern" but make validator to make sur it's a lookahead
-
-// returns the result of corresponding htmlvalidator (change type to make difference between htmlvalidator fn and return type)
-// by running the function it allows validators (eg date ones) to process input type before returning corresponding obj
 export function getMatchingHtmlValidator(
 	inputType: SvelidateInputType | undefined,
 	htmlValidatorMapperMap: Partial<HtmlValidatorMapperMap>
 ): HtmlValidator {
 	if (!inputType) return {}
 	for (const group in inputGroupMap) {
-		const g = group as keyof HtmlValidatorMapperMap
+		const g = group as keyof typeof inputGroupMap
 		if (inputGroupMap[g].some(type => type === inputType)) {
-			return htmlValidatorMapperMap[g]?.(inputType as any) ?? {}
+			// FIXME Type 'string' is not assignable to type 'never' (`inputType as never`)
+			return htmlValidatorMapperMap[g]?.(inputType as never) ?? {}
 		}
 	}
 	return {}
 }
-
-getMatchingHtmlValidator("checkbox", {
-	textarea: () => ({}),
-	numbers: () => ({}),
-	dates: () => ({}),
-})
 
 export function isNumberInput(inputType: SvelidateInputType) {
 	return inputGroupMap.numbers.some(type => type === inputType)
