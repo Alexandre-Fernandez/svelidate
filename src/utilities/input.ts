@@ -5,16 +5,19 @@ import {
 	HtmlStringInput,
 	HtmlPseudoInputType,
 	HtmlValidatorMapper,
+	HtmlValidator,
 } from "../types"
 
-type ValidatorMap = {
+type HtmlValidatorMapperMap = {
 	textarea: HtmlValidatorMapper<HtmlPseudoInputType>
 	numbers: HtmlValidatorMapper<HtmlNumberInput>
 	dates: HtmlValidatorMapper<HtmlDateTimeInputType>
 	strings: HtmlValidatorMapper<HtmlStringInput>
 }
 const inputGroupMap: {
-	[K in keyof ValidatorMap]: NonNullable<Parameters<ValidatorMap[K]>[0]>[]
+	[K in keyof HtmlValidatorMapperMap]: NonNullable<
+		Parameters<Required<HtmlValidatorMapperMap>[K]>[0] // TODO make function param (inputType) non nullable
+	>[]
 } = {
 	textarea: ["textarea"],
 	numbers: ["number", "range"],
@@ -26,22 +29,25 @@ const inputGroupMap: {
 
 // returns the result of corresponding htmlvalidator (change type to make difference between htmlvalidator fn and return type)
 // by running the function it allows validators (eg date ones) to process input type before returning corresponding obj
-export function getSomething(
+export function getMatchingHtmlValidator(
 	inputType: SvelidateInputType | undefined,
-	validatorMap: ValidatorMap
-) {
+	htmlValidatorMapperMap: Partial<HtmlValidatorMapperMap>
+): HtmlValidator {
 	if (!inputType) return {}
-}
-
-function getInputGroup<K extends keyof typeof inputGroupMap>(
-	inputType: SvelidateInputType
-): keyof typeof inputGroupMap | undefined {
-	for (const key in inputGroupMap) {
-		if (inputGroupMap[key as K].some(type => type === inputType)) {
-			return key as K
+	for (const group in inputGroupMap) {
+		const g = group as keyof HtmlValidatorMapperMap
+		if (inputGroupMap[g].some(type => type === inputType)) {
+			return htmlValidatorMapperMap[g]?.(inputType as any) ?? {}
 		}
 	}
+	return {}
 }
+
+getMatchingHtmlValidator("checkbox", {
+	textarea: () => ({}),
+	numbers: () => ({}),
+	dates: () => ({}),
+})
 
 export function isNumberInput(inputType: SvelidateInputType) {
 	return inputGroupMap.numbers.some(type => type === inputType)
@@ -57,17 +63,4 @@ export function isStringInput(inputType: SvelidateInputType) {
 
 export function isTextareaInput(inputType: SvelidateInputType) {
 	return inputGroupMap.textarea.some(type => type === inputType)
-}
-
-export function getMatchingHtmlValidator<K extends keyof typeof inputGroupMap>(
-	inputTypeToMatch: SvelidateInputType | undefined,
-	validatorMap: Record<K, ReturnType<HtmlValidatorMapper>>
-): ReturnType<HtmlValidatorMapper> {
-	if (!inputTypeToMatch) return {}
-	for (const key in validatorMap) {
-		if (inputGroupMap[key].some(type => type === inputTypeToMatch)) {
-			return validatorMap[key]
-		}
-	}
-	return {}
 }
