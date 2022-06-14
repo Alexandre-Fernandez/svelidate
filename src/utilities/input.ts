@@ -4,14 +4,14 @@ import {
 	HtmlNumberInput,
 	HtmlStringInput,
 	HtmlPseudoInputType,
-	HtmlValidator,
+	HtmlValidatorMapper,
 } from "../types"
 
 type ValidatorMap = {
-	textarea: HtmlValidator<HtmlPseudoInputType>
-	numbers: HtmlValidator<HtmlNumberInput>
-	dates: HtmlValidator<HtmlDateTimeInputType>
-	strings: HtmlValidator<HtmlStringInput>
+	textarea: HtmlValidatorMapper<HtmlPseudoInputType>
+	numbers: HtmlValidatorMapper<HtmlNumberInput>
+	dates: HtmlValidatorMapper<HtmlDateTimeInputType>
+	strings: HtmlValidatorMapper<HtmlStringInput>
 }
 const inputGroupMap: {
 	[K in keyof ValidatorMap]: NonNullable<Parameters<ValidatorMap[K]>[0]>[]
@@ -24,13 +24,13 @@ const inputGroupMap: {
 
 // make htmlvalidator obj lookahead named "pattern" but make validator to make sur it's a lookahead
 
+// returns the result of corresponding htmlvalidator (change type to make difference between htmlvalidator fn and return type)
+// by running the function it allows validators (eg date ones) to process input type before returning corresponding obj
 export function getSomething(
 	inputType: SvelidateInputType | undefined,
 	validatorMap: ValidatorMap
 ) {
 	if (!inputType) return {}
-	// returns the result of corresponding htmlvalidator (change type to make difference between htmlvalidator fn and return type)
-	// by running the function it allows validators (eg date ones) to process input type before returning corresponding obj
 }
 
 function getInputGroup<K extends keyof typeof inputGroupMap>(
@@ -61,8 +61,8 @@ export function isTextareaInput(inputType: SvelidateInputType) {
 
 export function getMatchingHtmlValidator<K extends keyof typeof inputGroupMap>(
 	inputTypeToMatch: SvelidateInputType | undefined,
-	validatorMap: Record<K, ReturnType<HtmlValidator>>
-): ReturnType<HtmlValidator> {
+	validatorMap: Record<K, ReturnType<HtmlValidatorMapper>>
+): ReturnType<HtmlValidatorMapper> {
 	if (!inputTypeToMatch) return {}
 	for (const key in validatorMap) {
 		if (inputGroupMap[key].some(type => type === inputTypeToMatch)) {

@@ -14,7 +14,7 @@ const string = {
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
 				strings: {
-					lookahead: `(?=^${$config.pattern.email}$)`,
+					pattern: `(?=^${$config.pattern.email}$)`,
 					minLength: 5,
 				},
 				textarea: {
@@ -27,7 +27,7 @@ const string = {
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
 				strings: {
-					lookahead: "(?=.*[A-Z])",
+					pattern: "(?=.*[A-Z])",
 				},
 			})
 	),
@@ -36,7 +36,7 @@ const string = {
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
 				strings: {
-					lookahead: "(?=.*[a-z])",
+					pattern: "(?=.*[a-z])",
 				},
 			})
 	),
@@ -45,7 +45,7 @@ const string = {
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
 				strings: {
-					lookahead: "(?=.*[0-9])",
+					pattern: "(?=.*[0-9])",
 				},
 			})
 	),
@@ -54,7 +54,7 @@ const string = {
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
 				strings: {
-					lookahead: `(?=.*${$config.pattern.symbol})`,
+					pattern: `(?=.*${$config.pattern.symbol})`,
 				},
 			})
 	),
@@ -64,7 +64,7 @@ const string = {
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
 					strings: {
-						lookahead: `(?=.*${regex.source})`,
+						pattern: `(?=.*${regex.source})`,
 					},
 				})
 		)
@@ -75,7 +75,7 @@ const string = {
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
 					strings: {
-						lookahead: `(?=^${string}$)`,
+						pattern: `(?=^${string}$)`,
 					},
 				})
 		)
@@ -86,7 +86,7 @@ const string = {
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
 					strings: {
-						lookahead: `(?!${string}$)`,
+						pattern: `(?!${string}$)`,
 					},
 				})
 		)
@@ -170,7 +170,7 @@ const string = {
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
 						strings: {
-							lookahead: `
+							pattern: `
 							(?=(.{0,${Math.floor(min)}}|.{${Math.floor(max)},})$)`,
 						},
 					})
@@ -184,7 +184,7 @@ const string = {
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
 						strings: {
-							lookahead: `
+							pattern: `
 							(?=(.{0,${Math.floor(min)}}|.{${Math.floor(max)},})$)`,
 						},
 					})

@@ -13,13 +13,7 @@ export type Field<T = unknown> = {
 type FormFieldAttributes = {
 	name?: string
 	title?: string
-	required?: boolean
-	pattern?: string
-	minLength?: number
-	maxLength?: number
-	min?: number
-	max?: number
-}
+} & HtmlValidator
 
 export type NakedSvelidateForm<F extends UninitializedForm> = {
 	[K in keyof F]: Required<Field<F[K]["value"]>>
@@ -66,19 +60,23 @@ export type Subscriber = <F extends UninitializedForm>(
 	form: SvelidateForm<F>
 ) => void
 
-export type ValidatorCollection<JS = unknown> = Readonly<{
-	js: JsValidator<JS>
-	html: HtmlValidator
+export type ValidatorCollection<
+	T = unknown,
+	I extends SvelidateInputType = SvelidateInputType
+> = Readonly<{
+	js: JsValidator<T>
+	html: HtmlValidatorMapper<I>
 }>
 
 export type JsValidator<T = unknown> = (value: T) => string | undefined
 export type JsValidatorPredicate<T = unknown> = (value: T) => boolean
 
-export type HtmlValidator<T extends SvelidateInputType = SvelidateInputType> = (
-	inputType?: T
-) => {
+export type HtmlValidatorMapper<
+	T extends SvelidateInputType = SvelidateInputType
+> = (inputType?: T) => HtmlValidator
+export type HtmlValidator = {
 	required?: boolean
-	lookahead?: string
+	pattern?: string
 	minLength?: number
 	maxLength?: number
 	min?: number | string

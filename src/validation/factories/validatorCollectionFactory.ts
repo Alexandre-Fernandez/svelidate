@@ -1,13 +1,13 @@
 import {
 	ValidatorCollection,
 	JsValidatorPredicate,
-	HtmlValidator,
+	HtmlValidatorMapper,
 } from "../../types"
 import { getDate } from "../../utilities/date"
 
 export function createValidatorCollectionFactory(
 	jsValidatorPredicate: JsValidatorPredicate,
-	htmlValidator: HtmlValidator = () => ({})
+	htmlValidator: HtmlValidatorMapper = () => ({})
 ) {
 	return (error = ""): ValidatorCollection =>
 		Object.freeze({
@@ -21,7 +21,7 @@ export function createValidatorCollectionFactory(
 
 export function createStringValidatorCollectionFactory(
 	jsValidatorPredicate: JsValidatorPredicate<string>,
-	htmlValidator: HtmlValidator = () => ({})
+	htmlValidator: HtmlValidatorMapper = () => ({})
 ) {
 	return (error = ""): ValidatorCollection =>
 		Object.freeze({
@@ -36,7 +36,7 @@ export function createStringValidatorCollectionFactory(
 
 export function createNumberValidatorCollectionFactory(
 	jsValidatorPredicate: JsValidatorPredicate<number>,
-	htmlValidator: HtmlValidator = () => ({})
+	htmlValidator: HtmlValidatorMapper = () => ({})
 ) {
 	return (error = ""): ValidatorCollection =>
 		Object.freeze({
@@ -51,7 +51,7 @@ export function createNumberValidatorCollectionFactory(
 
 export function createDateValidatorCollectionFactory(
 	jsValidatorPredicate: JsValidatorPredicate<Date>,
-	htmlValidator: HtmlValidator = () => ({})
+	htmlValidator: HtmlValidatorMapper = () => ({})
 ) {
 	return (error = ""): ValidatorCollection =>
 		Object.freeze({

@@ -88,7 +88,7 @@ const general = {
 				if (!inputType) return {}
 				if (isStringInput(inputType)) {
 					return {
-						lookahead: `(?!${value}$)`,
+						pattern: `(?!${value}$)`,
 					}
 				} else return {}
 			}
