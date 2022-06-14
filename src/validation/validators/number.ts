@@ -7,7 +7,7 @@ const number = {
 			value => value > number,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
-					numbers: { min: number + 1 },
+					numbers: () => ({ min: number + 1 }),
 				})
 		)
 	},
@@ -16,7 +16,7 @@ const number = {
 			value => value >= number,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
-					numbers: { min: number },
+					numbers: () => ({ min: number }),
 				})
 		)
 	},
@@ -25,7 +25,7 @@ const number = {
 			value => value < number,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
-					numbers: { max: number - 1 },
+					numbers: () => ({ max: number - 1 }),
 				})
 		)
 	},
@@ -34,7 +34,7 @@ const number = {
 			value => value <= number,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
-					numbers: { max: number },
+					numbers: () => ({ max: number }),
 				})
 		)
 	},
@@ -43,7 +43,7 @@ const number = {
 			value => value >= min && value <= max,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
-					numbers: { min, max },
+					numbers: () => ({ min, max }),
 				})
 		)
 	},
@@ -60,7 +60,7 @@ const number = {
 			value => value === number,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
-					numbers: { min: number, max: number },
+					numbers: () => ({ min: number, max: number }),
 				})
 		)
 	},

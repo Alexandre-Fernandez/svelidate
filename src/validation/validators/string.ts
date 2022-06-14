@@ -13,49 +13,49 @@ const string = {
 		value => new RegExp($config.pattern.email).test(value),
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
-				strings: {
+				strings: () => ({
 					pattern: `(?=^${$config.pattern.email}$)`,
 					minLength: 5,
-				},
-				textarea: {
+				}),
+				textarea: () => ({
 					minLength: 5,
-				},
+				}),
 			})
 	),
 	upperCase: createStringValidatorCollectionFactory(
 		value => value.toLowerCase() !== value,
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
-				strings: {
+				strings: () => ({
 					pattern: "(?=.*[A-Z])",
-				},
+				}),
 			})
 	),
 	lowerCase: createStringValidatorCollectionFactory(
 		value => value.toUpperCase() !== value,
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
-				strings: {
+				strings: () => ({
 					pattern: "(?=.*[a-z])",
-				},
+				}),
 			})
 	),
 	number: createStringValidatorCollectionFactory(
 		value => new RegExp("[0-9]").test(value),
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
-				strings: {
+				strings: () => ({
 					pattern: "(?=.*[0-9])",
-				},
+				}),
 			})
 	),
 	symbol: createStringValidatorCollectionFactory(
 		value => new RegExp($config.pattern.symbol).test(value),
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
-				strings: {
+				strings: () => ({
 					pattern: `(?=.*${$config.pattern.symbol})`,
-				},
+				}),
 			})
 	),
 	regex(regex: RegExp) {
@@ -63,9 +63,9 @@ const string = {
 			value => regex.test(value),
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
-					strings: {
+					strings: () => ({
 						pattern: `(?=.*${regex.source})`,
-					},
+					}),
 				})
 		)
 	},
@@ -74,9 +74,9 @@ const string = {
 			value => value === string,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
-					strings: {
+					strings: () => ({
 						pattern: `(?=^${string}$)`,
-					},
+					}),
 				})
 		)
 	},
@@ -85,9 +85,9 @@ const string = {
 			value => value !== string,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
-					strings: {
+					strings: () => ({
 						pattern: `(?!${string}$)`,
-					},
+					}),
 				})
 		)
 	},
@@ -97,12 +97,12 @@ const string = {
 				value => value.length > length,
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
-						strings: {
+						strings: () => ({
 							minLength: Math.floor(length) + 1,
-						},
-						textarea: {
+						}),
+						textarea: () => ({
 							minLength: Math.floor(length) + 1,
-						},
+						}),
 					})
 			)
 		},
@@ -111,12 +111,12 @@ const string = {
 				value => value.length >= length,
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
-						strings: {
+						strings: () => ({
 							minLength: Math.floor(length),
-						},
-						textarea: {
+						}),
+						textarea: () => ({
 							minLength: Math.floor(length),
-						},
+						}),
 					})
 			)
 		},
@@ -125,12 +125,12 @@ const string = {
 				value => value.length < length,
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
-						strings: {
+						strings: () => ({
 							maxLength: Math.floor(length) - 1,
-						},
-						textarea: {
+						}),
+						textarea: () => ({
 							maxLength: Math.floor(length) - 1,
-						},
+						}),
 					})
 			)
 		},
@@ -139,12 +139,12 @@ const string = {
 				value => value.length <= length,
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
-						strings: {
+						strings: () => ({
 							maxLength: Math.floor(length),
-						},
-						textarea: {
+						}),
+						textarea: () => ({
 							maxLength: Math.floor(length),
-						},
+						}),
 					})
 			)
 		},
@@ -153,14 +153,14 @@ const string = {
 				value => value.length >= min && value.length <= max,
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
-						strings: {
+						strings: () => ({
 							minLength: Math.floor(min),
 							maxLength: Math.floor(max),
-						},
-						textarea: {
+						}),
+						textarea: () => ({
 							minLength: Math.floor(min),
 							maxLength: Math.floor(max),
-						},
+						}),
 					})
 			)
 		},
@@ -169,10 +169,10 @@ const string = {
 				value => value.length < min && value.length > max,
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
-						strings: {
+						strings: () => ({
 							pattern: `
 							(?=(.{0,${Math.floor(min)}}|.{${Math.floor(max)},})$)`,
-						},
+						}),
 					})
 			)
 		},
@@ -183,10 +183,10 @@ const string = {
 				value => value.length !== length,
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
-						strings: {
+						strings: () => ({
 							pattern: `
 							(?=(.{0,${Math.floor(min)}}|.{${Math.floor(max)},})$)`,
-						},
+						}),
 					})
 			)
 		},
@@ -195,14 +195,14 @@ const string = {
 				value => value.length === length,
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
-						strings: {
+						strings: () => ({
 							minLength: Math.floor(length),
 							maxLength: Math.floor(length),
-						},
-						textarea: {
+						}),
+						textarea: () => ({
 							minLength: Math.floor(length),
 							maxLength: Math.floor(length),
-						},
+						}),
 					})
 			)
 		},
