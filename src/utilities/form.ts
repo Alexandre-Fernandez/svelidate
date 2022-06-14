@@ -1,12 +1,8 @@
-import { createConditionalValidatorCollection } from "../validation/factories/validatorCollection"
 import type {
 	SvelidateForm,
 	UninitializedForm,
 	Field,
-	NakedSvelidateForm,
 	Subscriber,
-	ValidatorCollection,
-	JsValidatorPredicate,
 } from "../types"
 
 export function getFormFieldValues<F extends UninitializedForm>(
@@ -34,7 +30,7 @@ export function isFormStateKey(key: string) {
 }
 
 export function getParentForm(input: HTMLInputElement) {
-	let current: HTMLElement = input
+	let current: HTMLElement | null = input
 	while (current !== null) {
 		if (current.tagName === "FORM") {
 			return current as HTMLFormElement

@@ -1,6 +1,5 @@
-import { HtmlDateTimeInputType } from "../../types"
 import { getExcludedDate, getFormattedDate } from "../../utilities/date"
-import { getMatchingHtmlValidator, isDateInput } from "../../utilities/input"
+import { getMatchingHtmlValidator } from "../../utilities/input"
 import { createDateValidatorCollectionFactory } from "../factories/validatorCollectionFactory"
 
 const date = {
