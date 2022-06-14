@@ -1,4 +1,4 @@
-import { HtmlDateTimeInput } from "../../types"
+import { HtmlDateTimeInputType } from "../../types"
 import {
 	getDate,
 	getExcludedDate,
@@ -19,6 +19,7 @@ const general = {
 	falsy: createValidatorCollectionFactory(
 		value => !value,
 		inputType => {
+			if (!inputType) return {}
 			if (isStringInput(inputType)) {
 				return {
 					lookahead: "(?=^$)",
@@ -30,16 +31,13 @@ const general = {
 				}
 			} else if (isDateInput(inputType)) {
 				const date = new Date()
-				const input = inputType as HtmlDateTimeInput
+				const input = inputType as HtmlDateTimeInputType
+				const exclMin = getExcludedDate(date, input, "+")
+				const exclMax = getExcludedDate(date, input, "-")
+				if (!exclMin || !exclMax) return {}
 				return {
-					min: getFormattedDate(
-						getExcludedDate(date, input, "+"),
-						input
-					),
-					max: getFormattedDate(
-						getExcludedDate(date, input, "-"),
-						input
-					),
+					min: getFormattedDate(exclMin, input),
+					max: getFormattedDate(exclMax, input),
 				}
 			} else return {}
 		}
@@ -61,6 +59,7 @@ const general = {
 		return createValidatorCollectionFactory(
 			val => val === value,
 			inputType => {
+				if (!inputType) return {}
 				if (isStringInput(inputType)) {
 					return {
 						lookahead: `(?=^${parsedString}$)`,
@@ -73,7 +72,7 @@ const general = {
 				} else if (isDateInput(inputType)) {
 					const date = getDate(value)
 					if (!date) return {}
-					const input = inputType as HtmlDateTimeInput
+					const input = inputType as HtmlDateTimeInputType
 					return {
 						min: getFormattedDate(date, input),
 						max: getFormattedDate(date, input),
@@ -86,6 +85,7 @@ const general = {
 		return createValidatorCollectionFactory(
 			val => val !== value,
 			inputType => {
+				if (!inputType) return {}
 				if (isStringInput(inputType)) {
 					return {
 						lookahead: `(?!${value}$)`,
