@@ -11,11 +11,17 @@ import type {
 	NakedSvelidateForm,
 	HtmlValidator,
 	SvelidateField,
+	SvelidateConfiguration,
+	PartialAll,
 } from "../types"
 import { mergeObjects } from "../utilities/general"
 import { isLookahead } from "../utilities/regex"
+import { svelidateConfig } from "./config"
 
-export function svelidate<F extends UninitializedForm>(initialForm: F) {
+export function svelidate<F extends UninitializedForm>(
+	initialForm: F,
+	config: PartialAll<SvelidateConfiguration> = svelidateConfig
+) {
 	const subscribers: Subscriber[] = []
 
 	const $form: SvelidateForm<F> = {

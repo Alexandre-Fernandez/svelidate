@@ -1,14 +1,33 @@
-export type UninitializedForm = {
-	[key: PropertyKey]: UninitializedField
+export type PartialAll<T> = {
+	[K in keyof T]?: T[K] extends object ? PartialAll<T[K]> : T[K]
 }
 
+export type SvelidateConfiguration = {
+	mode: "html" | "js" | "available" | "all"
+	pattern: {
+		symbol: string
+		email: string
+	}
+}
+
+type UninitializedFieldAttributes = {
+	type?: HtmlInputType
+	title?: string
+}
 export type UninitializedField<T = unknown> = {
 	value: T
 	validators?: ValidatorCollection<T>[]
 	touched?: boolean
 	attributes?: UninitializedFieldAttributes
 }
+export type UninitializedForm = {
+	[key: PropertyKey]: UninitializedField
+}
 
+type SvelidateFieldAttributes = {
+	name?: string
+} & UninitializedFieldAttributes &
+	HtmlValidator
 export type SvelidateField<T = unknown> = {
 	value: T
 	validators?: ValidatorCollection<T>[]
@@ -17,16 +36,6 @@ export type SvelidateField<T = unknown> = {
 	invalid?: boolean
 	attributes?: SvelidateFieldAttributes
 }
-
-type UninitializedFieldAttributes = {
-	type?: HtmlInputType
-	title?: string
-}
-
-type SvelidateFieldAttributes = {
-	name?: string
-} & HtmlValidator &
-	UninitializedFieldAttributes
 
 export type NakedSvelidateForm<F extends UninitializedForm> = {
 	[K in keyof F]: Required<SvelidateField<F[K]["value"]>>

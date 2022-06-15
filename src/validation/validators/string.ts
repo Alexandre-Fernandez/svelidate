@@ -1,20 +1,14 @@
+import { svelidateConfig } from "../../form/config"
 import { getMatchingHtmlValidator } from "../../utilities/input"
 import { createStringValidatorCollectionFactory } from "../factories/validatorCollectionFactory"
 
-const $config = {
-	pattern: {
-		symbol: "[!\"#\\$%&'\\(\\)\\*\\+,-\\.\\/: ;<=>\\?@\\[\\]\\^_`}{~\\|\\\\]", // !"#$%&'()*+,-./: ;<=>?@[\\]^_`{|}~
-		email: "[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+.[a-zA-Z]+",
-	},
-}
-
 const string = {
 	email: createStringValidatorCollectionFactory(
-		value => new RegExp($config.pattern.email).test(value),
+		value => new RegExp(svelidateConfig.pattern.email).test(value),
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
 				strings: () => ({
-					pattern: `(?=^${$config.pattern.email}$)`,
+					pattern: `(?=^${svelidateConfig.pattern.email}$)`,
 					minLength: 5,
 				}),
 				textarea: () => ({
@@ -50,11 +44,11 @@ const string = {
 			})
 	),
 	symbol: createStringValidatorCollectionFactory(
-		value => new RegExp($config.pattern.symbol).test(value),
+		value => new RegExp(svelidateConfig.pattern.symbol).test(value),
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
 				strings: () => ({
-					pattern: `(?=.*${$config.pattern.symbol})`,
+					pattern: `(?=.*${svelidateConfig.pattern.symbol})`,
 				}),
 			})
 	),
