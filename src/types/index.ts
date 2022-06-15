@@ -1,15 +1,15 @@
 export type UninitializedForm = {
-	[key: PropertyKey]: Field
+	[key: PropertyKey]: UninitializedField
 }
 
-type UninitializedField<T = unknown> = {
+export type UninitializedField<T = unknown> = {
 	value: T
 	validators?: ValidatorCollection<T>[]
 	touched?: boolean
 	attributes?: UninitializedFieldAttributes
 }
 
-type SvelidateField<T = unknown> = {
+export type SvelidateField<T = unknown> = {
 	value: T
 	validators?: ValidatorCollection<T>[]
 	errors?: string[]
@@ -23,24 +23,16 @@ type UninitializedFieldAttributes = {
 	title?: string
 }
 
-export type Field<T = unknown> = {
-	value: T
-	validators?: ValidatorCollection<T>[]
-	errors?: string[]
-	touched?: boolean
-	invalid?: boolean
-	attributes?: SvelidateFieldAttributes
-}
 type SvelidateFieldAttributes = {
 	name?: string
 } & HtmlValidator &
 	UninitializedFieldAttributes
 
 export type NakedSvelidateForm<F extends UninitializedForm> = {
-	[K in keyof F]: Required<Field<F[K]["value"]>>
+	[K in keyof F]: Required<SvelidateField<F[K]["value"]>>
 } & Partial<$Meta>
 export type SvelidateForm<F extends UninitializedForm> = {
-	[K in keyof F]: Required<Field<F[K]["value"]>>
+	[K in keyof F]: Required<SvelidateField<F[K]["value"]>>
 } & $Meta
 
 export type $Meta = $State & $Events & $Functions

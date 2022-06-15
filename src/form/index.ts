@@ -6,11 +6,11 @@ import {
 import type {
 	SvelidateForm,
 	UninitializedForm,
-	Field,
 	Subscriber,
 	SvelidateFormStore,
 	NakedSvelidateForm,
 	HtmlValidator,
+	SvelidateField,
 } from "../types"
 import { mergeObjects } from "../utilities/general"
 import { isLookahead } from "../utilities/regex"
@@ -101,7 +101,7 @@ function updateFormState<F extends UninitializedForm>(
 	newForm.$st.invalid = isInvalid
 }
 
-function updateFormField(formField: Required<Field>) {
+function updateFormField(formField: Required<SvelidateField>) {
 	let pattern = ""
 	const errors = []
 	const htmlValidator: HtmlValidator = {}
@@ -128,7 +128,7 @@ function updateFormField(formField: Required<Field>) {
 
 function createNakedSvelidateForm<F extends UninitializedForm>(form: F) {
 	return Object.entries(form).reduce((prev, [key, value]) => {
-		const formField: Required<Field> = {
+		const formField: Required<SvelidateField> = {
 			errors: [],
 			touched: false,
 			validators: [],

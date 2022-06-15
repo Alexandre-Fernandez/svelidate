@@ -1,8 +1,8 @@
 import type {
 	SvelidateForm,
 	UninitializedForm,
-	Field,
 	Subscriber,
+	SvelidateField,
 } from "../types"
 
 export function getFormFieldValues<F extends UninitializedForm>(
@@ -17,7 +17,7 @@ export function getFormFieldValues<F extends UninitializedForm>(
 
 export function forEachFormField<F extends UninitializedForm>(
 	form: SvelidateForm<F>,
-	callback: (formField: Required<Field>, key: string) => void
+	callback: (formField: Required<SvelidateField>, key: string) => void
 ) {
 	for (const key in form) {
 		if (isFormStateKey(key)) continue
