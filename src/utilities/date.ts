@@ -1,4 +1,4 @@
-import { HtmlDateTimeInputType, SvelidateInputType } from "../types"
+import type { HtmlDateTimeInputType, SvelidateInputType } from "../types"
 
 const MINUTE = 60000
 const DAY = MINUTE * 60 * 24

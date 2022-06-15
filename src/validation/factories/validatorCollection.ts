@@ -1,4 +1,4 @@
-import { JsValidatorPredicate, ValidatorCollection } from "../../types"
+import type { JsValidatorPredicate, ValidatorCollection } from "../../types"
 
 export function createConditionalValidatorCollection(
 	condition: JsValidatorPredicate,
