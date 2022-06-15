@@ -170,8 +170,9 @@ const string = {
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
 						strings: () => ({
-							pattern: `
-							(?=(.{0,${Math.floor(min)}}|.{${Math.floor(max)},})$)`,
+							pattern: `(?=(.{0,${Math.floor(
+								min
+							)}}|.{${Math.floor(max)},})$)`,
 						}),
 					})
 			)
@@ -184,8 +185,9 @@ const string = {
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
 						strings: () => ({
-							pattern: `
-							(?=(.{0,${Math.floor(min)}}|.{${Math.floor(max)},})$)`,
+							pattern: `(?=(.{0,${Math.floor(
+								min
+							)}}|.{${Math.floor(max)},})$)`,
 						}),
 					})
 			)
