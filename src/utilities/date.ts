@@ -26,17 +26,19 @@ export function getExcludedDate(
 	inputType: SvelidateInputType,
 	mode: keyof typeof addSubstract
 ) {
+	const d = getDate(date)
+	if (!d) return
 	switch (inputType) {
 		case "date":
-			return new Date(addSubstract[mode](date.getTime(), DAY))
+			return new Date(addSubstract[mode](d.getTime(), DAY))
 		case "datetime-local":
-			return new Date(addSubstract[mode](date.getTime(), MINUTE))
+			return new Date(addSubstract[mode](d.getTime(), MINUTE))
 		case "month":
-			return new Date(addSubstract[mode](date.getTime(), MONTH))
+			return new Date(addSubstract[mode](d.getTime(), MONTH))
 		case "time":
-			return new Date(addSubstract[mode](date.getTime(), MINUTE))
+			return new Date(addSubstract[mode](d.getTime(), MINUTE))
 		case "week":
-			return new Date(addSubstract[mode](date.getTime(), WEEK))
+			return new Date(addSubstract[mode](d.getTime(), WEEK))
 	}
 }
 
@@ -44,17 +46,19 @@ export function getExcludedDate(
  * Returns a string corresponding to the correct date format for the given `inputType`.
  */
 export function getFormattedDate(date: Date, inputType: HtmlDateTimeInputType) {
+	const d = getDate(date)
+	if (!d) return ""
 	switch (inputType) {
 		case "date":
-			return `${yyyyMm(date)}-${getDays(date)}`
+			return `${yyyyMm(d)}-${getDays(d)}`
 		case "datetime-local":
-			return `${yyyyMm(date)}-${getDays(date)}T${hhMM(date)}`
+			return `${yyyyMm(d)}-${getDays(d)}T${hhMM(d)}`
 		case "month":
-			return yyyyMm(date)
+			return yyyyMm(d)
 		case "time":
-			return hhMM(date)
+			return hhMM(d)
 		case "week":
-			return `${date.getFullYear()}-W${zerify(getWeeks(date))}`
+			return `${d.getFullYear()}-W${zerify(getWeeks(d))}`
 	}
 }
 
