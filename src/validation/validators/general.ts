@@ -50,7 +50,7 @@ const general = {
 			val => val === value,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
-					strings: () => ({ pattern: "(?=^${parsedString}$)" }),
+					strings: () => ({ pattern: `(?=^${parsedString}$)` }),
 					numbers: () => ({
 						min: parsedFloat,
 						max: parsedFloat,
@@ -71,7 +71,7 @@ const general = {
 			val => val !== value,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
-					strings: () => ({ pattern: "(?!${value}$)" }),
+					strings: () => ({ pattern: `(?!${value}$)` }),
 				})
 		)
 	},

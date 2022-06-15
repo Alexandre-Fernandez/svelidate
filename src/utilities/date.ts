@@ -79,11 +79,9 @@ function getDays(date: Date) {
 }
 
 function hhMM(date: Date, separator = ":") {
-	return `
-	${zerify(date.getHours() + 1)}
-	${separator}
-	${zerify(date.getMinutes())}
-	`
+	return `${zerify(date.getHours() + 1)}${separator}${zerify(
+		date.getMinutes()
+	)}`
 }
 
 function yyyyMm(date: Date, separator = "-") {
