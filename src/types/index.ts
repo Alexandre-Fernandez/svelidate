@@ -2,19 +2,39 @@ export type UninitializedForm = {
 	[key: PropertyKey]: Field
 }
 
+type UninitializedField<T = unknown> = {
+	value: T
+	validators?: ValidatorCollection<T>[]
+	touched?: boolean
+	attributes?: UninitializedFieldAttributes
+}
+
+type SvelidateField<T = unknown> = {
+	value: T
+	validators?: ValidatorCollection<T>[]
+	errors?: string[]
+	touched?: boolean
+	invalid?: boolean
+	attributes?: SvelidateFieldAttributes
+}
+
+type UninitializedFieldAttributes = {
+	type?: HtmlInputType
+	title?: string
+}
+
 export type Field<T = unknown> = {
 	value: T
 	validators?: ValidatorCollection<T>[]
 	errors?: string[]
 	touched?: boolean
 	invalid?: boolean
-	attributes?: FormFieldAttributes
+	attributes?: SvelidateFieldAttributes
 }
-type FormFieldAttributes = {
+type SvelidateFieldAttributes = {
 	name?: string
-	type?: HtmlInputType
-	title?: string
-} & HtmlValidator
+} & HtmlValidator &
+	UninitializedFieldAttributes
 
 export type NakedSvelidateForm<F extends UninitializedForm> = {
 	[K in keyof F]: Required<Field<F[K]["value"]>>
