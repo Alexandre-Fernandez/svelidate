@@ -12,6 +12,7 @@ export type Field<T = unknown> = {
 }
 type FormFieldAttributes = {
 	name?: string
+	type?: HtmlInputType
 	title?: string
 } & HtmlValidator
 
@@ -83,7 +84,7 @@ export type HtmlValidator = {
 	max?: number | string
 }
 
-export type HtmlPseudoInputType = "select" | "textarea"
+export type HtmlPseudoInputType = "select-multiple" | "select-one" | "textarea"
 export type HtmlNumberInput = "number" | "range"
 export type HtmlDateTimeInputType =
 	| "datetime-local" // YYYY-MM-DDThh:mm
@@ -109,4 +110,4 @@ export type HtmlInputType =
 	| "radio"
 	| "reset"
 	| "submit"
-export type SvelidateInputType = HtmlInputType | HtmlPseudoInputType | "custom"
+export type SvelidateInputType = HtmlInputType | HtmlPseudoInputType

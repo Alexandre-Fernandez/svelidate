@@ -10,7 +10,10 @@ import type {
 	Subscriber,
 	SvelidateFormStore,
 	NakedSvelidateForm,
+	HtmlValidator,
 } from "../types"
+import { mergeObjects } from "../utilities/general"
+import { isLookahead } from "../utilities/regex"
 
 export function svelidate<F extends UninitializedForm>(initialForm: F) {
 	const subscribers: Subscriber[] = []
@@ -99,28 +102,28 @@ function updateFormState<F extends UninitializedForm>(
 }
 
 function updateFormField(formField: Required<Field>) {
-	const pattern = ""
+	let pattern = ""
 	const errors = []
+	const htmlValidator: HtmlValidator = {}
 	for (const validator of formField.validators) {
 		const error = validator.js(formField.value)
 		if (error !== undefined) errors.push(error)
-		const attrs = validator.html()
+		if (!formField.attributes.type) continue
+		const { pattern: lookahead, ...localValidator } = validator.html(
+			formField.attributes.type
+		)
+		if (lookahead && isLookahead(lookahead)) pattern += lookahead
+		mergeObjects(htmlValidator, localValidator)
 	}
+	if (pattern) htmlValidator.pattern = `^${pattern}.+$`
 
+	// adding errors :
 	formField.errors = errors
 	if (formField.errors.length > 0) formField.invalid = true
 	else formField.invalid = false
 
-	formField.errors = formField.validators.reduce(
-		(errors, validatorCollection) => {
-			const error = validatorCollection.js(formField.value)
-			if (error !== undefined) errors.push(error)
-			return errors
-		},
-		[] as string[]
-	)
-	if (formField.errors.length > 0) formField.invalid = true
-	else formField.invalid = false
+	// adding attributes :
+	mergeObjects(formField.attributes, htmlValidator)
 }
 
 function createNakedSvelidateForm<F extends UninitializedForm>(form: F) {
