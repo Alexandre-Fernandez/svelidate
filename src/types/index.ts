@@ -25,7 +25,7 @@ export type UninitializedForm = {
 }
 
 type SvelidateFieldAttributes = {
-	name?: string
+	name: string
 } & UninitializedFieldAttributes &
 	HtmlValidator
 export type SvelidateField<T = unknown> = {

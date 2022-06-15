@@ -133,19 +133,24 @@ function updateFormField(formField: Required<SvelidateField>) {
 }
 
 function createNakedSvelidateForm<F extends UninitializedForm>(form: F) {
-	return Object.entries(form).reduce((prev, [key, value]) => {
-		const formField: Required<SvelidateField> = {
-			errors: [],
-			touched: false,
-			validators: [],
-			invalid: false,
-			attributes: {},
-			...value,
-		}
-		formField.attributes.name = key
-		return {
-			...prev,
-			[key]: formField,
-		}
-	}, {} as NakedSvelidateForm<F>)
+	return Object.entries(form).reduce(
+		(prev, [name, { attributes, ...otherProps }]) => {
+			const formField: Required<SvelidateField> = {
+				errors: [],
+				touched: false,
+				validators: [],
+				invalid: false,
+				attributes: {
+					name,
+					...attributes,
+				},
+				...otherProps,
+			}
+			return {
+				...prev,
+				[name]: formField,
+			}
+		},
+		{} as NakedSvelidateForm<F>
+	)
 }
