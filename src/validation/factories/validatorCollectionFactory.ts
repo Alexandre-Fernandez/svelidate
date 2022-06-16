@@ -41,8 +41,12 @@ export function createNumberValidatorCollectionFactory(
 	return (error = ""): ValidatorCollection =>
 		Object.freeze({
 			js: value => {
-				if (typeof value !== "number") return error
-				if (jsValidatorPredicate(value)) return undefined // no error
+				const number =
+					typeof value === "number"
+						? value
+						: parseFloat(String(value))
+				if (isNaN(number)) return error
+				if (jsValidatorPredicate(number)) return undefined // no error
 				return error
 			},
 			html: htmlValidator,
