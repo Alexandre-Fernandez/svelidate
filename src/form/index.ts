@@ -18,6 +18,11 @@ import { mergeObjects } from "../utilities/general"
 import { isLookahead } from "../utilities/regex"
 import { createLocalConfig, svelidateConfig } from "./config"
 
+let isBrowser = false
+try {
+	if (window) isBrowser = true
+} catch (err) {}
+
 export function svelidate<F extends UninitializedForm>(
 	initialForm: F,
 	config: PartialAll<SvelidateConfiguration> = svelidateConfig
