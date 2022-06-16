@@ -16,14 +16,15 @@ import type {
 } from "../types"
 import { mergeObjects } from "../utilities/general"
 import { isLookahead } from "../utilities/regex"
-import { svelidateConfig } from "./config"
+import { createLocalConfig, svelidateConfig } from "./config"
 
 export function svelidate<F extends UninitializedForm>(
 	initialForm: F,
 	config: PartialAll<SvelidateConfiguration> = svelidateConfig
 ) {
+	let localConfig =
+		config === svelidateConfig ? svelidateConfig : createLocalConfig(config)
 	const subscribers: Subscriber[] = []
-
 	const $form: SvelidateForm<F> = {
 		...createNakedSvelidateForm(initialForm),
 		$st: {
