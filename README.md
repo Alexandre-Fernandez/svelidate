@@ -17,7 +17,7 @@ pnpm add svelidate
 
 -   Star the [github repo](https://github.com/svelidate/svelidate) 😎
 
-```tsx
+```ts
 <script lang="ts">
 	import { svelidate, string as s, general as g } from "svelidate"
 
@@ -25,158 +25,272 @@ pnpm add svelidate
 		email: {
 			value: "",
 			validators: [
-				g.required("This field is required."),
-				s.email("Please enter a valid email."),
+				general.required("This field is required."),
+				string.email("Please enter a valid email."),
 			],
+			attributes: { // `name` attribute is auto-set to this object's key (`email` here)
+				type: "email",
+			},
 		},
 		password: {
 			value: "",
 			validators: [
-				g.required("This field is required."),
-				s.lowerCase("Password needs to have atleast one lower case letter."),
-				s.upperCase("Password needs to have atleast one upper case letter."),
-				s.number("Password needs to have atleast one number."),
-				s.symbol()("Password needs to have one symbol."),
-				s.length.gt(6)("Password needs to have more than 6 characters."),
+				general.required("This field is required."),
+				string.lowerCase("Password needs to have atleast one lower case letter."),
+				string.upperCase("Password needs to have atleast one upper case letter."),
+				string.number("Password needs to have atleast one number."),
+				string.symbol("Password needs to have one symbol."),
+				string.length.gt(6)("Password needs to have more than 6 characters."),
 			],
+			attributes: {
+				type: "password",
+			},
 		},
 	})
-
-	$form.$on.submit = () => {
-		// handle submit...
-	}
+	$form.$on.submit = () => { /*handle submit...*/	}
 </script>
+```
 
+```svelte
 <form on:submit={$form.$fn.submit}>
-	<div>
-		<!-- displaying email errors -->
-		<ul>
-			{#each $form.email.errors as error}
-				<li>{error}</li>
-			{/each}
-		</ul>
+	<ul> <!-- displaying email errors -->
+		{#each $form.email.errors as error}
+			<li>{error}</li>
+		{/each}
+	</ul>
+	<input bind:value={$form.email.value} {...$form.email.attributes} />
 
-		<input type="text" bind:value={$form.email.value} />
-	</div>
 
-	<div>
-		<!-- displaying password errors -->
-		<ul>
-			{#each $form.password.errors as error}
-				<li>{error}</li>
-			{/each}
-		</ul>
+	<ul> <!-- displaying password errors -->
+		{#each $form.password.errors as error}
+			<li>{error}</li>
+		{/each}
+	</ul>
+	<input bind:value={$form.password.value} {...$form.password.attributes} />
 
-		<input type="password" bind:value={$form.password.value} />
-	</div>
 	<button disabled={$form.$st.invalid}>Submit</button>
 </form>
 ```
 
-## Form
+## Configuration
 
-To create a svelidate form just use `svelidate(yourFormObject)` with an object representing your form, see the [form fields](#form-fields) section for more information.
-Svelidate adds 3 top level properties to the initial form, `$st` for global form state, `$fn` for form functions and `$on` to subscribe to a form event.
+You can modify Svelidate's default or local configuration.
 
-<details>
-	<summary><h3><code>$st</code></h3></summary>
-<pre lang="ts">
-const $st = {
-	invalid: boolean // true if any form field is invalid
-	submitted: boolean // true once `$fn.submit` has been called
-	initial: Readonly≺Form≻ // the original form passed to `svelidate()` 
-}
-</pre>
-</details>
+-   To modify the default configuration for all `svelidate` functions change this configuration object: `svelidateConfig`.
+-   To modify the configuration of one form instance, the modification you want to apply to the default configuration as a second argument in the `svelidate` function.
 
-<details>
-	<summary><h3><code>$fn</code></h3></summary>
-<pre lang="ts">
-const $fn = {
-	submit: (e?: SubmitEvent) =>  void // handles submit and then calls `$on.submit`
-	reset: () =>  void // resets all the form fields to their initial values
-	untouch: () =>  void // resets all the form fields `touched` values to false
-	getErrors: () => string[] // returns all the current errors
-}
-</pre>
-</details>
-
-<details>
-	<summary><h3><code>$on</code></h3></summary>
-<pre lang="ts">
-const $on = {
-	submit: (e?: SubmitEvent) =>  void // called after submitting with `$fn.submit`
-	touch: (key: string) => void // called when an input is touched
-}
-</pre>
-</details>
-
-## Form fields
-
-The argument passed to `svelidate()` is an object having form field names as keys and form fields objects as values.
-Here are all the available properties a form field object can have (after using `svelidate()` all of them will exist, undefined ones will be created by the function).
-
-```ts,
-const field = {
-	value: T // the value to bind to the input
-	validators: FormFieldValidator<T>[] // you can either import them or make your own
-	errors: string[] // an array of errors messages returned by the failed validators
-	touched: boolean // true if `value` got modified (submitting the form resets it to false)
-	invalid: boolean // true if `errors.length` > 0
+```ts
+{
+	mode, /*
+	A string indicating which validation mode to use:
+		- "default": The default value, uses html only on the server or if
+		javascript is disabled, and javascript only otherwise.
+		- "all": Uses both html and javascript validation.
+		- "js-only": Only uses javascript to validate the binded value.
+		- "html-only": Only uses html to validate the input.
+	*/
+	pattern: { /*
+	An object containing regular expression used by the default validators, these
+	can be modified to behave differently (e.g. you don't want to count "_" as
+	a symbol).
+	*/
+		symbol, /*
+		Pattern used for string.symbol, searches for the following symbols:
+		!"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~ .
+		*/
+		email /*
+		Pattern used for string.email.
+		*/
+	},
 }
 ```
 
-Only `value` is mandatory when creating a form field.
-If your form field object is invalid (for example having `invalid === false` and `errors.length > 0`) it will be corrected by `svelidate()`.
+## Form
+
+The Svelidate form object is created from an object representing your desired form.
+It's made of field names containing [objects reprensenting your fields](#fields), and top level objects added by Svelidate, beginning with `$`.
+
+### `$st` (state)
+
+```ts
+{
+	invalid, /*
+	A boolean that will be true if any of the form's fields is invalid.
+	*/
+	submitted, /*
+	A boolean that will be true once `$form.$fn.submit` has been called.
+	*/
+	initial, /*
+	The original form passed to `svelidate` to create the svelidate form.
+	*/
+}
+```
+
+### `$fn` (functions)
+
+```ts
+{
+	submit, /*
+	Handles submit internally and then calls the function stored in `$form.$on.submit`.
+	*/
+	reset, /*
+	Resets all fields to their initial value.
+	*/
+	untouch, /*
+	Reset all fields' `touched` property to false. If you only need to reset one
+	you can just do `$form.field.touched = false`.
+	*/
+	getErrors, /*
+	Returns all the current field's errors merged into one array.
+	*/
+}
+```
+
+### `$on` (events)
+
+```ts
+{
+	submit, /*
+	Called after submitting with `$form.$fn.submit`.
+	*/
+	touch, /*
+	Called everytime an input is touched (from false to true).
+	*/
+}
+```
+
+## Fields
+
+Fields are used to describe your inputs and create your svelidate form.
+The only required property is `value` which should be binded to an input.
+If you want your field to be able to have html validation you will need to set `field.attributes.type` to the corresponding input type.
+
+```ts
+{
+	value, /*
+	Used to bind the input's value/checked/etc.
+	*/
+	validators, /*
+	An array of validators, import them or make your own, see the validator
+	section.
+	*/
+	touched, /*
+	Boolean indicating if `value` was modified (submitting the form resets
+	it to false), it's initial value can be set to true.
+	*/
+	attributes, /*
+	An object containing all the input's attributes (the name attribute is
+	automatically set to the field object's key name).
+	The title attribute can be used as an error message for the HTML validation
+	of string inputs (text, email, password, search, tel, url).
+	*/
+	errors, /*
+	__Generated by svelidate__
+	An error message array corresponding to the	invalid javascript validators.
+	*/
+	invalid, /*
+	__Generated by svelidate__
+	A boolean that will be true if `errors.length > 0` and false otherwise.
+	*/
+}
+```
 
 ## Validators
 
+A validator is an object using this model: `{ js: value => string | undefined, html?: inputType => { ...validationAttributes } }`.
+As you can see, in reality it contains two validators:
+
+-   A javascript validator that takes the binded value and returns an error message or undefined.
+-   An optional html validator that takes the input's type and returns an object containing all the attributes necessary for html validation (`min`, `max`, etc).
+
 ### Default validators
 
-Svelidate comes with multiple validators that you can use, they are grouped by category (object): `general` when they can be used for many value types (e.g. `required` or `truthy`), `string` to validate strings, `number` for numbers and `date` for dates.
+Default validators are grouped together in objects for each input's value types.
 
-<details>
-	<summary><h4><code>general</code></h4></summary>
-<pre lang="ts">
-const general = {
-	truthy, // value is truthy (can be used to validate booleans/checkboxes).
-	falsy, // value is falsy (can be used to validate booleans/checkboxes).
-	required, // value is truthy or strictly equal to 0.
-	eq(value: any), // value is strictly equal to argument.
-	neq(value: any), // value is strictly different from argument.
+#### `general`
+
+```ts
+{
+	required, /*
+	Valid if the value is truthy or if it's equal to 0, the HTML validator
+	will add the `required` attribute.
+	*/
+	truthy, /*
+	Valid when value is truthy (can be used to validate booleans).
+	*/
+	falsy, /*
+	Valid when value is falsy (can be used to validate booleans).
+	*/
+	eq, /*
+	Valid if the value is strictly equal to the given argument.
+	*/
+	neq, /*
+	Valid if the value is strictly different from the given argument.
+	*/
 }
-</pre>
-</details>
+```
 
-<details>
-	<summary><h4><code>string</code></h4></summary>
-<pre lang="ts">
-// value must be a string
-const string = {
-	email, // value is an e-mail.
-	upperCase, // value has atleast one upper case letter.
-	lowerCase, // value has atleast one lower case letter.
-	number, // value has atleast one number.
-	symbol(symbols: string[]), // value has atleast one symbol ( !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~), a custom symbol array can be given.
-	regex(regex: RegExp), // value matches the given regex.
-	eq(string: string), // value is equal to the given string.
-	neq(string: string), // value is different from the given string.,
+#### `string`
+
+**If the passed value is not a string it will be invalid.**
+
+```ts
+{
+	email, /*
+	Valid if the string matches the email pattern.
+	*/
+	upperCase, /*
+	Valid if the string has atleast an upper case letter.
+	*/
+	lowerCase, /*
+	Valid if the string has atleast a lower case letter.
+	*/
+	number, /*
+	Valid if the string has atleast one number.
+	*/
+	symbol, /*
+	Valid if the string has atleast one symbol ( !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~).
+	*/
+	regex, /*
+	Valid if the string matches the given regex.
+	*/
+	eq, /*
+	Valid if the string is strictly equal to the given string.
+	*/
+	neq, /*
+	Valid if the string is strictly different from the given string.
+	*/,
 	length: {
-		gt(length: number), // value length is longer than the given length.
-		gte(length: number), // value length is longer than or equal to the given length.
-		lt(length: number), // value length is shorter than the given length.
-		lte(length: number), // value length is shorter than or equal to the given length.
-		inside(min: number, max: number), // value length is included in the given range.
-		outside(min: number, max: number), // value length is excluded from the given range.
-		neq(length: number), // value length is different from the given one.
-		eq(length: number), // value length is equal to the given one.
+		gt, /*
+		Valid if the string is longer than the given length.
+		*/
+		gte, /*
+		Valid if the string is longer than or equal to the given length.
+		*/
+		lt, /*
+		Valid if the string is shorter than the given length.
+		*/
+		lte, /*
+		Valid if the string is shorter than or equal to the given length.
+		*/
+		inside, /*
+		Valid if the string's length is inside the given interval.
+		*/
+		outside, /*
+		Valid if the string's length is outside the given interval.
+		*/
+		neq, /*
+		Valid if the string's length is strictly different from the given length.
+		*/
+		eq, /*
+		Valid if the string's length is strictly equal to the given length.
+		*/
 	},
 }
-</pre>
-</details>
+```
 
 <details>
-	<summary><h4><code>number</code></h4></summary>
+	<summary><code>number</code></summary>
 <pre lang="ts">
 // value must be a number
 const number = {
@@ -193,7 +307,7 @@ const number = {
 </details>
 
 <details>
-	<summary><h4><code>date</code></h4></summary>
+	<summary><code>date</code></summary>
 <pre lang="ts">
 // value must be a string or a date, if it's a string it will be parsed using the `Date` constructor.
 const date = {
