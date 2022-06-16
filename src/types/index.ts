@@ -3,7 +3,7 @@ export type PartialAll<T> = {
 }
 
 export type SvelidateConfiguration = {
-	mode: "html" | "js" | "available" | "all"
+	mode: "html-only" | "js-only" | "default" | "all"
 	pattern: {
 		symbol: string
 		email: string

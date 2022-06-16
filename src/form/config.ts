@@ -1,7 +1,7 @@
 import type { PartialAll, SvelidateConfiguration } from "../types"
 
 export const svelidateConfig: SvelidateConfiguration = {
-	mode: "available",
+	mode: "default",
 	pattern: {
 		symbol: "[!\"#\\$%&'\\(\\)\\*\\+,-\\.\\/: ;<=>\\?@\\[\\]\\^_`}{~\\|\\\\]", // !"#$%&'()*+,-./: ;<=>?@[\\]^_`{|}~
 		email: "[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+.[a-zA-Z]+",
