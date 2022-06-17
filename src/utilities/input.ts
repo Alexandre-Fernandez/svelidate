@@ -12,7 +12,9 @@ type MapperMapFunction<T extends HtmlValidatorMapper<any>> = (
 	inputType: NonNullable<Parameters<T>[0]>
 ) => ReturnType<T>
 type HtmlValidatorMapperMap = {
-	textarea: MapperMapFunction<HtmlValidatorMapper<HtmlPseudoInputType>>
+	textarea: MapperMapFunction<
+		HtmlValidatorMapper<Extract<HtmlPseudoInputType, "textarea">>
+	>
 	numbers: MapperMapFunction<HtmlValidatorMapper<HtmlNumberInput>>
 	dates: MapperMapFunction<HtmlValidatorMapper<HtmlDateTimeInputType>>
 	strings: MapperMapFunction<HtmlValidatorMapper<HtmlStringInput>>
