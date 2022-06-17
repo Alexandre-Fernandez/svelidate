@@ -1,9 +1,9 @@
 import { svelidateConfig } from "../../form/config"
 import { getMatchingHtmlValidator } from "../../utilities/input"
-import { createStringValidatorCollectionFactory } from "../factories/validatorCollectionFactory"
+import { createStringValidatorWrapperFactory } from "../factories/validatorCollectionFactory"
 
 const string = {
-	email: createStringValidatorCollectionFactory(
+	email: createStringValidatorWrapperFactory(
 		value => new RegExp(svelidateConfig.pattern.email).test(value),
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
@@ -16,7 +16,7 @@ const string = {
 				}),
 			})
 	),
-	upperCase: createStringValidatorCollectionFactory(
+	upperCase: createStringValidatorWrapperFactory(
 		value => value.toLowerCase() !== value,
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
@@ -25,7 +25,7 @@ const string = {
 				}),
 			})
 	),
-	lowerCase: createStringValidatorCollectionFactory(
+	lowerCase: createStringValidatorWrapperFactory(
 		value => value.toUpperCase() !== value,
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
@@ -34,7 +34,7 @@ const string = {
 				}),
 			})
 	),
-	number: createStringValidatorCollectionFactory(
+	number: createStringValidatorWrapperFactory(
 		value => new RegExp("[0-9]").test(value),
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
@@ -43,7 +43,7 @@ const string = {
 				}),
 			})
 	),
-	symbol: createStringValidatorCollectionFactory(
+	symbol: createStringValidatorWrapperFactory(
 		value => new RegExp(svelidateConfig.pattern.symbol).test(value),
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
@@ -53,7 +53,7 @@ const string = {
 			})
 	),
 	regex(regex: RegExp) {
-		return createStringValidatorCollectionFactory(
+		return createStringValidatorWrapperFactory(
 			value => regex.test(value),
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
@@ -64,7 +64,7 @@ const string = {
 		)
 	},
 	eq(string: string) {
-		return createStringValidatorCollectionFactory(
+		return createStringValidatorWrapperFactory(
 			value => value === string,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
@@ -75,7 +75,7 @@ const string = {
 		)
 	},
 	neq(string: string) {
-		return createStringValidatorCollectionFactory(
+		return createStringValidatorWrapperFactory(
 			value => value !== string,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
@@ -87,7 +87,7 @@ const string = {
 	},
 	length: {
 		gt(length: number) {
-			return createStringValidatorCollectionFactory(
+			return createStringValidatorWrapperFactory(
 				value => value.length > length,
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
@@ -101,7 +101,7 @@ const string = {
 			)
 		},
 		gte(length: number) {
-			return createStringValidatorCollectionFactory(
+			return createStringValidatorWrapperFactory(
 				value => value.length >= length,
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
@@ -115,7 +115,7 @@ const string = {
 			)
 		},
 		lt(length: number) {
-			return createStringValidatorCollectionFactory(
+			return createStringValidatorWrapperFactory(
 				value => value.length < length,
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
@@ -129,7 +129,7 @@ const string = {
 			)
 		},
 		lte(length: number) {
-			return createStringValidatorCollectionFactory(
+			return createStringValidatorWrapperFactory(
 				value => value.length <= length,
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
@@ -143,7 +143,7 @@ const string = {
 			)
 		},
 		inside(min: number, max: number) {
-			return createStringValidatorCollectionFactory(
+			return createStringValidatorWrapperFactory(
 				value => value.length >= min && value.length <= max,
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
@@ -159,7 +159,7 @@ const string = {
 			)
 		},
 		outside(min: number, max: number) {
-			return createStringValidatorCollectionFactory(
+			return createStringValidatorWrapperFactory(
 				value => value.length < min && value.length > max,
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
@@ -174,7 +174,7 @@ const string = {
 		neq(length: number) {
 			const min = Math.max(Math.floor(length) - 1, 0)
 			const max = Math.floor(length) + 1
-			return createStringValidatorCollectionFactory(
+			return createStringValidatorWrapperFactory(
 				value => value.length !== length,
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
@@ -187,7 +187,7 @@ const string = {
 			)
 		},
 		eq(length: number) {
-			return createStringValidatorCollectionFactory(
+			return createStringValidatorWrapperFactory(
 				value => value.length === length,
 				inputType =>
 					getMatchingHtmlValidator(inputType, {

@@ -4,14 +4,14 @@ import {
 	getFormattedDate,
 } from "../../utilities/date"
 import { getMatchingHtmlValidator } from "../../utilities/input"
-import { createValidatorCollectionFactory } from "../factories/validatorCollectionFactory"
+import { createValidatorWrapperFactory } from "../factories/validatorCollectionFactory"
 
 const general = {
-	truthy: createValidatorCollectionFactory(
+	truthy: createValidatorWrapperFactory(
 		value => !!value,
 		() => ({})
 	),
-	falsy: createValidatorCollectionFactory(
+	falsy: createValidatorWrapperFactory(
 		value => !value,
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
@@ -32,7 +32,7 @@ const general = {
 				},
 			})
 	),
-	required: createValidatorCollectionFactory(
+	required: createValidatorWrapperFactory(
 		value => {
 			if (!value && value !== 0) return false
 			return true
@@ -46,7 +46,7 @@ const general = {
 		const parsedFloat = isNaN(parseFloat(parsedString))
 			? undefined
 			: parseFloat(parsedString)
-		return createValidatorCollectionFactory(
+		return createValidatorWrapperFactory(
 			val => val === value,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
@@ -67,7 +67,7 @@ const general = {
 		)
 	},
 	neq(value: any) {
-		return createValidatorCollectionFactory(
+		return createValidatorWrapperFactory(
 			val => val !== value,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {

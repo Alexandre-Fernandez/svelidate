@@ -16,7 +16,7 @@ type UninitializedFieldAttributes = {
 }
 export type UninitializedField<T = unknown> = {
 	value: T
-	validators?: ValidatorCollection<T>[]
+	validators?: ValidatorWrapper<T>[]
 	touched?: boolean
 	attributes?: UninitializedFieldAttributes
 }
@@ -30,7 +30,7 @@ type SvelidateFieldAttributes = {
 	HtmlValidator
 export type SvelidateField<T = unknown> = {
 	value: T
-	validators?: ValidatorCollection<T>[]
+	validators?: ValidatorWrapper<T>[]
 	errors?: string[]
 	touched?: boolean
 	invalid?: boolean
@@ -82,7 +82,7 @@ export type Subscriber = <F extends UninitializedForm>(
 	form: SvelidateForm<F>
 ) => void
 
-export type ValidatorCollection<
+export type ValidatorWrapper<
 	T = unknown,
 	I extends SvelidateInputType = SvelidateInputType
 > = Readonly<{

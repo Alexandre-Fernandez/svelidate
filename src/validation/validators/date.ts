@@ -1,10 +1,10 @@
 import { getExcludedDate, getFormattedDate } from "../../utilities/date"
 import { getMatchingHtmlValidator } from "../../utilities/input"
-import { createDateValidatorCollectionFactory } from "../factories/validatorCollectionFactory"
+import { createDateValidatorWrapperFactory } from "../factories/validatorCollectionFactory"
 
 const date = {
 	gt(date: Date) {
-		return createDateValidatorCollectionFactory(
+		return createDateValidatorWrapperFactory(
 			value => value > date,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
@@ -23,7 +23,7 @@ const date = {
 		)
 	},
 	gte(date: Date) {
-		return createDateValidatorCollectionFactory(
+		return createDateValidatorWrapperFactory(
 			value => value >= date,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
@@ -34,7 +34,7 @@ const date = {
 		)
 	},
 	lt(date: Date) {
-		return createDateValidatorCollectionFactory(
+		return createDateValidatorWrapperFactory(
 			value => value < date,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
@@ -53,7 +53,7 @@ const date = {
 		)
 	},
 	lte(date: Date) {
-		return createDateValidatorCollectionFactory(
+		return createDateValidatorWrapperFactory(
 			value => value <= date,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
@@ -64,7 +64,7 @@ const date = {
 		)
 	},
 	inside(min: Date, max: Date) {
-		return createDateValidatorCollectionFactory(
+		return createDateValidatorWrapperFactory(
 			value => min <= value && value <= max,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
@@ -76,15 +76,15 @@ const date = {
 		)
 	},
 	outside(min: Date, max: Date) {
-		return createDateValidatorCollectionFactory(
+		return createDateValidatorWrapperFactory(
 			value => value < min || value > max
 		)
 	},
 	neq(date: Date) {
-		return createDateValidatorCollectionFactory(value => value !== date)
+		return createDateValidatorWrapperFactory(value => value !== date)
 	},
 	eq(date: Date) {
-		return createDateValidatorCollectionFactory(
+		return createDateValidatorWrapperFactory(
 			value => value === date,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {

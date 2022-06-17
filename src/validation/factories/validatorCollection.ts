@@ -1,9 +1,9 @@
-import type { JsValidatorPredicate, ValidatorCollection } from "../../types"
+import type { JsValidatorPredicate, ValidatorWrapper } from "../../types"
 
-export function createConditionalValidatorCollection(
+export function createConditionalValidatorWrapper(
 	condition: JsValidatorPredicate,
-	validator: ValidatorCollection
-): ValidatorCollection {
+	validator: ValidatorWrapper
+): ValidatorWrapper {
 	return {
 		js: (value: unknown) => {
 			if (condition(value)) return validator.js(value)
@@ -13,16 +13,17 @@ export function createConditionalValidatorCollection(
 	}
 }
 
-export function validateIf<
-	T extends ValidatorCollection | ValidatorCollection[]
->(condition: JsValidatorPredicate, validators: T) {
+export function validateIf<T extends ValidatorWrapper | ValidatorWrapper[]>(
+	condition: JsValidatorPredicate,
+	validators: T
+) {
 	if (Array.isArray(validators)) {
 		return validators.map(validator =>
-			createConditionalValidatorCollection(condition, validator)
+			createConditionalValidatorWrapper(condition, validator)
 		) as T
 	}
-	return createConditionalValidatorCollection(
+	return createConditionalValidatorWrapper(
 		condition,
-		validators as ValidatorCollection
+		validators as ValidatorWrapper
 	) as T
 }

@@ -1,15 +1,15 @@
 import type {
-	ValidatorCollection,
+	ValidatorWrapper,
 	JsValidatorPredicate,
 	HtmlValidatorMapper,
 } from "../../types"
 import { getDate } from "../../utilities/date"
 
-export function createValidatorCollectionFactory(
+export function createValidatorWrapperFactory(
 	jsValidatorPredicate: JsValidatorPredicate,
 	htmlValidator: HtmlValidatorMapper = () => ({})
 ) {
-	return (error = ""): ValidatorCollection =>
+	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
 			js: value => {
 				if (jsValidatorPredicate(value)) return undefined // no error
@@ -19,11 +19,11 @@ export function createValidatorCollectionFactory(
 		})
 }
 
-export function createStringValidatorCollectionFactory(
+export function createStringValidatorWrapperFactory(
 	jsValidatorPredicate: JsValidatorPredicate<string>,
 	htmlValidator: HtmlValidatorMapper = () => ({})
 ) {
-	return (error = ""): ValidatorCollection =>
+	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
 			js: value => {
 				if (typeof value !== "string") return error
@@ -34,11 +34,11 @@ export function createStringValidatorCollectionFactory(
 		})
 }
 
-export function createNumberValidatorCollectionFactory(
+export function createNumberValidatorWrapperFactory(
 	jsValidatorPredicate: JsValidatorPredicate<number>,
 	htmlValidator: HtmlValidatorMapper = () => ({})
 ) {
-	return (error = ""): ValidatorCollection =>
+	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
 			js: value => {
 				const number =
@@ -53,11 +53,11 @@ export function createNumberValidatorCollectionFactory(
 		})
 }
 
-export function createDateValidatorCollectionFactory(
+export function createDateValidatorWrapperFactory(
 	jsValidatorPredicate: JsValidatorPredicate<Date>,
 	htmlValidator: HtmlValidatorMapper = () => ({})
 ) {
-	return (error = ""): ValidatorCollection =>
+	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
 			js: value => {
 				const date = getDate(value)

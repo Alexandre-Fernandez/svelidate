@@ -1,9 +1,9 @@
 import { getMatchingHtmlValidator } from "../../utilities/input"
-import { createNumberValidatorCollectionFactory } from "../factories/validatorCollectionFactory"
+import { createNumberValidatorWrapperFactory } from "../factories/validatorCollectionFactory"
 
 const number = {
 	gt(number: number) {
-		return createNumberValidatorCollectionFactory(
+		return createNumberValidatorWrapperFactory(
 			value => value > number,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
@@ -12,7 +12,7 @@ const number = {
 		)
 	},
 	gte(number: number) {
-		return createNumberValidatorCollectionFactory(
+		return createNumberValidatorWrapperFactory(
 			value => value >= number,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
@@ -21,7 +21,7 @@ const number = {
 		)
 	},
 	lt(number: number) {
-		return createNumberValidatorCollectionFactory(
+		return createNumberValidatorWrapperFactory(
 			value => value < number,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
@@ -30,7 +30,7 @@ const number = {
 		)
 	},
 	lte(number: number) {
-		return createNumberValidatorCollectionFactory(
+		return createNumberValidatorWrapperFactory(
 			value => value <= number,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
@@ -39,7 +39,7 @@ const number = {
 		)
 	},
 	inside(min: number, max: number) {
-		return createNumberValidatorCollectionFactory(
+		return createNumberValidatorWrapperFactory(
 			value => value >= min && value <= max,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
@@ -48,15 +48,15 @@ const number = {
 		)
 	},
 	outside(min: number, max: number) {
-		return createNumberValidatorCollectionFactory(
+		return createNumberValidatorWrapperFactory(
 			value => value < min && value > max
 		)
 	},
 	neq(number: number) {
-		return createNumberValidatorCollectionFactory(value => value !== number)
+		return createNumberValidatorWrapperFactory(value => value !== number)
 	},
 	eq(number: number) {
-		return createNumberValidatorCollectionFactory(
+		return createNumberValidatorWrapperFactory(
 			value => value === number,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
