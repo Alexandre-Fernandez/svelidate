@@ -19,7 +19,7 @@ pnpm add svelidate
 
 ```ts
 <script lang="ts">
-	import { svelidate, string as s, general as g } from "svelidate"
+	import { svelidate, string, general } from "svelidate"
 
 	const form = svelidate({
 		email: {
@@ -146,7 +146,7 @@ It's made of field names containing [objects reprensenting your fields](#fields)
 }
 ```
 
-### `$on` (events)
+### `$on` (event handlers)
 
 ```ts
 {
@@ -197,34 +197,54 @@ If you want your field to be able to have html validation you will need to set `
 
 ## Validators
 
-A validator is an object using this model: `{ js: value => string | undefined, html?: inputType => { ...validationAttributes } }`.
-As you can see, in reality it contains two validators:
+There's two kinds of validators in Svelidate, html and javascript.
+When you fill the `validators` array inside your [field](#fields) with the [default validators](#default-validators), you are actually creating validation objects called validator wrappers:
 
--   A javascript validator that takes the binded value and returns an error message or undefined.
--   An optional html validator that takes the input's type and returns an object containing all the attributes necessary for html validation (`min`, `max`, etc).
+```ts
+{
+	js: (inputValue) => string | undefined, /*
+	A javascript validator takes the current input's value as an argument and outputs an error message or undefined if the value is valid.
+	The error messages from the javascript validator are the ones found in `$form.field.errors`.
+	*/
+	html: (inputType) => { ...validationAttributes } /*
+	The html validator is optional, it takes the input's type (retrieved from `$form.field.attributes.type`), if it's not undefined it will output an object containing html validation attributes (min, max, etc).
+	The field attributes found in `$form.field.attributes` will be appended with the output of your html validators.
+	*/
+}
+```
+
+Replacing any function by an object following the `ValidatorWrapper` model will work, check [custom validators](#custom-validators) for more information.
+HTML validators distinguish and will only validate the following **input type groups** :
+
+-   **textarea** ("textarea")
+-   **numbers** ("number", "range")
+-   **strings** ("email", "password", "search", "tel", "text", "url")
+-   **dates** ("date", "datetime-local", "month", "time", "week")
 
 ### Default validators
 
-Default validators are grouped together in objects for each input's value types.
+Default validators are functions helping you to easily validate your forms.
+They can take a custom error (e.g. a translation key) that will be used for your javascript validator.
+They are grouped by input value type inside an importable object.
 
 #### `general`
 
 ```ts
 {
-	required, /*
+	required, /*     | HTML: Validates all input types |
 	Valid if the value is truthy or if it's equal to 0, the HTML validator
 	will add the `required` attribute.
 	*/
-	truthy, /*
+	truthy, /*     | HTML: No validation |
 	Valid when value is truthy (can be used to validate booleans).
 	*/
-	falsy, /*
+	falsy, /*     | HTML: Validates all input type groups |
 	Valid when value is falsy (can be used to validate booleans).
 	*/
-	eq, /*
+	eq, /*     | HTML: Validates strings, numbers and dates groups |
 	Valid if the value is strictly equal to the given argument.
 	*/
-	neq, /*
+	neq, /*     | HTML: Validates strings group |
 	Valid if the value is strictly different from the given argument.
 	*/
 }
@@ -236,148 +256,251 @@ Default validators are grouped together in objects for each input's value types.
 
 ```ts
 {
-	email, /*
+	email, /*     | HTML: Validates textarea (only input length) and strings groups |
 	Valid if the string matches the email pattern.
 	*/
-	upperCase, /*
+	upperCase, /*     | HTML: Validates strings group |
 	Valid if the string has atleast an upper case letter.
 	*/
-	lowerCase, /*
+	lowerCase, /*     | HTML: Validates strings group |
 	Valid if the string has atleast a lower case letter.
 	*/
-	number, /*
+	number, /*     | HTML: Validates strings group |
 	Valid if the string has atleast one number.
 	*/
-	symbol, /*
+	symbol, /*     | HTML: Validates strings group |
 	Valid if the string has atleast one symbol ( !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~).
 	*/
-	regex, /*
+	regex, /*     | HTML: Validates strings group |
 	Valid if the string matches the given regex.
 	*/
-	eq, /*
+	eq, /*     | HTML: Validates strings group |
 	Valid if the string is strictly equal to the given string.
 	*/
-	neq, /*
+	neq, /*     | HTML: Validates strings group |
 	Valid if the string is strictly different from the given string.
 	*/,
 	length: {
-		gt, /*
+		gt, /*     | HTML: Validates textarea and strings groups |
 		Valid if the string is longer than the given length.
 		*/
-		gte, /*
+		gte, /*     | HTML: Validates textarea and strings groups |
 		Valid if the string is longer than or equal to the given length.
 		*/
-		lt, /*
+		lt, /*     | HTML: Validates textarea and strings groups |
 		Valid if the string is shorter than the given length.
 		*/
-		lte, /*
+		lte, /*     | HTML: Validates textarea and strings groups |
 		Valid if the string is shorter than or equal to the given length.
 		*/
-		inside, /*
+		inside, /*      | HTML: Validates textarea and strings groups |
 		Valid if the string's length is inside the given interval.
 		*/
-		outside, /*
+		outside, /*     | HTML: Validates strings group |
 		Valid if the string's length is outside the given interval.
 		*/
-		neq, /*
+		neq, /*     | HTML: Validates strings group |
 		Valid if the string's length is strictly different from the given length.
 		*/
-		eq, /*
+		eq, /*     | HTML: Validates textarea and strings groups |
 		Valid if the string's length is strictly equal to the given length.
 		*/
 	},
 }
 ```
 
-<details>
-	<summary><code>number</code></summary>
-<pre lang="ts">
-// value must be a number
-const number = {
-	gt(number: number), // value is greater than the given number.
-	gte(number: number), // value is greater than or equal to the given number.
-	lt(number: number), // value is lesser than the given number.
-	lte(number: number), // value is lesser than or equal to the given number.
-	inside(min: number, max: number), // value is in included in the given interval.
-	outside(min: number, max: number), // value is in excluded from the given interval.
-	neq(number: number), // value is different from the given number.
-	eq(number: number), // value is equal to the given number.
-}
-</pre>
-</details>
+#### `number`
 
-<details>
-	<summary><code>date</code></summary>
-<pre lang="ts">
-// value must be a string or a date, if it's a string it will be parsed using the `Date` constructor.
-const date = {
-	gt(date: Date), // value is after the given date.
-	gte(date: Date), // value is after the or is the given date.
-	lt(date: Date),  // value is before the given date.
-	lte(date: Date), // value is before the or is the given date.
-	inside(min: Date, max: Date), // value is between the given date range.
-	outside(min: Date, max: Date), // value is outside the given date range.
-	neq(date: Date), // value is not the given date.
-	eq(date: Date), // value is the given date.
-}
-</pre>
-</details>
-
-### Custom validators
-
-You can also create your own validator, a validator takes the binded input `value` has an argument and returns `undefined` if there are no errors or a `string` containing the error message.
-Because the error message may change (for example if using translation keys), svelidate provide helper functions to create a validator factory that can take custom error messages.
-These helper functions take, a `callback` that must return `true` if the value is valid or `false` if it's not, and a `string` for the default error message (optional).
+**If the passed value is not a number it will be parsed with `parseFloat`, if it's still not a number it will be invalid**
 
 ```ts
-import {
-	createValidator,
-	createStringValidator, // will return an error if value is not a string.
-	createNumberValidator, // will return an error if value is not a number.
-	createDateValidator, // will return an error if value is not a date (it will try to parse it as a date first using the `Date` constructor).
-} from "svelidate"
-
-//
-const isObject = createValidator(
-	value => typeof value === "object",
-	"This is not an object !"
-)
-
-const objectValidator = isObject() // this is what you use in form fields (`isObject()`)
-objectValidator({}) // return undefined
-objectValidator("string") // returns "This is not an object !"
-
-//
-// you can also pass params by wrapping it in another function:
-const isNumberEqualTo = (number: number) => {
-	return createNumberValidator(value => value === number)
+{
+	gt, /*     | HTML: Validates numbers group |
+	Valid if the number is greater than the given number.
+	*/
+	gte, /*     | HTML: Validates numbers group |
+	Valid if the number is greater than or equal to the given number.
+	*/
+	lt, /*     | HTML: Validates numbers group |
+	Valid if the number is lesser than the given number.
+	*/
+	lte, /*     | HTML: Validates numbers group |
+	Valid if the number is lesser than or equal to the given number.
+	*/
+	inside, /*     | HTML: Validates numbers group |
+	Valid if the number is inside the given interval.
+	*/
+	outside, /*     | HTML: No validation |
+	Valid if the number is outside the given interval.
+	*/
+	neq, /*     | HTML: No validation |
+	Valid if the number is strictly different from the given number.
+	*/
+	eq, /*     | HTML: Validates numbers group |
+	Valid if the number is strictly equal to the given number.
+	*/
 }
+```
 
-const threeValidator = isNumberEqualTo(3)("This is not equal to 3 !")
-threeValidator(3) // return undefined
-threeValidator(69) // return "This is not equal to 3 !"
+#### `date`
+
+**If the passed value is not a date it will be parsed with the `Date` constructor, if it's still not a date it will be invalid**
+
+```ts
+{
+	gt, /*     | HTML: Validates dates group |
+	Valid if the date is after the given date.
+	*/
+	gte, /*     | HTML: Validates dates group |
+	Valid if the date is after or at the same time than the given date.
+	*/
+	lt, /*     | HTML: Validates dates group |
+	Valid if the date is before the given date.
+	*/
+	lte, /*     | HTML: Validates dates group |
+	Valid if the date is before or at the same time than the given date.
+	*/
+	inside, /*     | HTML: Validates dates group |
+	Valid if the date is inside the given interval.
+	*/
+	outside, /*     | HTML: No validation |
+	Valid if the date is outside the given interval.
+	*/
+	neq, /*     | HTML: No validation |
+	Valid if the date is different from the given date.
+	*/
+	eq, /*     | HTML: Validates dates group |
+	Valid if the date is equal to the given date.
+	*/
+}
 ```
 
 ### Conditional validation
 
-You can make any validator or array of validator only validate if a condition is true/undefined by using the `validateIf(predicate: Validator | ValidatorPredicate, validators: Validator | Validator[] )` function.
+You can make a javascript validator or all the javascript validators in the `$form.field.validators` array depend on a condition to be able to return an error.
 
 ```ts
-import { validateIf, general } from "svelidate"
+<script lang="ts">
+	import { svelidate, string, general, validateIf } from "svelidate"
 
-const value = undefined
-
-// if the predicate returns true or undefined the general.required() will be run as normal
-validateIf(() => true, general.required("error"))(value) // returns "error"
-
-// else it won't return any errors, even if the value is not valid
-validateIf(() => false, general.required("error"))(value) // returns undefined
-
-// validateIf can also be used to validate arrays
-validateIf(
-	() => false,
-	[general.required("error1"), general.truthy("error2")]
-).map(validator => validator(value)) // returns [undefined, undefined]
+	const form = svelidate({
+		email: {
+			value: "",
+			// This will only validate `$form.email.value` if it's longer than 5 characters.
+			validators: validateIf(emailValue => emailValue.length > 5, [
+				general.required("This field is required."),
+				string.email("Please enter a valid email."),
+			]),
+		},
+		password: {
+			value: "",
+			validators: [
+				general.required("This field is required."),
+				// This will stop lowercase validation after 8 characters.
+				validateIf(
+					passwordValue => passwordValue.length < 8
+					string.lowerCase("Password needs to have atleast one lower case letter.")
+				),
+			],
+			attributes: {
+				type: "password",
+			},
+		},
+	})
+	$form.$on.submit = () => { /*handle submit...*/	}
+</script>
 ```
 
-If you want to make a custom validator conditional you can use `createConditionalValidator(predicate: Validator | ValidatorPredicate, validator: Validator)`. Same usage, except it doesn't take arrays.
+### Custom validators
+
+As seen in the [validators section](#validators) any object respecting [the `ValidatorWrapper` model](#validators) can be used as a validator.
+However svelidates provides helpers that make that process easier, and enable you to easily make javascript validators with custom errors or sort the input type group in your html validators.
+
+#### `ValidatorWrapper` factory creators
+
+```ts
+import {
+	createValidatorWrapperFactory,
+	createStringValidatorWrapperFactory /*
+	Makes javascript validator return an error if the given value was not a string.
+	*/,
+	createNumberValidatorWrapperFactory /*
+	Makes javascript validator try to parse the given value as a number with
+	`parseFloat` and returns an error if the value was not a number.
+	*/,
+	createDateValidatorWrapperFactory, /*
+	Makes javascript validator try to parse the given value as a date the `Date`
+	constructor and returns an error if the value was not a date.
+	*/,
+} from "svelidate"
+
+
+const requiredValidatorWrapperFactory =  createValidatorWrapperFactory(
+	/* The first argument is a javascript predicate returning true if the value
+	is valid or false otherwise. */
+	fieldValue => {
+		if (!fieldValue && fieldValue !== 0) return false
+		return true
+	},
+	/* The second argument is a HTML validator creator, it takes the input type
+	found in `$form.field.attributes.type` (which may be undefined) and returns
+	the corresponding HTML input attributes to validate it. */
+	(inputType) => ({ required: true })
+),
+
+/* The line below creates a ValidatorWrapper creator, this enables you to easily add
+custom error messages. */
+const requiredValidatorWrapper = requiredValidatorWrapperFactory("This field is required !")
+
+requiredValidatorWrapper.js("I am the current field value.") // Returns undefined (no error)
+requiredValidatorWrapper.js("") // Returns "This field is required !"
+requiredValidatorWrapper.html // In this case it'll always be { required: true }
+
+/**
+ * The other createValidatorWrapperFactory variants only add type checking/parsing to
+ * the javascript predicate.
+ */
+```
+
+#### getMatchingHtmlValidator helper
+
+This functions makes creating HTML validators using `createValidatorWrapperFactory` much easier by enabling you to use a single callback by HTML input group.
+
+```ts
+import { getMatchingHtmlValidator } from "svelidate"
+
+// We wrap `createValidatorWrapperFactory` to be able to pass arguments to it when used.
+const equalValidatorWrapperFactory = (value: unknown) => {
+	const parsedString = String(value)
+	const parsedFloat = isNaN(parseFloat(parsedString))
+		? undefined
+		: parseFloat(parsedString)
+
+	return createValidatorWrapperFactory(
+		val => val === value,
+		inputType =>
+			getMatchingHtmlValidator(inputType, {
+				// "textarea"
+				textarea: textareaInput => ({}),
+				// "email", "password", "search", "tel", "text", "url"
+				strings: stringInput => ({
+					pattern: `(?=^${parsedString}$)`,
+				}),
+				// "number", "range"
+				numbers: numberInput => ({
+					min: parsedFloat,
+					max: parsedFloat,
+				}),
+				// "date", "datetime-local", "month", "time", "week"
+				dates: dateInput => {
+					const date = getDate(value)
+					if (!date) return {}
+					return {
+						min: getFormattedDate(date, dateInput),
+						max: getFormattedDate(date, dateInput),
+					}
+				},
+			})
+	)
+}
+```
