@@ -14,11 +14,13 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createDateValidatorWrapperFactory = exports.createNumberValidatorWrapperFactory = exports.createStringValidatorWrapperFactory = exports.createValidatorWrapperFactory = exports.validateIf = exports.svelidateConfig = exports.svelidate = void 0;
+exports.createDateValidatorWrapperFactory = exports.createNumberValidatorWrapperFactory = exports.createStringValidatorWrapperFactory = exports.createValidatorWrapperFactory = exports.validateIf = exports.getMatchingHtmlValidator = exports.svelidateConfig = exports.svelidate = void 0;
 var form_1 = require("./form");
 Object.defineProperty(exports, "svelidate", { enumerable: true, get: function () { return form_1.svelidate; } });
 var config_1 = require("./form/config");
 Object.defineProperty(exports, "svelidateConfig", { enumerable: true, get: function () { return config_1.svelidateConfig; } });
+var input_1 = require("./utilities/input");
+Object.defineProperty(exports, "getMatchingHtmlValidator", { enumerable: true, get: function () { return input_1.getMatchingHtmlValidator; } });
 var validatorCollection_1 = require("./validation/factories/validatorCollection");
 Object.defineProperty(exports, "validateIf", { enumerable: true, get: function () { return validatorCollection_1.validateIf; } });
 var validatorCollectionFactory_1 = require("./validation/factories/validatorCollectionFactory");

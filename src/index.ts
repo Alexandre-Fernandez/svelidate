@@ -11,6 +11,7 @@ export type {
 	HtmlValidator,
 	HtmlValidatorMapper,
 } from "./types"
+export { getMatchingHtmlValidator } from "./utilities/input"
 export { validateIf } from "./validation/factories/validatorCollection"
 export {
 	createValidatorWrapperFactory,
