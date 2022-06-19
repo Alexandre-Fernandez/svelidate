@@ -19,7 +19,6 @@ var form_1 = require("./form");
 Object.defineProperty(exports, "svelidate", { enumerable: true, get: function () { return form_1.svelidate; } });
 var config_1 = require("./form/config");
 Object.defineProperty(exports, "svelidateConfig", { enumerable: true, get: function () { return config_1.svelidateConfig; } });
-var types_1 = require("./types");
 var validatorCollection_1 = require("./validation/factories/validatorCollection");
 Object.defineProperty(exports, "validateIf", { enumerable: true, get: function () { return validatorCollection_1.validateIf; } });
 var validatorCollectionFactory_1 = require("./validation/factories/validatorCollectionFactory");
