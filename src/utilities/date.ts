@@ -10,6 +10,9 @@ const addSubstract = {
 	"-": (a: number, b: number) => a - b,
 }
 
+/**
+ * Returns `value` as a `Date` if it is one or can be parsed as one or undefined.
+ */
 export function getDate(value: unknown) {
 	const date = typeof value === "string" ? new Date(value) : value
 	if (!(date instanceof Date)) return undefined
