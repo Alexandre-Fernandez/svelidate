@@ -4,7 +4,7 @@ export const svelidateConfig: SvelidateConfiguration = {
 	mode: "default",
 	pattern: {
 		symbol: "[!\"#\\$%&'\\(\\)\\*\\+,-\\.\\/: ;<=>\\?@\\[\\]\\^_`}{~\\|\\\\]", // !"#$%&'()*+,-./: ;<=>?@[\\]^_`{|}~
-		email: "[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+.[a-zA-Z]+",
+		email: "[a-zA-Z0-9._-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]+",
 	},
 }
 
