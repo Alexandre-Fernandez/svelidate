@@ -1,6 +1,6 @@
 export { svelidate } from "./form"
 export { svelidateConfig } from "./form/config"
-export {
+export type {
 	UninitializedForm,
 	SvelidateForm,
 	SvelidateFormStore,
