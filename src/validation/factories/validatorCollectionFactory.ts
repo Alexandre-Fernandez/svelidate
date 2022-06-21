@@ -86,3 +86,23 @@ export function createDateValidatorWrapperFactory(
 			html: htmlValidator,
 		})
 }
+
+export function createFileListValidatorWrapperFactory(
+	jsValidatorPredicate: JsValidatorPredicate<FileList>,
+	htmlValidator: HtmlValidatorMapper = () => ({})
+) {
+	return (error = ""): ValidatorWrapper =>
+		Object.freeze({
+			js: value => {
+				try {
+					if (!(value instanceof FileList)) return error
+					if (jsValidatorPredicate(value)) return undefined
+					return error
+				} catch (err) {
+					console.error(err)
+					return error
+				}
+			},
+			html: htmlValidator,
+		})
+}
