@@ -2,6 +2,15 @@ import { getMatchingHtmlValidator } from "../../utilities/input"
 import { createNumberValidatorWrapperFactory } from "../factories/validatorCollectionFactory"
 
 const number = {
+	required: createNumberValidatorWrapperFactory(
+		() => true,
+		inputType =>
+			getMatchingHtmlValidator(inputType, {
+				numbers: () => ({
+					required: true,
+				}),
+			})
+	),
 	gt(number: number) {
 		return createNumberValidatorWrapperFactory(
 			value => value > number,

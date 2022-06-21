@@ -3,6 +3,18 @@ import { getMatchingHtmlValidator } from "../../utilities/input"
 import { createStringValidatorWrapperFactory } from "../factories/validatorCollectionFactory"
 
 const string = {
+	required: createStringValidatorWrapperFactory(
+		value => value.length > 0,
+		inputType =>
+			getMatchingHtmlValidator(inputType, {
+				strings: () => ({
+					required: true,
+				}),
+				textarea: () => ({
+					required: true,
+				}),
+			})
+	),
 	email: createStringValidatorWrapperFactory(
 		value => new RegExp(svelidateConfig.pattern.email).test(value),
 		inputType =>

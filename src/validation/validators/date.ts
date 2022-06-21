@@ -3,6 +3,15 @@ import { getMatchingHtmlValidator } from "../../utilities/input"
 import { createDateValidatorWrapperFactory } from "../factories/validatorCollectionFactory"
 
 const date = {
+	required: createDateValidatorWrapperFactory(
+		() => true,
+		inputType =>
+			getMatchingHtmlValidator(inputType, {
+				dates: () => ({
+					required: true,
+				}),
+			})
+	),
 	gt(date: Date) {
 		return createDateValidatorWrapperFactory(
 			value => value > date,
