@@ -19,6 +19,20 @@ export function createValidatorWrapperFactory(
 		})
 }
 
+export function createBooleanValidatorWrapperFactory(
+	jsValidatorPredicate: JsValidatorPredicate<boolean>,
+	htmlValidator: HtmlValidatorMapper = () => ({})
+) {
+	return (error = ""): ValidatorWrapper =>
+		Object.freeze({
+			js: value => {
+				if (jsValidatorPredicate(!!value)) return undefined // no error
+				return error
+			},
+			html: htmlValidator,
+		})
+}
+
 export function createStringValidatorWrapperFactory(
 	jsValidatorPredicate: JsValidatorPredicate<string>,
 	htmlValidator: HtmlValidatorMapper = () => ({})
