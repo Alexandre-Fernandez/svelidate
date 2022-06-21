@@ -26,8 +26,12 @@ export function createStringValidatorWrapperFactory(
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
 			js: value => {
-				if (typeof value !== "string") return error
-				if (jsValidatorPredicate(value)) return undefined // no error
+				const string =
+					typeof value === "string"
+						? value
+						: (value as any)?.toString()
+				if (typeof string !== "string") return error
+				if (jsValidatorPredicate(string)) return undefined // no error
 				return error
 			},
 			html: htmlValidator,
