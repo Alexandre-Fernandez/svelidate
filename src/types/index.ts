@@ -117,14 +117,15 @@ export type HtmlValidator = {
 }
 
 export type HtmlPseudoInputType = "select-multiple" | "select-one" | "textarea"
-export type HtmlNumberInput = "number" | "range"
+export type HtmlFileInputType = "file"
+export type HtmlNumberInputType = "number" | "range"
 export type HtmlDateTimeInputType =
 	| "datetime-local" // YYYY-MM-DDThh:mm
 	| "date" // YYYY-MM-DD
 	| "month" // YYYY-MM
 	| "week" // YYYY-Www
 	| "time" // hh:mm
-export type HtmlStringInput =
+export type HtmlStringInputType =
 	| "text"
 	| "tel"
 	| "email"
@@ -133,11 +134,11 @@ export type HtmlStringInput =
 	| "search"
 export type HtmlInputType =
 	| HtmlDateTimeInputType
-	| HtmlNumberInput
-	| HtmlStringInput
+	| HtmlNumberInputType
+	| HtmlStringInputType
+	| HtmlFileInputType
 	| "checkbox"
 	| "color"
-	| "file"
 	| "hidden"
 	| "radio"
 	| "reset"

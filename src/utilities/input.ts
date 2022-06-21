@@ -1,11 +1,12 @@
 import type {
 	HtmlDateTimeInputType,
 	SvelidateInputType,
-	HtmlNumberInput,
-	HtmlStringInput,
+	HtmlNumberInputType,
+	HtmlStringInputType,
 	HtmlPseudoInputType,
 	HtmlValidatorMapper,
 	HtmlValidator,
+	HtmlFileInputType,
 } from "../types"
 
 type MapperMapFunction<T extends HtmlValidatorMapper<any>> = (
@@ -15,9 +16,10 @@ type HtmlValidatorMapperMap = {
 	textarea: MapperMapFunction<
 		HtmlValidatorMapper<Extract<HtmlPseudoInputType, "textarea">>
 	>
-	numbers: MapperMapFunction<HtmlValidatorMapper<HtmlNumberInput>>
+	file: MapperMapFunction<HtmlValidatorMapper<HtmlFileInputType>>
+	numbers: MapperMapFunction<HtmlValidatorMapper<HtmlNumberInputType>>
 	dates: MapperMapFunction<HtmlValidatorMapper<HtmlDateTimeInputType>>
-	strings: MapperMapFunction<HtmlValidatorMapper<HtmlStringInput>>
+	strings: MapperMapFunction<HtmlValidatorMapper<HtmlStringInputType>>
 }
 const inputGroupMap: {
 	[K in keyof HtmlValidatorMapperMap]: NonNullable<
@@ -25,6 +27,7 @@ const inputGroupMap: {
 	>[]
 } = {
 	textarea: ["textarea"],
+	file: ["file"],
 	numbers: ["number", "range"],
 	dates: ["date", "datetime-local", "month", "time", "week"],
 	strings: ["email", "password", "search", "tel", "text", "url"],
