@@ -1,3 +1,5 @@
+import type { ByteUnit } from "../../types"
+import { toBytes } from "../../utilities/general"
 import { getMatchingHtmlValidator } from "../../utilities/input"
 import { createFileListValidatorWrapperFactory } from "../factories/validatorCollectionFactory"
 
@@ -11,6 +13,115 @@ const filelist = {
 		value => value.length > 0,
 		() => ({ required: true })
 	),
+	files: {
+		type: {},
+		size: {
+			gt(size: number, unit: ByteUnit = "b") {
+				const bytes = toBytes(size, unit)
+				return createFileListValidatorWrapperFactory(
+					value => {
+						for (let i = 0; i < value.length; i++) {
+							if (value[i].size <= bytes) return false
+						}
+						return true
+					},
+					() => ({})
+				)
+			},
+			gte(size: number, unit: ByteUnit = "b") {
+				const bytes = toBytes(size, unit)
+				return createFileListValidatorWrapperFactory(
+					value => {
+						for (let i = 0; i < value.length; i++) {
+							if (value[i].size < bytes) return false
+						}
+						return true
+					},
+					() => ({})
+				)
+			},
+			lt(size: number, unit: ByteUnit = "b") {
+				const bytes = toBytes(size, unit)
+				return createFileListValidatorWrapperFactory(
+					value => {
+						for (let i = 0; i < value.length; i++) {
+							if (value[i].size >= bytes) return false
+						}
+						return true
+					},
+					() => ({})
+				)
+			},
+			lte(size: number, unit: ByteUnit = "b") {
+				const bytes = toBytes(size, unit)
+				return createFileListValidatorWrapperFactory(
+					value => {
+						for (let i = 0; i < value.length; i++) {
+							if (value[i].size > bytes) return false
+						}
+						return true
+					},
+					() => ({})
+				)
+			},
+			inside(min: number, max: number, unit: ByteUnit = "b") {
+				const bytesMin = toBytes(min, unit)
+				const bytesMax = toBytes(max, unit)
+				return createFileListValidatorWrapperFactory(
+					value => {
+						for (let i = 0; i < value.length; i++) {
+							if (value[i].size < bytesMin) return false
+							if (value[i].size > bytesMax) return false
+						}
+						return true
+					},
+					() => ({})
+				)
+			},
+			outside(min: number, max: number, unit: ByteUnit = "b") {
+				const bytesMin = toBytes(min, unit)
+				const bytesMax = toBytes(max, unit)
+				return createFileListValidatorWrapperFactory(
+					value => {
+						for (let i = 0; i < value.length; i++) {
+							if (
+								value[i].size >= bytesMin &&
+								value[i].size <= bytesMax
+							) {
+								return false
+							}
+						}
+						return true
+					},
+					() => ({})
+				)
+			},
+			neq(size: number, unit: ByteUnit = "b") {
+				const bytes = toBytes(size, unit)
+				return createFileListValidatorWrapperFactory(
+					value => {
+						for (let i = 0; i < value.length; i++) {
+							if (value[i].size === bytes) return false
+						}
+						return true
+					},
+					() => ({})
+				)
+			},
+			eq(size: number, unit: ByteUnit = "b") {
+				const bytes = toBytes(size, unit)
+				return createFileListValidatorWrapperFactory(
+					value => {
+						for (let i = 0; i < value.length; i++) {
+							if (value[i].size !== bytes) return false
+						}
+						return true
+					},
+					() => ({})
+				)
+			},
+		},
+	},
 	length: {
 		gt(length: number) {
 			return createFileListValidatorWrapperFactory(

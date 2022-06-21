@@ -201,3 +201,5 @@ type HtmlAutocompleteAttribute =
 	| "impp"
 	| "url"
 	| "photo"
+
+export type ByteUnit = "b" | "kb" | "mb" | "gb" | "tb"
