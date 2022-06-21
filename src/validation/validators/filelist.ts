@@ -15,117 +15,49 @@ const filelist = {
 		gt(length: number) {
 			return createFileListValidatorWrapperFactory(
 				value => value.length > length,
-				inputType =>
-					getMatchingHtmlValidator(inputType, {
-						strings: () => ({
-							minLength: Math.floor(length) + 1,
-						}),
-						textarea: () => ({
-							minLength: Math.floor(length) + 1,
-						}),
-					})
+				() => ({})
 			)
 		},
 		gte(length: number) {
 			return createFileListValidatorWrapperFactory(
 				value => value.length >= length,
-				inputType =>
-					getMatchingHtmlValidator(inputType, {
-						strings: () => ({
-							minLength: Math.floor(length),
-						}),
-						textarea: () => ({
-							minLength: Math.floor(length),
-						}),
-					})
+				() => ({})
 			)
 		},
 		lt(length: number) {
 			return createFileListValidatorWrapperFactory(
 				value => value.length < length,
-				inputType =>
-					getMatchingHtmlValidator(inputType, {
-						strings: () => ({
-							maxLength: Math.floor(length) - 1,
-						}),
-						textarea: () => ({
-							maxLength: Math.floor(length) - 1,
-						}),
-					})
+				() => ({})
 			)
 		},
 		lte(length: number) {
 			return createFileListValidatorWrapperFactory(
 				value => value.length <= length,
-				inputType =>
-					getMatchingHtmlValidator(inputType, {
-						strings: () => ({
-							maxLength: Math.floor(length),
-						}),
-						textarea: () => ({
-							maxLength: Math.floor(length),
-						}),
-					})
+				() => ({})
 			)
 		},
 		inside(min: number, max: number) {
 			return createFileListValidatorWrapperFactory(
 				value => value.length >= min && value.length <= max,
-				inputType =>
-					getMatchingHtmlValidator(inputType, {
-						strings: () => ({
-							minLength: Math.floor(min),
-							maxLength: Math.floor(max),
-						}),
-						textarea: () => ({
-							minLength: Math.floor(min),
-							maxLength: Math.floor(max),
-						}),
-					})
+				() => ({})
 			)
 		},
 		outside(min: number, max: number) {
 			return createFileListValidatorWrapperFactory(
 				value => value.length < min && value.length > max,
-				inputType =>
-					getMatchingHtmlValidator(inputType, {
-						strings: () => ({
-							pattern: `(?=(.{0,${Math.floor(
-								Math.max(0, min - 1)
-							)}}|.{${Math.floor(max + 1)},})$)`,
-						}),
-					})
+				() => ({})
 			)
 		},
 		neq(length: number) {
-			const min = Math.max(Math.floor(length) - 1, 0)
-			const max = Math.floor(length) + 1
 			return createFileListValidatorWrapperFactory(
 				value => value.length !== length,
-				inputType =>
-					getMatchingHtmlValidator(inputType, {
-						strings: () => ({
-							pattern: `(?=(.{0,${Math.floor(
-								min
-							)}}|.{${Math.floor(max)},})$)`,
-						}),
-					})
+				() => ({})
 			)
 		},
 		eq(length: number) {
 			return createFileListValidatorWrapperFactory(
 				value => value.length === length,
-				inputType =>
-					getMatchingHtmlValidator(inputType, {
-						strings: () => ({
-							minLength: Math.floor(length),
-							maxLength: Math.floor(length),
-						}),
-						textarea: () => ({
-							minLength: Math.floor(length),
-							maxLength: Math.floor(length),
-						}),
-					})
+				() => ({})
 			)
 		},
 	},
