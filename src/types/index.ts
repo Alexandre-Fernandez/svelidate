@@ -10,13 +10,23 @@ export type SvelidateConfiguration = {
 	}
 }
 
+// TODO: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attributes
 type UninitializedFieldAttributes = {
-	type?: HtmlInputType
 	title?: string
+	placeholder?: string
+	readonly?: boolean
+	step?: number | string
+	multiple?: boolean
+	size?: number
+	orient?: HtmlOrientAttribute
+	autocomplete?: HtmlAutocompleteAttribute
+	spellcheck?: boolean | ""
 }
+
 export type UninitializedField<T = unknown> = {
 	value: T
 	validators?: ValidatorWrapper<T>[]
+	type?: HtmlInputType
 	touched?: boolean
 	attributes?: UninitializedFieldAttributes
 }
@@ -31,10 +41,11 @@ type SvelidateFieldAttributes = {
 export type SvelidateField<T = unknown> = {
 	value: T
 	validators?: ValidatorWrapper<T>[]
-	errors?: string[]
+	type?: HtmlInputType | null
 	touched?: boolean
-	invalid?: boolean
 	attributes?: SvelidateFieldAttributes
+	errors?: string[]
+	invalid?: boolean
 }
 
 export type NakedSvelidateForm<F extends UninitializedForm> = {
@@ -132,3 +143,60 @@ export type HtmlInputType =
 	| "reset"
 	| "submit"
 export type SvelidateInputType = HtmlInputType | HtmlPseudoInputType
+
+type HtmlOrientAttribute = "horizontal" | "vertical"
+type HtmlAutocompleteAttribute =
+	| "off"
+	| "on"
+	| "name"
+	| "honorific-prefix"
+	| "given-name"
+	| "additional-name"
+	| "family-name"
+	| "honorific-suffix"
+	| "nickname"
+	| "email"
+	| "username"
+	| "new-password"
+	| "current-password"
+	| "one-time-code"
+	| "organization-title"
+	| "organization"
+	| "street-address"
+	| "address-line1"
+	| "address-line2"
+	| "address-line3"
+	| "address-level4"
+	| "address-level3"
+	| "address-level2"
+	| "address-level1"
+	| "country"
+	| "country-name"
+	| "postal-code"
+	| "cc-name"
+	| "cc-given-name"
+	| "cc-additional-name"
+	| "cc-family-name"
+	| "cc-number"
+	| "cc-exp"
+	| "cc-exp-month"
+	| "cc-exp-year"
+	| "cc-csc"
+	| "cc-type"
+	| "transaction-currency"
+	| "transaction-amount"
+	| "language"
+	| "bday"
+	| "bday-day"
+	| "bday-month"
+	| "bday-year"
+	| "sex"
+	| "tel"
+	| "tel-country-code"
+	| "tel-national"
+	| "tel-area-code"
+	| "tel-local"
+	| "tel-extension"
+	| "impp"
+	| "url"
+	| "photo"

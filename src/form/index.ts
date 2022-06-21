@@ -137,9 +137,9 @@ function updateFormField(
 		}
 		// validate html
 		if (mode === "all" || mode === "html-only") {
-			if (!formField.attributes.type) continue
+			if (!formField.type) continue
 			const { pattern: lookahead, ...localValidator } = validator.html(
-				formField.attributes.type
+				formField.type
 			)
 			if (lookahead && isLookahead(lookahead)) pattern += lookahead
 			mergeObjects(htmlValidator, localValidator)
@@ -164,6 +164,7 @@ function createNakedSvelidateForm<F extends UninitializedForm>(form: F) {
 				touched: false,
 				validators: [],
 				invalid: false,
+				type: null,
 				attributes: {
 					name,
 					...attributes,
