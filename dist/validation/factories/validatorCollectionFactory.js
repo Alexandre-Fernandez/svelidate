@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createDateValidatorWrapperFactory = exports.createNumberValidatorWrapperFactory = exports.createStringValidatorWrapperFactory = exports.createValidatorWrapperFactory = void 0;
+exports.createFileListValidatorWrapperFactory = exports.createDateValidatorWrapperFactory = exports.createNumberValidatorWrapperFactory = exports.createStringValidatorWrapperFactory = exports.createBooleanValidatorWrapperFactory = exports.createValidatorWrapperFactory = void 0;
 const date_1 = require("../../utilities/date");
 function createValidatorWrapperFactory(jsValidatorPredicate, htmlValidator = () => ({})) {
     return (error = "") => Object.freeze({
@@ -13,12 +13,26 @@ function createValidatorWrapperFactory(jsValidatorPredicate, htmlValidator = () 
     });
 }
 exports.createValidatorWrapperFactory = createValidatorWrapperFactory;
+function createBooleanValidatorWrapperFactory(jsValidatorPredicate, htmlValidator = () => ({})) {
+    return (error = "") => Object.freeze({
+        js: value => {
+            if (jsValidatorPredicate(!!value))
+                return undefined; // no error
+            return error;
+        },
+        html: htmlValidator,
+    });
+}
+exports.createBooleanValidatorWrapperFactory = createBooleanValidatorWrapperFactory;
 function createStringValidatorWrapperFactory(jsValidatorPredicate, htmlValidator = () => ({})) {
     return (error = "") => Object.freeze({
         js: value => {
-            if (typeof value !== "string")
+            const string = typeof value === "string"
+                ? value
+                : value === null || value === void 0 ? void 0 : value.toString();
+            if (typeof string !== "string")
                 return error;
-            if (jsValidatorPredicate(value))
+            if (jsValidatorPredicate(string))
                 return undefined; // no error
             return error;
         },
@@ -56,4 +70,23 @@ function createDateValidatorWrapperFactory(jsValidatorPredicate, htmlValidator =
     });
 }
 exports.createDateValidatorWrapperFactory = createDateValidatorWrapperFactory;
+function createFileListValidatorWrapperFactory(jsValidatorPredicate, htmlValidator = () => ({})) {
+    return (error = "") => Object.freeze({
+        js: value => {
+            try {
+                if (!(value instanceof FileList))
+                    return error;
+                if (jsValidatorPredicate(value))
+                    return undefined;
+                return error;
+            }
+            catch (err) {
+                console.error(err);
+                return error;
+            }
+        },
+        html: htmlValidator,
+    });
+}
+exports.createFileListValidatorWrapperFactory = createFileListValidatorWrapperFactory;
 //# sourceMappingURL=validatorCollectionFactory.js.map

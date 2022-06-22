@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.date = exports.number = exports.string = exports.general = void 0;
-var general_1 = require("./general");
-Object.defineProperty(exports, "general", { enumerable: true, get: function () { return general_1.default; } });
+exports.date = exports.number = exports.string = exports.boolean = void 0;
+var boolean_1 = require("./boolean");
+Object.defineProperty(exports, "boolean", { enumerable: true, get: function () { return boolean_1.default; } });
 var string_1 = require("./string");
 Object.defineProperty(exports, "string", { enumerable: true, get: function () { return string_1.default; } });
 var number_1 = require("./number");

@@ -1,4 +1,8 @@
 declare const number: {
+    required: (error?: string) => Readonly<{
+        js: import("../..").JsValidator<unknown>;
+        html: import("../..").HtmlValidatorMapper<import("../../types").SvelidateInputType>;
+    }>;
     gt(number: number): (error?: string) => Readonly<{
         js: import("../..").JsValidator<unknown>;
         html: import("../..").HtmlValidatorMapper<import("../../types").SvelidateInputType>;

@@ -4,6 +4,14 @@ const config_1 = require("../../form/config");
 const input_1 = require("../../utilities/input");
 const validatorCollectionFactory_1 = require("../factories/validatorCollectionFactory");
 const string = {
+    required: (0, validatorCollectionFactory_1.createStringValidatorWrapperFactory)(value => value.length > 0, inputType => (0, input_1.getMatchingHtmlValidator)(inputType, {
+        strings: () => ({
+            required: true,
+        }),
+        textarea: () => ({
+            required: true,
+        }),
+    })),
     email: (0, validatorCollectionFactory_1.createStringValidatorWrapperFactory)(value => new RegExp(config_1.svelidateConfig.pattern.email).test(value), inputType => (0, input_1.getMatchingHtmlValidator)(inputType, {
         strings: () => ({
             pattern: `(?=^${config_1.svelidateConfig.pattern.email}$)`,

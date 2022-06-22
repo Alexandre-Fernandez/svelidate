@@ -119,9 +119,9 @@ function updateFormField(formField, config) {
         }
         // validate html
         if (mode === "all" || mode === "html-only") {
-            if (!formField.attributes.type)
+            if (!formField.type)
                 continue;
-            const _a = validator.html(formField.attributes.type), { pattern: lookahead } = _a, localValidator = __rest(_a, ["pattern"]);
+            const _a = validator.html(formField.type), { pattern: lookahead } = _a, localValidator = __rest(_a, ["pattern"]);
             if (lookahead && (0, regex_1.isLookahead)(lookahead))
                 pattern += lookahead;
             (0, general_1.mergeObjects)(htmlValidator, localValidator);
@@ -141,7 +141,7 @@ function updateFormField(formField, config) {
 function createNakedSvelidateForm(form) {
     return Object.entries(form).reduce((prev, _a) => {
         var [name, _b] = _a, { attributes } = _b, otherProps = __rest(_b, ["attributes"]);
-        const formField = Object.assign({ errors: [], touched: false, validators: [], invalid: false, attributes: Object.assign({ name }, attributes) }, otherProps);
+        const formField = Object.assign({ errors: [], touched: false, validators: [], invalid: false, type: null, attributes: Object.assign({ name }, attributes) }, otherProps);
         return Object.assign(Object.assign({}, prev), { [name]: formField });
     }, {});
 }

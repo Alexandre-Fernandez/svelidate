@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.isTextareaInput = exports.isStringInput = exports.isDateInput = exports.isNumberInput = exports.getMatchingHtmlValidator = void 0;
 const inputGroupMap = {
     textarea: ["textarea"],
+    file: ["file"],
     numbers: ["number", "range"],
     dates: ["date", "datetime-local", "month", "time", "week"],
     strings: ["email", "password", "search", "tel", "text", "url"],

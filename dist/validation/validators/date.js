@@ -4,6 +4,11 @@ const date_1 = require("../../utilities/date");
 const input_1 = require("../../utilities/input");
 const validatorCollectionFactory_1 = require("../factories/validatorCollectionFactory");
 const date = {
+    required: (0, validatorCollectionFactory_1.createDateValidatorWrapperFactory)(() => true, inputType => (0, input_1.getMatchingHtmlValidator)(inputType, {
+        dates: () => ({
+            required: true,
+        }),
+    })),
     gt(date) {
         return (0, validatorCollectionFactory_1.createDateValidatorWrapperFactory)(value => value > date, inputType => (0, input_1.getMatchingHtmlValidator)(inputType, {
             dates: dateInput => {

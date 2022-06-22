@@ -1,4 +1,8 @@
 declare const string: {
+    required: (error?: string) => Readonly<{
+        js: import("../..").JsValidator<unknown>;
+        html: import("../..").HtmlValidatorMapper<import("../../types").SvelidateInputType>;
+    }>;
     email: (error?: string) => Readonly<{
         js: import("../..").JsValidator<unknown>;
         html: import("../..").HtmlValidatorMapper<import("../../types").SvelidateInputType>;

@@ -1,4 +1,8 @@
 declare const date: {
+    required: (error?: string) => Readonly<{
+        js: import("../..").JsValidator<unknown>;
+        html: import("../..").HtmlValidatorMapper<import("../../types").SvelidateInputType>;
+    }>;
     gt(date: Date): (error?: string) => Readonly<{
         js: import("../..").JsValidator<unknown>;
         html: import("../..").HtmlValidatorMapper<import("../../types").SvelidateInputType>;
