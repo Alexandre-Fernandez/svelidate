@@ -68,28 +68,28 @@ const filelist = {
     },
     length: {
         gt(length) {
-            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length > length, () => ({}));
+            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length > length, () => ({ multiple: true }));
         },
         gte(length) {
-            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length >= length, () => ({}));
+            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length >= length, () => ({ multiple: true }));
         },
         lt(length) {
-            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length < length, () => ({}));
+            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length < length, () => (length <= 2 ? {} : { multiple: true }));
         },
         lte(length) {
-            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length <= length, () => ({}));
+            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length <= length, () => (length <= 1 ? {} : { multiple: true }));
         },
         inside(min, max) {
-            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length >= min && value.length <= max, () => ({}));
+            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length >= min && value.length <= max, () => (max <= 1 ? {} : { multiple: true }));
         },
         outside(min, max) {
-            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length < min && value.length > max, () => ({}));
+            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length < min && value.length > max, () => ({ multiple: true }));
         },
         neq(length) {
-            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length !== length, () => ({}));
+            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length !== length, () => ({ multiple: true }));
         },
         eq(length) {
-            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length === length, () => ({}));
+            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length === length, () => (length <= 1 ? {} : { multiple: true }));
         },
     },
 };

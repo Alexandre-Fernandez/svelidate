@@ -92,6 +92,7 @@ export declare type HtmlValidator = {
     min?: number | string;
     max?: number | string;
     accept?: string;
+    multiple?: boolean;
 };
 export declare type HtmlPseudoInputType = "select-multiple" | "select-one" | "textarea";
 export declare type HtmlFileInputType = "file";
