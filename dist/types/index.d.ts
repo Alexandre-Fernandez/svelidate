@@ -13,11 +13,11 @@ declare type UninitializedFieldAttributes = {
     placeholder?: string;
     readonly?: boolean;
     step?: number | string;
-    multiple?: boolean;
     size?: number;
-    orient?: HtmlOrientAttribute;
     autocomplete?: HtmlAutocompleteAttribute;
     spellcheck?: boolean | "";
+    autocapitalize?: boolean;
+    autofocus?: boolean;
 };
 export declare type UninitializedField<T = unknown> = {
     value: T;
@@ -100,7 +100,6 @@ export declare type HtmlDateTimeInputType = "datetime-local" | "date" | "month" 
 export declare type HtmlStringInputType = "text" | "tel" | "email" | "url" | "password" | "search";
 export declare type HtmlInputType = HtmlDateTimeInputType | HtmlNumberInputType | HtmlStringInputType | HtmlFileInputType | "checkbox" | "color" | "hidden" | "radio" | "reset" | "submit";
 export declare type SvelidateInputType = HtmlInputType | HtmlPseudoInputType;
-declare type HtmlOrientAttribute = "horizontal" | "vertical";
 declare type HtmlAutocompleteAttribute = "off" | "on" | "name" | "honorific-prefix" | "given-name" | "additional-name" | "family-name" | "honorific-suffix" | "nickname" | "email" | "username" | "new-password" | "current-password" | "one-time-code" | "organization-title" | "organization" | "street-address" | "address-line1" | "address-line2" | "address-line3" | "address-level4" | "address-level3" | "address-level2" | "address-level1" | "country" | "country-name" | "postal-code" | "cc-name" | "cc-given-name" | "cc-additional-name" | "cc-family-name" | "cc-number" | "cc-exp" | "cc-exp-month" | "cc-exp-year" | "cc-csc" | "cc-type" | "transaction-currency" | "transaction-amount" | "language" | "bday" | "bday-day" | "bday-month" | "bday-year" | "sex" | "tel" | "tel-country-code" | "tel-national" | "tel-area-code" | "tel-local" | "tel-extension" | "impp" | "url" | "photo";
 export declare type ByteUnit = "b" | "kb" | "mb" | "gb" | "tb";
 export declare type VectorExtension = "svg" | "svgz";
