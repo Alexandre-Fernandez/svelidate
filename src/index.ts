@@ -19,5 +19,6 @@ export {
 	createNumberValidatorWrapperFactory,
 	createDateValidatorWrapperFactory,
 	createFileListValidatorWrapperFactory,
+	createBooleanValidatorWrapperFactory,
 } from "./validation/factories/validatorCollectionFactory"
 export * from "./validation/validators"
