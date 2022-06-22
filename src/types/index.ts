@@ -40,7 +40,7 @@ type SvelidateFieldAttributes = {
 export type SvelidateField<T = unknown> = {
 	value: T
 	validators?: ValidatorWrapper<T>[]
-	type?: HtmlInputType | null
+	type?: SvelidateInputType | null
 	touched?: boolean
 	attributes?: SvelidateFieldAttributes
 	errors?: string[]
