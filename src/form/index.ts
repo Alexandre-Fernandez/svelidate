@@ -90,14 +90,16 @@ export function svelidate<F extends UninitializedForm>(
 		},
 		set(newForm) {
 			forEachFormField(newForm, (formField, key) => {
-				if (lastValues[key] === undefined) return
+				// TODO optimize lastValues to only render modified values (some
+				// values will be mutable objects (e.g. FileList)), it will need
+				// to check object content (atleast in a shallow way)
 				if (lastValues[key] !== formField.value) {
 					if (!formField.touched) {
 						formField.touched = true
 						newForm.$on.touch(key)
 					}
-					updateFormField(formField, localConfig)
 				}
+				updateFormField(formField, localConfig)
 			})
 			updateFormState(newForm)
 			storeDispatch(subscribers, newForm)
