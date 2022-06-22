@@ -29,14 +29,14 @@ const filelist = {
 				value => assert(value, file => isImage(file.name, "raster")),
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
-						file: () => ({ accept: vectorExtensions.join(",") }),
+						file: () => ({ accept: rasterExtensions.join(",") }),
 					})
 			),
 			vector: createFileListValidatorWrapperFactory(
 				value => assert(value, file => isImage(file.name, "vector")),
 				inputType =>
 					getMatchingHtmlValidator(inputType, {
-						file: () => ({ accept: rasterExtensions.join(",") }),
+						file: () => ({ accept: vectorExtensions.join(",") }),
 					})
 			),
 			video: createFileListValidatorWrapperFactory(
