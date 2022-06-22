@@ -143,49 +143,49 @@ const filelist = {
 		gt(length: number) {
 			return createFileListValidatorWrapperFactory(
 				value => value.length > length,
-				() => ({})
+				() => ({ multiple: true })
 			)
 		},
 		gte(length: number) {
 			return createFileListValidatorWrapperFactory(
 				value => value.length >= length,
-				() => ({})
+				() => ({ multiple: true })
 			)
 		},
 		lt(length: number) {
 			return createFileListValidatorWrapperFactory(
 				value => value.length < length,
-				() => ({})
+				() => (length <= 2 ? {} : { multiple: true })
 			)
 		},
 		lte(length: number) {
 			return createFileListValidatorWrapperFactory(
 				value => value.length <= length,
-				() => ({})
+				() => (length <= 1 ? {} : { multiple: true })
 			)
 		},
 		inside(min: number, max: number) {
 			return createFileListValidatorWrapperFactory(
 				value => value.length >= min && value.length <= max,
-				() => ({})
+				() => (max <= 1 ? {} : { multiple: true })
 			)
 		},
 		outside(min: number, max: number) {
 			return createFileListValidatorWrapperFactory(
 				value => value.length < min && value.length > max,
-				() => ({})
+				() => ({ multiple: true })
 			)
 		},
 		neq(length: number) {
 			return createFileListValidatorWrapperFactory(
 				value => value.length !== length,
-				() => ({})
+				() => ({ multiple: true })
 			)
 		},
 		eq(length: number) {
 			return createFileListValidatorWrapperFactory(
 				value => value.length === length,
-				() => ({})
+				() => (length <= 1 ? {} : { multiple: true })
 			)
 		},
 	},
