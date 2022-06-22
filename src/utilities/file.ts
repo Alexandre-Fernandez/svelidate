@@ -5,8 +5,8 @@ import type {
 	VideoExtension,
 } from "../types"
 
-const vectorExtensions: VectorExtension[] = ["svg", "svgz"]
-const rasterExtensions: RasterExtension[] = [
+export const vectorExtensions: VectorExtension[] = ["svg", "svgz"]
+export const rasterExtensions: RasterExtension[] = [
 	".tiff",
 	".pjp",
 	".jfif",
@@ -25,7 +25,7 @@ const rasterExtensions: RasterExtension[] = [
 	".avif",
 ]
 
-const videoExtensions: VideoExtension[] = [
+export const videoExtensions: VideoExtension[] = [
 	".ogm",
 	".wmv",
 	".mpg",
@@ -39,7 +39,7 @@ const videoExtensions: VideoExtension[] = [
 	".avi",
 ]
 
-const audioExtensions: AudioExtension[] = [
+export const audioExtensions: AudioExtension[] = [
 	".opus",
 	".flac",
 	".webm",

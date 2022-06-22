@@ -1,44 +1,15 @@
 import type { ByteUnit, FileExtension } from "../../types"
-import { getExtension, isAudio, isImage, isVideo } from "../../utilities/file"
+import {
+	getExtension,
+	isAudio,
+	isImage,
+	isVideo,
+	rasterExtensions,
+	vectorExtensions,
+} from "../../utilities/file"
 import { toBytes } from "../../utilities/general"
 import { getMatchingHtmlValidator } from "../../utilities/input"
 import { createFileListValidatorWrapperFactory } from "../factories/validatorCollectionFactory"
-
-// formats
-// size
-// number of files
-// filenames ?
-/*
-let File = {
-	name: "black.png",
-	lastModified: 1643617999316,
-	webkitRelativePath: "",
-	size: 144, // bytes
-	type: "image/png",
-}
-{
-	name: "rotated-phone.xcf",
-	lastModified: 1644198965043,
-	webkitRelativePath: "",
-	size: 678609,
-	type: "image/x-xcf",
-}
-{
-	name: "rabbit.mp4",
-	lastModified: 1468153484000,
-	webkitRelativePath: "",
-	size: 346861418,
-	type: "video/mp4",
-}
-
-image/*
-".tiff", ".pjp", ".jfif", ".bmp", ".gif", ".svg", ".png", ".xbm", ".dib", ".jxl", ".jpeg", 
-".svgz", ".jpg", ".webp", ".ico", ".tif", ".pjpeg", ".avif"
-video/*
-".ogm", ".wmv", ".mpg", ".webm", ".ogv", ".mov", ".asx", ".mpeg", ".mp4", ".m4v", ".avi"
-audio/*
-".opus", ".flac", ".webm", ".weba", ".wav", ".ogg", ".m4a", ".oga", ".mid", ".mp3", ".aiff", ".wma", ".au"
-*/
 
 const filelist = {
 	required: createFileListValidatorWrapperFactory(
@@ -49,23 +20,38 @@ const filelist = {
 		type: {
 			image: createFileListValidatorWrapperFactory(
 				value => assert(value, file => isImage(file.name)),
-				() => ({})
+				inputType =>
+					getMatchingHtmlValidator(inputType, {
+						file: () => ({ accept: "image/*" }),
+					})
 			),
 			raster: createFileListValidatorWrapperFactory(
 				value => assert(value, file => isImage(file.name, "raster")),
-				() => ({})
+				inputType =>
+					getMatchingHtmlValidator(inputType, {
+						file: () => ({ accept: vectorExtensions.join(",") }),
+					})
 			),
 			vector: createFileListValidatorWrapperFactory(
 				value => assert(value, file => isImage(file.name, "vector")),
-				() => ({})
+				inputType =>
+					getMatchingHtmlValidator(inputType, {
+						file: () => ({ accept: rasterExtensions.join(",") }),
+					})
 			),
 			video: createFileListValidatorWrapperFactory(
 				value => assert(value, file => isVideo(file.name)),
-				() => ({})
+				inputType =>
+					getMatchingHtmlValidator(inputType, {
+						file: () => ({ accept: "video/*" }),
+					})
 			),
 			audio: createFileListValidatorWrapperFactory(
 				value => assert(value, file => isAudio(file.name)),
-				() => ({})
+				inputType =>
+					getMatchingHtmlValidator(inputType, {
+						file: () => ({ accept: "audio/*" }),
+					})
 			),
 			is: (allowedExtensions: FileExtension[]) =>
 				createFileListValidatorWrapperFactory(
@@ -75,7 +61,12 @@ const filelist = {
 								ext => ext === getExtension(file.name)
 							)
 						),
-					() => ({})
+					inputType =>
+						getMatchingHtmlValidator(inputType, {
+							file: () => ({
+								accept: allowedExtensions.join(","),
+							}),
+						})
 				),
 		},
 		size: {

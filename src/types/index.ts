@@ -114,6 +114,7 @@ export type HtmlValidator = {
 	maxLength?: number
 	min?: number | string
 	max?: number | string
+	accept?: string
 }
 
 export type HtmlPseudoInputType = "select-multiple" | "select-one" | "textarea"
