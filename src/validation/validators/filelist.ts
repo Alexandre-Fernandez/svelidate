@@ -1,5 +1,5 @@
-import type { ByteUnit } from "../../types"
-import { isAudio, isImage, isVideo } from "../../utilities/file"
+import type { ByteUnit, FileExtension } from "../../types"
+import { getExtension, isAudio, isImage, isVideo } from "../../utilities/file"
 import { toBytes } from "../../utilities/general"
 import { getMatchingHtmlValidator } from "../../utilities/input"
 import { createFileListValidatorWrapperFactory } from "../factories/validatorCollectionFactory"
@@ -67,6 +67,16 @@ const filelist = {
 				value => assert(value, file => isAudio(file.name)),
 				() => ({})
 			),
+			is: (allowedExtensions: FileExtension[]) =>
+				createFileListValidatorWrapperFactory(
+					value =>
+						assert(value, file =>
+							allowedExtensions.some(
+								ext => ext === getExtension(file.name)
+							)
+						),
+					() => ({})
+				),
 		},
 		size: {
 			gt(size: number, unit: ByteUnit = "b") {
