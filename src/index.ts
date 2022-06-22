@@ -18,5 +18,6 @@ export {
 	createStringValidatorWrapperFactory,
 	createNumberValidatorWrapperFactory,
 	createDateValidatorWrapperFactory,
+	createFileListValidatorWrapperFactory,
 } from "./validation/factories/validatorCollectionFactory"
 export * from "./validation/validators"
