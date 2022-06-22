@@ -5,7 +5,7 @@ import type {
 	VideoExtension,
 } from "../types"
 
-export const vectorExtensions: VectorExtension[] = ["svg", "svgz"]
+export const vectorExtensions: VectorExtension[] = [".svg", ".svgz"]
 export const rasterExtensions: RasterExtension[] = [
 	".tiff",
 	".pjp",

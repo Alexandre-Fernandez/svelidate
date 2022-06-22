@@ -203,7 +203,7 @@ type HtmlAutocompleteAttribute =
 
 export type ByteUnit = "b" | "kb" | "mb" | "gb" | "tb"
 
-export type VectorExtension = "svg" | "svgz"
+export type VectorExtension = ".svg" | ".svgz"
 export type RasterExtension =
 	| ".tiff"
 	| ".pjp"
