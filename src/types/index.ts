@@ -10,17 +10,16 @@ export type SvelidateConfiguration = {
 	}
 }
 
-// TODO: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attributes
 type UninitializedFieldAttributes = {
 	title?: string
 	placeholder?: string
 	readonly?: boolean
 	step?: number | string
-	multiple?: boolean
 	size?: number
-	orient?: HtmlOrientAttribute
 	autocomplete?: HtmlAutocompleteAttribute
 	spellcheck?: boolean | ""
+	autocapitalize?: boolean
+	autofocus?: boolean
 }
 
 export type UninitializedField<T = unknown> = {
@@ -146,7 +145,6 @@ export type HtmlInputType =
 	| "submit"
 export type SvelidateInputType = HtmlInputType | HtmlPseudoInputType
 
-type HtmlOrientAttribute = "horizontal" | "vertical"
 type HtmlAutocompleteAttribute =
 	| "off"
 	| "on"
