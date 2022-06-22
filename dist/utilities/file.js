@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getExtension = exports.isAudio = exports.isVideo = exports.isImage = exports.audioExtensions = exports.videoExtensions = exports.rasterExtensions = exports.vectorExtensions = void 0;
-exports.vectorExtensions = ["svg", "svgz"];
+exports.vectorExtensions = [".svg", ".svgz"];
 exports.rasterExtensions = [
     ".tiff",
     ".pjp",
