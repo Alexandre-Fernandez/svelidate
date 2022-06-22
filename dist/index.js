@@ -14,7 +14,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createDateValidatorWrapperFactory = exports.createNumberValidatorWrapperFactory = exports.createStringValidatorWrapperFactory = exports.createValidatorWrapperFactory = exports.validateIf = exports.getMatchingHtmlValidator = exports.svelidateConfig = exports.svelidate = void 0;
+exports.createFileListValidatorWrapperFactory = exports.createDateValidatorWrapperFactory = exports.createNumberValidatorWrapperFactory = exports.createStringValidatorWrapperFactory = exports.createValidatorWrapperFactory = exports.validateIf = exports.getMatchingHtmlValidator = exports.svelidateConfig = exports.svelidate = void 0;
 var form_1 = require("./form");
 Object.defineProperty(exports, "svelidate", { enumerable: true, get: function () { return form_1.svelidate; } });
 var config_1 = require("./form/config");
@@ -28,5 +28,6 @@ Object.defineProperty(exports, "createValidatorWrapperFactory", { enumerable: tr
 Object.defineProperty(exports, "createStringValidatorWrapperFactory", { enumerable: true, get: function () { return validatorCollectionFactory_1.createStringValidatorWrapperFactory; } });
 Object.defineProperty(exports, "createNumberValidatorWrapperFactory", { enumerable: true, get: function () { return validatorCollectionFactory_1.createNumberValidatorWrapperFactory; } });
 Object.defineProperty(exports, "createDateValidatorWrapperFactory", { enumerable: true, get: function () { return validatorCollectionFactory_1.createDateValidatorWrapperFactory; } });
+Object.defineProperty(exports, "createFileListValidatorWrapperFactory", { enumerable: true, get: function () { return validatorCollectionFactory_1.createFileListValidatorWrapperFactory; } });
 __exportStar(require("./validation/validators"), exports);
 //# sourceMappingURL=index.js.map
