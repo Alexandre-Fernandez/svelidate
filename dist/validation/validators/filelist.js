@@ -12,10 +12,10 @@ const filelist = {
                 file: () => ({ accept: "image/*" }),
             })),
             raster: (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => assert(value, file => (0, file_1.isImage)(file.name, "raster")), inputType => (0, input_1.getMatchingHtmlValidator)(inputType, {
-                file: () => ({ accept: file_1.vectorExtensions.join(",") }),
+                file: () => ({ accept: file_1.rasterExtensions.join(",") }),
             })),
             vector: (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => assert(value, file => (0, file_1.isImage)(file.name, "vector")), inputType => (0, input_1.getMatchingHtmlValidator)(inputType, {
-                file: () => ({ accept: file_1.rasterExtensions.join(",") }),
+                file: () => ({ accept: file_1.vectorExtensions.join(",") }),
             })),
             video: (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => assert(value, file => (0, file_1.isVideo)(file.name)), inputType => (0, input_1.getMatchingHtmlValidator)(inputType, {
                 file: () => ({ accept: "video/*" }),
