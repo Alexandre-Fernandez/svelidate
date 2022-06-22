@@ -17,8 +17,8 @@ type UninitializedFieldAttributes = {
 	step?: number | string
 	size?: number
 	autocomplete?: HtmlAutocompleteAttribute
-	spellcheck?: boolean | ""
-	autocapitalize?: boolean
+	spellcheck?: boolean | "true" | "false" | null | undefined
+	autocapitalize?: string | null | undefined
 	autofocus?: boolean
 }
 
