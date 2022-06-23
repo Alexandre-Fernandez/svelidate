@@ -20,6 +20,8 @@ type UninitializedFieldAttributes = {
 	spellcheck?: boolean | "true" | "false" | null | undefined
 	autocapitalize?: string | null | undefined
 	autofocus?: boolean
+	inputmode?: HtmlInputmodeAttribute
+	tabindex?: number
 }
 
 export type UninitializedField<T = unknown> = {
@@ -103,9 +105,6 @@ export type ValidatorWrapper<
 export type JsValidator<T = unknown> = (value: T) => string | undefined
 export type JsValidatorPredicate<T = unknown> = (value: T) => boolean
 
-export type HtmlValidatorMapper<
-	T extends SvelidateInputType = SvelidateInputType
-> = (inputType?: T) => HtmlValidator
 export type HtmlValidator = {
 	required?: boolean
 	pattern?: string
@@ -114,8 +113,10 @@ export type HtmlValidator = {
 	min?: number | string
 	max?: number | string
 	accept?: string
-	multiple?: boolean
 }
+export type HtmlValidatorMapper<
+	T extends SvelidateInputType = SvelidateInputType
+> = (inputType?: T) => HtmlValidator
 
 export type HtmlPseudoInputType = "select-multiple" | "select-one" | "textarea"
 export type HtmlFileInputType = "file"
@@ -145,6 +146,16 @@ export type HtmlInputType =
 	| "reset"
 	| "submit"
 export type SvelidateInputType = HtmlInputType | HtmlPseudoInputType
+
+type HtmlInputmodeAttribute =
+	| "none"
+	| "text"
+	| "decimal"
+	| "numeric"
+	| "tel"
+	| "search"
+	| "email"
+	| "url"
 
 type HtmlAutocompleteAttribute =
 	| "off"
