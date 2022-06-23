@@ -18,6 +18,8 @@ declare type UninitializedFieldAttributes = {
     spellcheck?: boolean | "true" | "false" | null | undefined;
     autocapitalize?: string | null | undefined;
     autofocus?: boolean;
+    inputmode?: HtmlInputmodeAttribute;
+    tabindex?: number;
 };
 export declare type UninitializedField<T = unknown> = {
     value: T;
@@ -35,7 +37,7 @@ declare type SvelidateFieldAttributes = {
 export declare type SvelidateField<T = unknown> = {
     value: T;
     validators?: ValidatorWrapper<T>[];
-    type?: HtmlInputType | null;
+    type?: SvelidateInputType | null;
     touched?: boolean;
     attributes?: SvelidateFieldAttributes;
     errors?: string[];
@@ -83,7 +85,6 @@ export declare type ValidatorWrapper<T = unknown, I extends SvelidateInputType =
 }>;
 export declare type JsValidator<T = unknown> = (value: T) => string | undefined;
 export declare type JsValidatorPredicate<T = unknown> = (value: T) => boolean;
-export declare type HtmlValidatorMapper<T extends SvelidateInputType = SvelidateInputType> = (inputType?: T) => HtmlValidator;
 export declare type HtmlValidator = {
     required?: boolean;
     pattern?: string;
@@ -92,8 +93,8 @@ export declare type HtmlValidator = {
     min?: number | string;
     max?: number | string;
     accept?: string;
-    multiple?: boolean;
 };
+export declare type HtmlValidatorMapper<T extends SvelidateInputType = SvelidateInputType> = (inputType?: T) => HtmlValidator;
 export declare type HtmlPseudoInputType = "select-multiple" | "select-one" | "textarea";
 export declare type HtmlFileInputType = "file";
 export declare type HtmlNumberInputType = "number" | "range";
@@ -101,6 +102,7 @@ export declare type HtmlDateTimeInputType = "datetime-local" | "date" | "month" 
 export declare type HtmlStringInputType = "text" | "tel" | "email" | "url" | "password" | "search";
 export declare type HtmlInputType = HtmlDateTimeInputType | HtmlNumberInputType | HtmlStringInputType | HtmlFileInputType | "checkbox" | "color" | "hidden" | "radio" | "reset" | "submit";
 export declare type SvelidateInputType = HtmlInputType | HtmlPseudoInputType;
+declare type HtmlInputmodeAttribute = "none" | "text" | "decimal" | "numeric" | "tel" | "search" | "email" | "url";
 declare type HtmlAutocompleteAttribute = "off" | "on" | "name" | "honorific-prefix" | "given-name" | "additional-name" | "family-name" | "honorific-suffix" | "nickname" | "email" | "username" | "new-password" | "current-password" | "one-time-code" | "organization-title" | "organization" | "street-address" | "address-line1" | "address-line2" | "address-line3" | "address-level4" | "address-level3" | "address-level2" | "address-level1" | "country" | "country-name" | "postal-code" | "cc-name" | "cc-given-name" | "cc-additional-name" | "cc-family-name" | "cc-number" | "cc-exp" | "cc-exp-month" | "cc-exp-year" | "cc-csc" | "cc-type" | "transaction-currency" | "transaction-amount" | "language" | "bday" | "bday-day" | "bday-month" | "bday-year" | "sex" | "tel" | "tel-country-code" | "tel-national" | "tel-area-code" | "tel-local" | "tel-extension" | "impp" | "url" | "photo";
 export declare type ByteUnit = "b" | "kb" | "mb" | "gb" | "tb";
 export declare type VectorExtension = ".svg" | ".svgz";

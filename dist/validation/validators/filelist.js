@@ -68,28 +68,28 @@ const filelist = {
     },
     length: {
         gt(length) {
-            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length > length, () => ({ multiple: true }));
+            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length > length, () => ({}));
         },
         gte(length) {
-            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length >= length, () => ({ multiple: true }));
+            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length >= length, () => ({}));
         },
         lt(length) {
-            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length < length, () => (length <= 2 ? {} : { multiple: true }));
+            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length < length, () => ({}));
         },
         lte(length) {
-            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length <= length, () => (length <= 1 ? {} : { multiple: true }));
+            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length <= length, () => ({}));
         },
         inside(min, max) {
-            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length >= min && value.length <= max, () => (max <= 1 ? {} : { multiple: true }));
+            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length >= min && value.length <= max, () => ({}));
         },
         outside(min, max) {
-            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length < min && value.length > max, () => ({ multiple: true }));
+            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length < min && value.length > max, () => ({}));
         },
         neq(length) {
-            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length !== length, () => ({ multiple: true }));
+            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length !== length, () => ({}));
         },
         eq(length) {
-            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length === length, () => (length <= 1 ? {} : { multiple: true }));
+            return (0, validatorCollectionFactory_1.createFileListValidatorWrapperFactory)(value => value.length === length, () => ({}));
         },
     },
 };
