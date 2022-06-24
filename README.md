@@ -19,35 +19,40 @@ pnpm add svelidate
 
 ```ts
 <script lang="ts">
-	import { svelidate, string, general } from "svelidate"
+	import { svelidate, string } from "svelidate"
 
 	const form = svelidate({
 		email: {
 			value: "",
+			type: "email" /* Defining `type` is not mandatory but will enable
+			HTML5 validation generation. By default HTML5 validation will only
+			work when JS is disabled */,
 			validators: [
-				general.required("This field is required."),
+				string.required("This field is required."),
 				string.email("Please enter a valid email."),
 			],
-			attributes: { // `name` attribute is auto-set to this object's key (`email` here)
-				type: "email",
-			},
 		},
 		password: {
 			value: "",
+			type: "password",
 			validators: [
-				general.required("This field is required."),
-				string.lowerCase("Password needs to have atleast one lower case letter."),
-				string.upperCase("Password needs to have atleast one upper case letter."),
+				string.required("This field is required."),
+				string.lowerCase(
+					"Password needs to have atleast one lower case letter."
+				),
+				string.upperCase(
+					"Password needs to have atleast one upper case letter."
+				),
 				string.number("Password needs to have atleast one number."),
 				string.symbol("Password needs to have one symbol."),
-				string.length.gt(6)("Password needs to have more than 6 characters."),
+				string.length.gt(6)(
+					"Password needs to have more than 6 characters."
+				),
 			],
-			attributes: {
-				type: "password",
-			},
 		},
 	})
-	$form.$on.submit = () => { /*handle submit...*/	}
+
+	$form.$on.submit = () => {/* handle submit... */}
 </script>
 ```
 
@@ -58,15 +63,22 @@ pnpm add svelidate
 			<li>{error}</li>
 		{/each}
 	</ul>
-	<input bind:value={$form.email.value} {...$form.email.attributes} />
-
+	<input
+		bind:value={$form.email.value}
+		{...$form.email.attributes}
+		type="email"
+	/>
 
 	<ul> <!-- displaying password errors -->
 		{#each $form.password.errors as error}
 			<li>{error}</li>
 		{/each}
 	</ul>
-	<input bind:value={$form.password.value} {...$form.password.attributes} />
+	<input
+		bind:value={$form.password.value}
+		{...$form.password.attributes}
+		type="password"
+	/>
 
 	<button disabled={$form.$st.invalid}>Submit</button>
 </form>
@@ -217,6 +229,8 @@ Replacing any function by an object following the `ValidatorWrapper` model will 
 HTML validators distinguish and will only validate the following **input type groups** :
 
 -   **textarea** ("textarea")
+-   **file** ("file")
+-   **checkbox** ("checkbox")
 -   **numbers** ("number", "range")
 -   **strings** ("email", "password", "search", "tel", "text", "url")
 -   **dates** ("date", "datetime-local", "month", "time", "week")
@@ -227,151 +241,243 @@ Default validators are functions helping you to easily validate your forms.
 They can take a custom error (e.g. a translation key) that will be used for your javascript validator.
 They are grouped by input value type inside an importable object.
 
-#### `general`
+#### `boolean`
+
+**If the passed value is not a boolean it will be parsed as one using the truthy & falsy rules.**
 
 ```ts
 {
-	required, /*     | HTML: Validates all input types |
-	Valid if the value is truthy or if it's equal to 0, the HTML validator
-	will add the `required` attribute.
-	*/
-	truthy, /*     | HTML: No validation |
-	Valid when value is truthy (can be used to validate booleans).
-	*/
-	falsy, /*     | HTML: Validates all input type groups |
-	Valid when value is falsy (can be used to validate booleans).
-	*/
-	eq, /*     | HTML: Validates strings, numbers and dates groups |
-	Valid if the value is strictly equal to the given argument.
-	*/
-	neq, /*     | HTML: Validates strings group |
-	Valid if the value is strictly different from the given argument.
-	*/
+	true /*     | HTML: Validates checkbox group |
+	Valid if the value is true.
+	*/,
+	false /*     | HTML: No validation |
+	Valid if the value is false.
+	*/,
 }
 ```
 
 #### `string`
 
-**If the passed value is not a string it will be invalid.**
+**If the passed value is not a string it will be parsed with the `toString` method (if it exists), if it's still not a string it will be invalid.**
 
 ```ts
 {
-	email, /*     | HTML: Validates textarea (only input length) and strings groups |
+	required /*     | HTML: Validates textarea and strings groups |
+	Valid if the string is atleast one character.
+	*/,
+	email /*     | HTML: Validates textarea (only input length) and strings groups |
 	Valid if the string matches the email pattern.
-	*/
-	upperCase, /*     | HTML: Validates strings group |
+	*/,
+	upperCase /*     | HTML: Validates strings group |
 	Valid if the string has atleast an upper case letter.
-	*/
-	lowerCase, /*     | HTML: Validates strings group |
+	*/,
+	lowerCase /*     | HTML: Validates strings group |
 	Valid if the string has atleast a lower case letter.
-	*/
-	number, /*     | HTML: Validates strings group |
+	*/,
+	number /*     | HTML: Validates strings group |
 	Valid if the string has atleast one number.
-	*/
-	symbol, /*     | HTML: Validates strings group |
+	*/,
+	symbol /*     | HTML: Validates strings group |
 	Valid if the string has atleast one symbol ( !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~).
-	*/
-	regex, /*     | HTML: Validates strings group |
+	*/,
+	regex /*     | HTML: Validates strings group |
 	Valid if the string matches the given regex.
-	*/
-	eq, /*     | HTML: Validates strings group |
+	*/,
+	eq /*     | HTML: Validates strings group |
 	Valid if the string is strictly equal to the given string.
-	*/
-	neq, /*     | HTML: Validates strings group |
+	*/,
+	neq /*     | HTML: Validates strings group |
 	Valid if the string is strictly different from the given string.
 	*/,
 	length: {
-		gt, /*     | HTML: Validates textarea and strings groups |
+		gt /*     | HTML: Validates textarea and strings groups |
 		Valid if the string is longer than the given length.
-		*/
-		gte, /*     | HTML: Validates textarea and strings groups |
+		*/,
+		gte /*     | HTML: Validates textarea and strings groups |
 		Valid if the string is longer than or equal to the given length.
-		*/
-		lt, /*     | HTML: Validates textarea and strings groups |
+		*/,
+		lt /*     | HTML: Validates textarea and strings groups |
 		Valid if the string is shorter than the given length.
-		*/
-		lte, /*     | HTML: Validates textarea and strings groups |
+		*/,
+		lte /*     | HTML: Validates textarea and strings groups |
 		Valid if the string is shorter than or equal to the given length.
-		*/
-		inside, /*      | HTML: Validates textarea and strings groups |
+		*/,
+		inside /*      | HTML: Validates textarea and strings groups |
 		Valid if the string's length is inside the given interval.
-		*/
-		outside, /*     | HTML: Validates strings group |
+		*/,
+		outside /*     | HTML: Validates strings group |
 		Valid if the string's length is outside the given interval.
-		*/
-		neq, /*     | HTML: Validates strings group |
+		*/,
+		neq /*     | HTML: Validates strings group |
 		Valid if the string's length is strictly different from the given length.
-		*/
-		eq, /*     | HTML: Validates textarea and strings groups |
+		*/,
+		eq /*     | HTML: Validates textarea and strings groups |
 		Valid if the string's length is strictly equal to the given length.
-		*/
+		*/,
 	},
 }
 ```
 
 #### `number`
 
-**If the passed value is not a number it will be parsed with `parseFloat`, if it's still not a number it will be invalid**
+**If the passed value is not a number it will be parsed with `parseFloat`, if it's still not a number it will be invalid.**
 
 ```ts
 {
-	gt, /*     | HTML: Validates numbers group |
+	required /*     | HTML: Validates numbers group |
+	Valid if the number can be parsed.
+	*/,
+	gt /*     | HTML: Validates numbers group |
 	Valid if the number is greater than the given number.
-	*/
-	gte, /*     | HTML: Validates numbers group |
+	*/,
+	gte /*     | HTML: Validates numbers group |
 	Valid if the number is greater than or equal to the given number.
-	*/
-	lt, /*     | HTML: Validates numbers group |
+	*/,
+	lt /*     | HTML: Validates numbers group |
 	Valid if the number is lesser than the given number.
-	*/
-	lte, /*     | HTML: Validates numbers group |
+	*/,
+	lte /*     | HTML: Validates numbers group |
 	Valid if the number is lesser than or equal to the given number.
-	*/
-	inside, /*     | HTML: Validates numbers group |
+	*/,
+	inside /*     | HTML: Validates numbers group |
 	Valid if the number is inside the given interval.
-	*/
-	outside, /*     | HTML: No validation |
+	*/,
+	outside /*     | HTML: No validation |
 	Valid if the number is outside the given interval.
-	*/
-	neq, /*     | HTML: No validation |
+	*/,
+	neq /*     | HTML: No validation |
 	Valid if the number is strictly different from the given number.
-	*/
-	eq, /*     | HTML: Validates numbers group |
+	*/,
+	eq /*     | HTML: Validates numbers group |
 	Valid if the number is strictly equal to the given number.
-	*/
+	*/,
 }
 ```
 
 #### `date`
 
-**If the passed value is not a date it will be parsed with the `Date` constructor, if it's still not a date it will be invalid**
+**If the passed value is not a date it will be parsed with the `Date` constructor, if it's still not a date it will be invalid.**
 
 ```ts
 {
-	gt, /*     | HTML: Validates dates group |
+	required /*     | HTML: Validates dates group |
+	Valid if the date can be parsed.
+	*/,
+	gt /*     | HTML: Validates dates group |
 	Valid if the date is after the given date.
-	*/
-	gte, /*     | HTML: Validates dates group |
+	*/,
+	gte /*     | HTML: Validates dates group |
 	Valid if the date is after or at the same time than the given date.
-	*/
-	lt, /*     | HTML: Validates dates group |
+	*/,
+	lt /*     | HTML: Validates dates group |
 	Valid if the date is before the given date.
-	*/
-	lte, /*     | HTML: Validates dates group |
+	*/,
+	lte /*     | HTML: Validates dates group |
 	Valid if the date is before or at the same time than the given date.
-	*/
-	inside, /*     | HTML: Validates dates group |
+	*/,
+	inside /*     | HTML: Validates dates group |
 	Valid if the date is inside the given interval.
-	*/
-	outside, /*     | HTML: No validation |
+	*/,
+	outside /*     | HTML: No validation |
 	Valid if the date is outside the given interval.
-	*/
-	neq, /*     | HTML: No validation |
+	*/,
+	neq /*     | HTML: No validation |
 	Valid if the date is different from the given date.
-	*/
-	eq, /*     | HTML: Validates dates group |
+	*/,
+	eq /*     | HTML: Validates dates group |
 	Valid if the date is equal to the given date.
-	*/
+	*/,
+}
+```
+
+#### `filelist`
+
+**If the passed value is not a FileList instance it will be invalid.**
+The value will be a FileList if binded to a "file" input's `files` property.
+
+```ts
+const filelist = {
+	required /*     | HTML: Validates file group |
+	Valid if value is a FileList and has atleast one file.
+	*/,
+	files: {
+		type: {
+			image /*     | HTML: Validates file group |
+			Valid if all files are images (	.tiff, .pjp, .jfif, .bmp, .gif, .png, .xbm,
+			.dib, .jxl, .jpeg, .jpg, .webp, .ico, .tif, .pjpeg, .avif, .svg, .svgz)
+			*/,
+			raster: /*     | HTML: Validates file group |
+			Valid if all files are raster images (.tiff, .pjp, .jfif, .bmp, .gif,
+			.png, .xbm, .dib, .jxl, .jpeg, .jpg, .webp, .ico, .tif, .pjpeg, .avif)
+			*/,
+			vector: /*     | HTML: Validates file group |
+			Valid if all files are vector images (.svg, .svgz)
+			*/,
+			video: /*     | HTML: Validates file group |
+			Valid if all files are videos (.ogm, .wmv, .mpg, .webm, .ogv, .mov,
+			.asx, .mpeg, .mp4, .m4v, .avi)
+			*/,
+			audio: /*     | HTML: Validates file group |
+			Valid if all files are audio files (.opus, .flac, .webm, .weba, .wav,
+			.ogg, .m4a, .oga, .mid, .mp3, .aiff, .wma, .au)
+			*/,
+			is /*     | HTML: Validates file group |
+			Valid if all files' extensions are inside the given array.
+			*/,
+		},
+		size: {
+			gt /*     | HTML: No validation |
+			Valid if all files are larger than the given size.
+			*/,
+			gte /*     | HTML: No validation |
+			Valid if all files are larger than or equal to the given size.
+			*/,
+			lt /*     | HTML: No validation |
+			Valid if all files are smaller than the given size.
+			*/,
+			lte /*     | HTML: No validation |
+			Valid if all files are smaller than or equal to the given size.
+			*/,
+			inside /*     | HTML: No validation |
+			Valid if all file sizes are in the given interval.
+			*/,
+			outside /*     | HTML: No validation |
+			Valid if all file sizes are outside the given interval.
+			*/,
+			neq /*     | HTML: No validation |
+			Valid if all file sizes are different from the given size.
+			*/,
+			eq /*     | HTML: No validation |
+			Valid if all file sizes are equal to the given size.
+			*/,
+		},
+	},
+	length: {
+		gt /*     | HTML: No validation |
+		Valid if the FileList's length is greater than the given one.
+		*/,
+		gte /*     | HTML: No validation |
+		Valid if the FileList's length is greater than or equal to the given one.
+		*/,
+		lt /*     | HTML: No validation |
+		Valid if the FileList's length is lesser than the given one.
+		*/,
+		lte /*     | HTML: No validation |
+		Valid if the FileList's length is lesser than or equal to the given one.
+		*/,
+		inside /*     | HTML: No validation |
+		Valid if the FileList's length is in the given interval.
+		*/,
+		outside /*     | HTML: No validation |
+		Valid if the FileList's length is outside the given interval.
+		*/,
+		neq /*     | HTML: No validation |
+		Valid if the FileList's length is different from the given one.
+		*/,
+		eq /*     | HTML: No validation |
+		Valid if the FileList's length is equal to the given one.
+		*/,
+	},
 }
 ```
 
@@ -428,14 +534,20 @@ import {
 	Makes javascript validator try to parse the given value as a number with
 	`parseFloat` and returns an error if the value was not a number.
 	*/,
-	createDateValidatorWrapperFactory, /*
+	createDateValidatorWrapperFactory /*
 	Makes javascript validator try to parse the given value as a date the `Date`
 	constructor and returns an error if the value was not a date.
 	*/,
+	createFileListValidatorWrapperFactory /*
+	Makes javascript validator check if the value is an instance of `FileList`
+	and returns an error if the value was not a `FileList`.
+	*/,
+	createBooleanValidatorWrapperFactory /*
+	Makes javascript validator parse the value as a boolean.
+	*/,
 } from "svelidate"
 
-
-const requiredValidatorWrapperFactory =  createValidatorWrapperFactory(
+const requiredValidatorWrapperFactory = createValidatorWrapperFactory(
 	/* The first argument is a javascript predicate returning true if the value
 	is valid or false otherwise. */
 	fieldValue => {
@@ -445,12 +557,14 @@ const requiredValidatorWrapperFactory =  createValidatorWrapperFactory(
 	/* The second argument is a HTML validator creator, it takes the input type
 	found in `$form.field.attributes.type` (which may be undefined) and returns
 	the corresponding HTML input attributes to validate it. */
-	(inputType) => ({ required: true })
-),
+	inputType => ({ required: true })
+)
 
 /* The line below creates a ValidatorWrapper creator, this enables you to easily add
 custom error messages. */
-const requiredValidatorWrapper = requiredValidatorWrapperFactory("This field is required !")
+const requiredValidatorWrapper = requiredValidatorWrapperFactory(
+	"This field is required !"
+)
 
 requiredValidatorWrapper.js("I am the current field value.") // Returns undefined (no error)
 requiredValidatorWrapper.js("") // Returns "This field is required !"
