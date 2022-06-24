@@ -1,20 +1,43 @@
-import { $Form, Form, FormField, Subscriber, Svelidate$Form } from "../types"
 import {
-	createNaked$Form,
-	dispatch,
+	storeDispatch,
 	forEachFormField,
 	getFormFieldValues,
-} from "./utils"
+} from "../utilities/form"
+import type {
+	SvelidateForm,
+	UninitializedForm,
+	Subscriber,
+	SvelidateFormStore,
+	NakedSvelidateForm,
+	HtmlValidator,
+	SvelidateField,
+	SvelidateConfiguration,
+	PartialAll,
+} from "../types"
+import { mergeObjects } from "../utilities/general"
+import { isLookahead } from "../utilities/regex"
+import { createLocalConfig, svelidateConfig } from "./config"
 
-export function svelidate<F extends Form>(initialForm: F) {
+let isBrowser = false
+try {
+	if (window) isBrowser = true
+} catch (err) {}
+
+export function svelidate<F extends UninitializedForm>(
+	initialForm: F,
+	config: PartialAll<SvelidateConfiguration> = svelidateConfig
+) {
+	let localConfig =
+		config === svelidateConfig ? svelidateConfig : createLocalConfig(config)
+
 	const subscribers: Subscriber[] = []
-
-	const $form: $Form<F> = {
-		...createNaked$Form(initialForm),
+	const $form: SvelidateForm<F> = {
+		...createNakedSvelidateForm(initialForm),
 		$st: {
 			invalid: true,
 			submitted: false,
 			initial: Object.freeze(initialForm),
+			form: null,
 		},
 		$fn: {
 			submit: (e?: SubmitEvent) => {
@@ -27,17 +50,17 @@ export function svelidate<F extends Form>(initialForm: F) {
 				for (const key in $form.$initial) {
 					$form[key].touched = false
 					$form[key].value = $form.$st.initial[key].value
-					updateFormField($form[key])
+					updateFormField($form[key], localConfig)
 				}
 				updateFormState($form)
-				dispatch(subscribers, $form)
+				storeDispatch(subscribers, $form)
 			},
 			untouch: () => {
 				forEachFormField(
 					$form,
 					formField => (formField.touched = false)
 				)
-				dispatch(subscribers, $form)
+				storeDispatch(subscribers, $form)
 			},
 			getErrors: () => {
 				let errors: string[] = []
@@ -53,35 +76,42 @@ export function svelidate<F extends Form>(initialForm: F) {
 	}
 
 	// init
-	forEachFormField($form, formField => updateFormField(formField))
-	updateFormState($form as $Form<F>)
+	forEachFormField($form, formField =>
+		updateFormField(formField, localConfig)
+	)
+	updateFormState($form as SvelidateForm<F>)
 
 	let lastValues = getFormFieldValues($form)
 	return {
 		subscribe(fn) {
-			fn($form as $Form<F>)
+			fn($form as SvelidateForm<F>)
 			subscribers.push(fn)
 			return () => subscribers.splice(subscribers.indexOf(fn), 1)
 		},
 		set(newForm) {
 			forEachFormField(newForm, (formField, key) => {
-				if (lastValues[key] === undefined) return
+				// TODO optimize lastValues to only render modified values (some
+				// values will be mutable objects (e.g. FileList)), it will need
+				// to check object content (atleast in a shallow way)
+				// either that or detect wich field was changed with a proxy
 				if (lastValues[key] !== formField.value) {
 					if (!formField.touched) {
 						formField.touched = true
 						newForm.$on.touch(key)
 					}
-					updateFormField(formField)
 				}
+				updateFormField(formField, localConfig)
 			})
 			updateFormState(newForm)
-			dispatch(subscribers, newForm)
+			storeDispatch(subscribers, newForm)
 			lastValues = getFormFieldValues(newForm)
 		},
-	} as Svelidate$Form<F>
+	} as SvelidateFormStore<F>
 }
 
-function updateFormState<F extends Form>(newForm: $Form<F>) {
+function updateFormState<F extends UninitializedForm>(
+	newForm: SvelidateForm<F>
+) {
 	let isInvalid = false
 	forEachFormField(newForm, formField => {
 		if (formField.invalid) isInvalid = true
@@ -89,15 +119,66 @@ function updateFormState<F extends Form>(newForm: $Form<F>) {
 	newForm.$st.invalid = isInvalid
 }
 
-function updateFormField<F extends Form>(
-	formField: Required<FormField>,
-	newValue: F[string]["value"] = formField.value
+function updateFormField(
+	formField: Required<SvelidateField>,
+	config: SvelidateConfiguration
 ) {
-	formField.errors = formField.validators.reduce((errors, validator) => {
-		const error = validator(newValue)
-		if (error !== undefined) errors.push(error)
-		return errors
-	}, [] as string[])
+	let mode: Exclude<SvelidateConfiguration["mode"], "available"> = "all"
+	if (config.mode === "default") {
+		if (isBrowser) mode = "js-only"
+		else mode = "html-only"
+	} else mode = config.mode
+
+	let pattern = ""
+	const errors = []
+	const htmlValidator: HtmlValidator = {}
+	for (const validator of formField.validators) {
+		// validate js
+		if (isBrowser && (mode === "all" || mode === "js-only")) {
+			const error = validator.js(formField.value)
+			if (error !== undefined) errors.push(error)
+		}
+		// validate html
+		if (mode === "all" || mode === "html-only") {
+			if (!formField.type) continue
+			const { pattern: lookahead, ...localValidator } = validator.html(
+				formField.type
+			)
+			if (lookahead && isLookahead(lookahead)) pattern += lookahead
+			mergeObjects(htmlValidator, localValidator)
+		}
+	}
+	if (pattern) htmlValidator.pattern = `^${pattern}.+$`
+
+	// adding errors :
+	formField.errors = errors
 	if (formField.errors.length > 0) formField.invalid = true
 	else formField.invalid = false
+
+	// adding attributes :
+	mergeObjects(formField.attributes, htmlValidator)
+}
+
+function createNakedSvelidateForm<F extends UninitializedForm>(form: F) {
+	return Object.entries(form).reduce(
+		(prev, [name, { attributes, ...otherProps }]) => {
+			const formField: Required<SvelidateField> = {
+				errors: [],
+				touched: false,
+				validators: [],
+				invalid: false,
+				type: null,
+				attributes: {
+					name,
+					...attributes,
+				},
+				...otherProps,
+			}
+			return {
+				...prev,
+				[name]: formField,
+			}
+		},
+		{} as NakedSvelidateForm<F>
+	)
 }

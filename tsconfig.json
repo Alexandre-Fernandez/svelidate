@@ -6,7 +6,10 @@
 		"outDir": "./dist",
 		"noImplicitAny": true,
 		"declaration": true,
-		"moduleResolution": "Node"
+		"moduleResolution": "Node",
+		"forceConsistentCasingInFileNames": true,
+		"importsNotUsedAsValues": "error",
+		"strict": true
 	},
 	"include": ["src/**/*"],
 	"exclude": ["node_modules"]
