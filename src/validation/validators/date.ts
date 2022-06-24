@@ -1,10 +1,14 @@
-import { getExcludedDate, getFormattedDate } from "../../utilities/date"
+import {
+	getDate,
+	getExcludedDate,
+	getFormattedDate,
+} from "../../utilities/date"
 import { getMatchingHtmlValidator } from "../../utilities/input"
 import { createDateValidatorWrapperFactory } from "../factories/validatorCollectionFactory"
 
 const date = {
 	required: createDateValidatorWrapperFactory(
-		() => true,
+		() => true, // valid if parsed
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
 				dates: () => ({

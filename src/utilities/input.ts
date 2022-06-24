@@ -7,6 +7,7 @@ import type {
 	HtmlValidatorMapper,
 	HtmlValidator,
 	HtmlFileInputType,
+	HtmlCheckboxInputType,
 } from "../types"
 
 type MapperMapFunction<T extends HtmlValidatorMapper<any>> = (
@@ -17,6 +18,7 @@ type HtmlValidatorMapperMap = {
 		HtmlValidatorMapper<Extract<HtmlPseudoInputType, "textarea">>
 	>
 	file: MapperMapFunction<HtmlValidatorMapper<HtmlFileInputType>>
+	checkbox: MapperMapFunction<HtmlValidatorMapper<HtmlCheckboxInputType>>
 	numbers: MapperMapFunction<HtmlValidatorMapper<HtmlNumberInputType>>
 	dates: MapperMapFunction<HtmlValidatorMapper<HtmlDateTimeInputType>>
 	strings: MapperMapFunction<HtmlValidatorMapper<HtmlStringInputType>>
@@ -31,6 +33,7 @@ const inputGroupMap: {
 	numbers: ["number", "range"],
 	dates: ["date", "datetime-local", "month", "time", "week"],
 	strings: ["email", "password", "search", "tel", "text", "url"],
+	checkbox: ["checkbox"],
 }
 
 export function getMatchingHtmlValidator(

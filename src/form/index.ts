@@ -93,6 +93,7 @@ export function svelidate<F extends UninitializedForm>(
 				// TODO optimize lastValues to only render modified values (some
 				// values will be mutable objects (e.g. FileList)), it will need
 				// to check object content (atleast in a shallow way)
+				// either that or detect wich field was changed with a proxy
 				if (lastValues[key] !== formField.value) {
 					if (!formField.touched) {
 						formField.touched = true

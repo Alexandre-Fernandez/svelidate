@@ -3,7 +3,7 @@ import { createNumberValidatorWrapperFactory } from "../factories/validatorColle
 
 const number = {
 	required: createNumberValidatorWrapperFactory(
-		() => true,
+		() => true, // valid if parsed
 		inputType =>
 			getMatchingHtmlValidator(inputType, {
 				numbers: () => ({
