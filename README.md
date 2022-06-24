@@ -37,17 +37,11 @@ pnpm add svelidate
 			type: "password",
 			validators: [
 				string.required("This field is required."),
-				string.lowerCase(
-					"Password needs to have atleast one lower case letter."
-				),
-				string.upperCase(
-					"Password needs to have atleast one upper case letter."
-				),
+				string.lowerCase("Password needs to have atleast one lower case letter."),
+				string.upperCase("Password needs to have atleast one upper case letter."),
 				string.number("Password needs to have atleast one number."),
 				string.symbol("Password needs to have one symbol."),
-				string.length.gt(6)(
-					"Password needs to have more than 6 characters."
-				),
+				string.length.gt(6)("Password needs to have more than 6 characters."),
 			],
 		},
 	})
