@@ -7,6 +7,7 @@ const inputGroupMap = {
     numbers: ["number", "range"],
     dates: ["date", "datetime-local", "month", "time", "week"],
     strings: ["email", "password", "search", "tel", "text", "url"],
+    checkbox: ["checkbox"],
 };
 function getMatchingHtmlValidator(inputType, htmlValidatorMapperMap) {
     var _a, _b;

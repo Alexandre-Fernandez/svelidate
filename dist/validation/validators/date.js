@@ -4,7 +4,9 @@ const date_1 = require("../../utilities/date");
 const input_1 = require("../../utilities/input");
 const validatorCollectionFactory_1 = require("../factories/validatorCollectionFactory");
 const date = {
-    required: (0, validatorCollectionFactory_1.createDateValidatorWrapperFactory)(() => true, inputType => (0, input_1.getMatchingHtmlValidator)(inputType, {
+    required: (0, validatorCollectionFactory_1.createDateValidatorWrapperFactory)(() => true, // valid if parsed
+    // valid if parsed
+    inputType => (0, input_1.getMatchingHtmlValidator)(inputType, {
         dates: () => ({
             required: true,
         }),

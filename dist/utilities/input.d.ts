@@ -1,8 +1,9 @@
-import type { HtmlDateTimeInputType, SvelidateInputType, HtmlNumberInputType, HtmlStringInputType, HtmlPseudoInputType, HtmlValidatorMapper, HtmlValidator, HtmlFileInputType } from "../types";
+import type { HtmlDateTimeInputType, SvelidateInputType, HtmlNumberInputType, HtmlStringInputType, HtmlPseudoInputType, HtmlValidatorMapper, HtmlValidator, HtmlFileInputType, HtmlCheckboxInputType } from "../types";
 declare type MapperMapFunction<T extends HtmlValidatorMapper<any>> = (inputType: NonNullable<Parameters<T>[0]>) => ReturnType<T>;
 declare type HtmlValidatorMapperMap = {
     textarea: MapperMapFunction<HtmlValidatorMapper<Extract<HtmlPseudoInputType, "textarea">>>;
     file: MapperMapFunction<HtmlValidatorMapper<HtmlFileInputType>>;
+    checkbox: MapperMapFunction<HtmlValidatorMapper<HtmlCheckboxInputType>>;
     numbers: MapperMapFunction<HtmlValidatorMapper<HtmlNumberInputType>>;
     dates: MapperMapFunction<HtmlValidatorMapper<HtmlDateTimeInputType>>;
     strings: MapperMapFunction<HtmlValidatorMapper<HtmlStringInputType>>;

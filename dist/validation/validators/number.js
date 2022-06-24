@@ -3,7 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const input_1 = require("../../utilities/input");
 const validatorCollectionFactory_1 = require("../factories/validatorCollectionFactory");
 const number = {
-    required: (0, validatorCollectionFactory_1.createNumberValidatorWrapperFactory)(() => true, inputType => (0, input_1.getMatchingHtmlValidator)(inputType, {
+    required: (0, validatorCollectionFactory_1.createNumberValidatorWrapperFactory)(() => true, // valid if parsed
+    // valid if parsed
+    inputType => (0, input_1.getMatchingHtmlValidator)(inputType, {
         numbers: () => ({
             required: true,
         }),
