@@ -120,6 +120,7 @@ export type HtmlValidatorMapper<
 
 export type HtmlPseudoInputType = "select-multiple" | "select-one" | "textarea"
 export type HtmlFileInputType = "file"
+export type HtmlCheckboxInputType = "checkbox"
 export type HtmlNumberInputType = "number" | "range"
 export type HtmlDateTimeInputType =
 	| "datetime-local" // YYYY-MM-DDThh:mm
@@ -139,7 +140,7 @@ export type HtmlInputType =
 	| HtmlNumberInputType
 	| HtmlStringInputType
 	| HtmlFileInputType
-	| "checkbox"
+	| HtmlCheckboxInputType
 	| "color"
 	| "hidden"
 	| "radio"
