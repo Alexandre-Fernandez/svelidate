@@ -18,8 +18,10 @@ describe("svelte store", () => {
 			local = val
 		})
 
-		const newString = "test"
+		const newString = "primitive"
 
+		// FIXME because of subscribe local is already equal to svelidateForm
+		// make a clone to set
 		svelidateForm.string.value = newString
 		svelidateStore.set(svelidateForm)
 
@@ -32,11 +34,36 @@ describe("svelte store", () => {
 			local = val
 		})
 
-		const newNestedString = "test"
+		const newNestedString = "reference"
 
 		svelidateForm.object.value.test = newNestedString
 		svelidateStore.set(svelidateForm)
 
 		expect(local.object.value.test).toBe(newNestedString)
 	})
+
+	// test("can unsubscribe", () => {
+	// 	let local = {} as typeof svelidateForm
+	// 	const unsubscribe = svelidateStore.subscribe(val => {
+	// 		local = val
+	// 	})
+
+	// 	let newString = "subscribed"
+
+	// 	svelidateForm.string.value = newString
+	// 	console.log(local)
+	// 	return
+	// 	svelidateStore.set(svelidateForm)
+
+	// 	expect(local.string.value).toBe(newString)
+
+	// 	unsubscribe()
+
+	// 	newString = "unsubscribed"
+
+	// 	svelidateForm.string.value = newString
+	// 	svelidateStore.set(svelidateForm)
+
+	// 	expect(local.string.value).toBe(newString)
+	// })
 })

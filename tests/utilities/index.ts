@@ -1,5 +1,10 @@
 /* eslint-disable import/prefer-default-export */
-import { svelidate, SvelidateConfiguration, UninitializedForm } from "$src"
+import {
+	svelidate,
+	SvelidateConfiguration,
+	SvelidateForm,
+	UninitializedForm,
+} from "$src"
 import type { ExtractSvelidateForm } from "$tests/types"
 import type { PartialAll } from "$src/types/utilities"
 
@@ -17,3 +22,9 @@ export function createSvelidateFormStore<F extends UninitializedForm>(
 
 	return { svelidateStore, svelidateForm }
 }
+
+// TODO create form meta creators to reuse them here
+
+// export function createSvelidateForm<F extends UninitializedForm>(
+// 	initialForm: F
+// ): SvelidateForm<F> {}
