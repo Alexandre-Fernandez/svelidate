@@ -2,21 +2,41 @@ import { describe, expect, test } from "vitest"
 import { createSvelidateFormStore } from "./helpers"
 
 describe("svelte store", () => {
+	const initialValue = ""
 	const { svelidateForm, svelidateStore } = createSvelidateFormStore({
-		email: { value: "" },
+		string: { value: initialValue },
+		object: { value: {} as Record<string, unknown> },
 	})
 
-	test("can subscribe & update", () => {
+	test("can subscribe", () => {
+		expect(svelidateForm.string.value).toBe(initialValue)
+	})
+
+	test("can update (primitive)", () => {
 		let local = {} as typeof svelidateForm
 		svelidateStore.subscribe(val => {
 			local = val
 		})
 
-		const newEmail = "a@a.a"
+		const newString = "test"
 
-		svelidateForm.email.value = newEmail
+		svelidateForm.string.value = newString
 		svelidateStore.set(svelidateForm)
 
-		expect(local.email.value).toBe(newEmail)
+		expect(local.string.value).toBe(newString)
+	})
+
+	test("can update (reference)", () => {
+		let local = {} as typeof svelidateForm
+		svelidateStore.subscribe(val => {
+			local = val
+		})
+
+		const newNestedString = "test"
+
+		svelidateForm.object.value.test = newNestedString
+		svelidateStore.set(svelidateForm)
+
+		expect(local.object.value.test).toBe(newNestedString)
 	})
 })
