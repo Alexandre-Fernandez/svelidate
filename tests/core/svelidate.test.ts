@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest"
-import { createSvelidateFormStore } from "./helpers"
+import { createSvelidateFormStore } from "$tests/utilities"
 
 describe("svelte store", () => {
 	const initialValue = ""
