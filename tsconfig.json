@@ -17,7 +17,13 @@
 		"importsNotUsedAsValues": "error",
 		"noUnusedLocals": true,
 		"noUnusedParameters": true,
-		"noImplicitReturns": true
+		"noImplicitReturns": true,
+		"paths": {
+			"$src": ["./src"],
+			"$src/*": ["./src/*"],
+			"$tests/*": ["./tests/*"],
+			"$tests": ["./tests"]
+		}
 	},
 	"include": ["src", "tests"]
 }
