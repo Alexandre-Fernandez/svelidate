@@ -11,7 +11,7 @@ import type { PartialAll } from "../types/utilities"
 import { forEachFormField, getFormFieldValues } from "./state/helpers"
 import { updateFormField, updateFormState } from "./state/update"
 
-function createNakedSvelidateForm<F extends UninitializedForm>(form: F) {
+export function createNakedSvelidateForm<F extends UninitializedForm>(form: F) {
 	return Object.entries(form).reduce(
 		(prev, [name, { attributes, ...otherProps }]) => {
 			const formField: Required<SvelidateField> = {
@@ -35,7 +35,7 @@ function createNakedSvelidateForm<F extends UninitializedForm>(form: F) {
 	)
 }
 
-function storeDispatch<F extends UninitializedForm>(
+export function storeDispatch<F extends UninitializedForm>(
 	to: Subscriber[],
 	form: SvelidateForm<F>
 ) {
