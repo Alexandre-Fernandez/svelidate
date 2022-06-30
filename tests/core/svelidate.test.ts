@@ -1,69 +1,103 @@
 import { describe, expect, test } from "vitest"
-import { createSvelidateFormStore } from "$tests/utilities"
+import { svelidate } from "$src"
+import type { ExtractSvelidateForm } from "$tests/types"
 
 describe("svelte store", () => {
 	const initialValue = ""
-	const { svelidateForm, svelidateStore } = createSvelidateFormStore({
+	const svelidateStore = svelidate({
 		string: { value: initialValue },
 		object: { value: {} as Record<string, unknown> },
 	})
 
+	let mainSubscriber = {} as ExtractSvelidateForm<typeof svelidateStore>
+	svelidateStore.subscribe(val => {
+		mainSubscriber = val
+	})
+
 	test("can subscribe", () => {
-		expect(svelidateForm.string.value).toBe(initialValue)
+		let localSubscriber = {} as typeof mainSubscriber
+		svelidateStore.subscribe(val => {
+			localSubscriber = val
+		})
+		expect(localSubscriber.string.value).toBe(initialValue)
+		expect(mainSubscriber.string.value).toBe(initialValue)
 	})
 
 	test("can update (primitive)", () => {
-		let local = {} as typeof svelidateForm
+		let localSubscriber = {} as typeof mainSubscriber
 		svelidateStore.subscribe(val => {
-			local = val
+			localSubscriber = val
 		})
 
-		const newString = "primitive"
+		const primitive = "primitive"
 
-		// FIXME because of subscribe local is already equal to svelidateForm
-		// make a clone to set
-		svelidateForm.string.value = newString
-		svelidateStore.set(svelidateForm)
+		svelidateStore.set({
+			$st: mainSubscriber.$st,
+			$fn: mainSubscriber.$fn,
+			$on: mainSubscriber.$on,
+			string: {
+				...mainSubscriber.string,
+				value: primitive,
+			},
+			object: mainSubscriber.object,
+		} as typeof mainSubscriber)
 
-		expect(local.string.value).toBe(newString)
+		expect(localSubscriber.string.value).toBe(primitive)
+		expect(mainSubscriber.string.value).toBe(primitive)
 	})
 
 	test("can update (reference)", () => {
-		let local = {} as typeof svelidateForm
+		let localSubscriber = {} as typeof mainSubscriber
 		svelidateStore.subscribe(val => {
-			local = val
+			localSubscriber = val
 		})
 
-		const newNestedString = "reference"
+		const reference = "reference"
 
-		svelidateForm.object.value.test = newNestedString
-		svelidateStore.set(svelidateForm)
+		mainSubscriber.object.value.test = reference
+		svelidateStore.set(mainSubscriber)
 
-		expect(local.object.value.test).toBe(newNestedString)
+		expect(localSubscriber.object.value.test).toBe(reference)
+		expect(mainSubscriber.object.value.test).toBe(reference)
 	})
 
-	// test("can unsubscribe", () => {
-	// 	let local = {} as typeof svelidateForm
-	// 	const unsubscribe = svelidateStore.subscribe(val => {
-	// 		local = val
-	// 	})
+	test("can unsubscribe", () => {
+		let localSubscriber = {} as typeof mainSubscriber
+		const unsubscribe = svelidateStore.subscribe(val => {
+			localSubscriber = val
+		})
 
-	// 	let newString = "subscribed"
+		const subscribed = "subscribed"
 
-	// 	svelidateForm.string.value = newString
-	// 	console.log(local)
-	// 	return
-	// 	svelidateStore.set(svelidateForm)
+		svelidateStore.set({
+			$st: mainSubscriber.$st,
+			$fn: mainSubscriber.$fn,
+			$on: mainSubscriber.$on,
+			string: {
+				...mainSubscriber.string,
+				value: subscribed,
+			},
+			object: mainSubscriber.object,
+		} as typeof mainSubscriber)
 
-	// 	expect(local.string.value).toBe(newString)
+		expect(localSubscriber.string.value).toBe(subscribed)
+		expect(mainSubscriber.string.value).toBe(subscribed)
 
-	// 	unsubscribe()
+		unsubscribe()
+		const unsubscribed = "unsubscribed"
 
-	// 	newString = "unsubscribed"
+		svelidateStore.set({
+			$st: mainSubscriber.$st,
+			$fn: mainSubscriber.$fn,
+			$on: mainSubscriber.$on,
+			string: {
+				...mainSubscriber.string,
+				value: unsubscribed,
+			},
+			object: mainSubscriber.object,
+		} as typeof mainSubscriber)
 
-	// 	svelidateForm.string.value = newString
-	// 	svelidateStore.set(svelidateForm)
-
-	// 	expect(local.string.value).toBe(newString)
-	// })
+		expect(localSubscriber.string.value).not.toBe(unsubscribed)
+		expect(mainSubscriber.string.value).toBe(unsubscribed)
+	})
 })
