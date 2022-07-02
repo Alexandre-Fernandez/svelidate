@@ -40,7 +40,11 @@ export type $Functions = {
 	}
 }
 
-export type $Meta = $State & $Events & $Functions
+export type $Element = {
+	$el: null | HTMLFormElement
+}
+
+export type $Meta = $State & $Events & $Functions & $Element
 
 export type NakedSvelidateForm<F extends UninitializedForm> = {
 	[K in keyof F]: Required<SvelidateField<F[K]["value"]>>
