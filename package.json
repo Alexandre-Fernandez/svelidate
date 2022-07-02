@@ -18,7 +18,7 @@
 		"progressive",
 		"enhancement"
 	],
-	"main": "dist/svelidate.es.js",
+	"main": "dist/svelidate.cjs.js",
 	"types": "dist/index.d.ts",
 	"files": [
 		"/dist"
