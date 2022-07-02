@@ -234,6 +234,10 @@ HTML validators distinguish and will only validate the following **input type gr
 -   **numbers** ("number", "range")
 -   **strings** ("email", "password", "search", "tel", "text", "url")
 -   **dates** ("date", "datetime-local", "month", "time", "week")
+-   **select** ("select-multiple", "select-one")
+-   **color** ("color")
+-   **radio** ("radio")
+-   **other** ("hidden", "reset", "submit")
 
 ### Default validators
 
