@@ -18,7 +18,7 @@
 		"progressive",
 		"enhancement"
 	],
-	"main": "dist/svelidate.umd.js",
+	"main": "dist/svelidate.es.js",
 	"types": "dist/index.d.ts",
 	"files": [
 		"/dist"

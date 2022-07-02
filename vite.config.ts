@@ -16,7 +16,7 @@ export default defineConfig({
 			entry: resolve(__dirname, "src/index.ts"),
 			name: "svelidate",
 			fileName: "svelidate",
-			formats: ["umd"],
+			formats: ["es"],
 		},
 	},
 	plugins: [dts()],
