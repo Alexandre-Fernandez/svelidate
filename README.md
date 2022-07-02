@@ -172,6 +172,10 @@ It's made of field names containing [objects reprensenting your fields](#fields)
 }
 ```
 
+### `$el`
+
+Not an object, but a reference to the HTML form element, meant to be binded.
+
 ## Fields
 
 Fields are used to describe your inputs and create your svelidate form.
