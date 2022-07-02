@@ -24,7 +24,7 @@ export function updateFormField<F extends UninitializedForm>(
 	form: SvelidateForm<F>,
 	config: SvelidateConfiguration
 ) {
-	let mode: SvelidateConfiguration["mode"] = config.mode
+	let { mode } = config
 	if (config.mode === "default") {
 		if (isBrowser) mode = "js-only"
 		else mode = "html-only"
