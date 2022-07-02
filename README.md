@@ -17,7 +17,7 @@ pnpm add svelidate
 
 -   Star the [github repo](https://github.com/svelidate/svelidate) 😎
 
-```ts
+```svelte
 <script lang="ts">
 	import { svelidate, string } from "svelidate"
 
@@ -48,9 +48,7 @@ pnpm add svelidate
 
 	$form.$on.submit = () => {/* handle submit... */}
 </script>
-```
 
-```svelte
 <form bind:this={$form.$el}>
 	<ul> <!-- displaying email errors -->
 		{#each $form.email.errors as error}
@@ -76,6 +74,15 @@ pnpm add svelidate
 
 	<button disabled={$form.$st.invalid}>Submit</button>
 </form>
+
+<style>
+	input:valid {
+		background: lightgreen;
+	}
+	input:invalid {
+		background: lightpink;
+	}
+</style>
 ```
 
 ## Configuration
