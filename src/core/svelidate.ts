@@ -69,7 +69,7 @@ export default function svelidate<F extends UninitializedForm>(
 				Object.keys($form.$initial).forEach(key => {
 					$form[key].touched = false
 					$form[key].value = $form.$st.initial[key].value
-					updateFormField($form[key], localConfig)
+					updateFormField($form[key], $form, localConfig)
 				})
 				updateFormState($form)
 				storeDispatch(subscribers, $form)
@@ -91,11 +91,12 @@ export default function svelidate<F extends UninitializedForm>(
 			},
 		},
 		$on: { submit: () => {}, touch: () => {} },
+		$el: null,
 	}
 
 	// init
 	forEachFormField($form, formField =>
-		updateFormField(formField, localConfig)
+		updateFormField(formField, $form, localConfig)
 	)
 	updateFormState($form as SvelidateForm<F>)
 
@@ -107,22 +108,31 @@ export default function svelidate<F extends UninitializedForm>(
 			return () => subscribers.splice(subscribers.indexOf(fn), 1)
 		},
 		set(newForm) {
+			if (newForm.$el && !newForm.$el.hasSvelidateListener) {
+				newForm.$el.addEventListener("submit", e =>
+					newForm.$fn.submit(e)
+				)
+				newForm.$el.hasSvelidateListener = true
+			}
+
 			forEachFormField(newForm, (formField, key) => {
-				// TODO optimize lastValues to only render modified values (some
-				// values will be mutable objects (e.g. FileList)), it will need
-				// to check object content (atleast in a shallow way)
-				// either that or detect wich field was changed with a proxy
 				if (lastValues[key] !== formField.value) {
 					if (!formField.touched) {
 						formField.touched = true
 						newForm.$on.touch(key)
 					}
 				}
-				updateFormField(formField, localConfig)
+				updateFormField(formField, $form, localConfig)
 			})
+
 			updateFormState(newForm)
+
 			storeDispatch(subscribers, newForm)
 			lastValues = getFormFieldValues(newForm)
 		},
 	} as SvelidateFormStore<F>
 }
+
+// TODO optimize lastValues to only update modified values (some values will be
+// mutable objects (e.g. FileList)), then update the form accordingly...
+// either use proxy or make diffing algo that work with mutable values
