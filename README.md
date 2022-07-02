@@ -51,7 +51,7 @@ pnpm add svelidate
 ```
 
 ```svelte
-<form on:submit={$form.$fn.submit}>
+<form bind:this={$form.$el}>
 	<ul> <!-- displaying email errors -->
 		{#each $form.email.errors as error}
 			<li>{error}</li>
