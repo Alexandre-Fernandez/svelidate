@@ -19,33 +19,38 @@ export function updateFormState<F extends UninitializedForm>(
 	newForm.$st.invalid = isInvalid
 }
 
-export function updateFormField(
+export function updateFormField<F extends UninitializedForm>(
 	formField: Required<SvelidateField>,
+	form: SvelidateForm<F>,
 	config: SvelidateConfiguration
 ) {
-	let mode: Exclude<SvelidateConfiguration["mode"], "available"> = "all"
+	let mode: SvelidateConfiguration["mode"] = config.mode
 	if (config.mode === "default") {
 		if (isBrowser) mode = "js-only"
 		else mode = "html-only"
-	} else mode = config.mode
+	}
+
+	if (form.$el) {
+		if (mode === "js-only") form.$el.noValidate = true
+		else form.$el.noValidate = false
+	}
 
 	let pattern = ""
 	const errors: string[] = []
 	const htmlValidator: HtmlValidator = {}
 	formField.validators.forEach(validator => {
-		if (isBrowser && (mode === "all" || mode === "js-only")) {
+		// validate js
+		if (isBrowser && mode !== "html-only") {
 			const error = validator.js(formField.value)
 			if (error !== undefined) errors.push(error)
 		}
 		// validate html
-		if (mode === "all" || mode === "html-only") {
-			if (!formField.type) return
-			const { pattern: lookahead, ...localValidator } = validator.html(
-				formField.type
-			)
-			if (lookahead && isLookahead(lookahead)) pattern += lookahead
-			mergeObjects(htmlValidator, localValidator)
-		}
+		if (!formField.type) return
+		const { pattern: lookahead, ...localValidator } = validator.html(
+			formField.type
+		)
+		if (lookahead && isLookahead(lookahead)) pattern += lookahead
+		mergeObjects(htmlValidator, localValidator)
 	})
 	if (pattern) htmlValidator.pattern = `^${pattern}.+$`
 
