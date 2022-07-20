@@ -136,6 +136,9 @@ It's made of field names containing [objects reprensenting your fields](#fields)
 	initial, /*
 	The original form passed to `svelidate` to create the svelidate form.
 	*/
+	errors, /*
+	An array of all the current form errors.
+	*/
 }
 ```
 

@@ -17,6 +17,7 @@ export function updateFormState<F extends UninitializedForm>(
 		if (formField.invalid) isInvalid = true
 	})
 	newForm.$st.invalid = isInvalid
+	newForm.$st.errors = newForm.$fn.getErrors()
 }
 
 export function updateFormField<F extends UninitializedForm>(

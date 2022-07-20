@@ -57,6 +57,7 @@ export default function svelidate<F extends UninitializedForm>(
 			submitted: false,
 			initial: Object.freeze(initialForm),
 			form: null,
+			errors: [],
 		},
 		$fn: {
 			submit: (e?: SubmitEvent) => {

@@ -23,6 +23,7 @@ export type $State = {
 		submitted: boolean
 		initial: Readonly<UninitializedForm>
 		form: HTMLFormElement | null
+		errors: string[]
 	}
 }
 export type $Events = {
