@@ -133,3 +133,10 @@ export function validateIf<T extends ValidatorWrapper | ValidatorWrapper[]>(
 		validators as ValidatorWrapper
 	) as T
 }
+
+export function createValidatorGetter<T>(value: T) {
+	return (typeof value === "function" ? value : () => value) as Extract<
+		T,
+		Function
+	>
+}
