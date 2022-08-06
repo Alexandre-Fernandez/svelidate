@@ -1,4 +1,7 @@
-import { createNumberValidatorWrapperFactory } from "./factories"
+import {
+	createNumberValidatorWrapperFactory,
+	createValidatorGetter,
+} from "./factories"
 import { getMatchingHtmlValidator } from "./helpers"
 
 const number = {
@@ -11,69 +14,87 @@ const number = {
 				}),
 			})
 	),
-	gt(thresholdNumber: number) {
+	gt(thresholdNumber: number | (() => number)) {
+		const getThresholdNumber = createValidatorGetter(thresholdNumber)
+
 		return createNumberValidatorWrapperFactory(
-			value => value > thresholdNumber,
+			value => value > getThresholdNumber(),
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
-					numbers: () => ({ min: thresholdNumber + 1 }),
+					numbers: () => ({ min: getThresholdNumber() + 1 }),
 				})
 		)
 	},
-	gte(thresholdNumber: number) {
+	gte(thresholdNumber: number | (() => number)) {
+		const getThresholdNumber = createValidatorGetter(thresholdNumber)
+
 		return createNumberValidatorWrapperFactory(
-			value => value >= thresholdNumber,
+			value => value >= getThresholdNumber(),
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
-					numbers: () => ({ min: thresholdNumber }),
+					numbers: () => ({ min: getThresholdNumber() }),
 				})
 		)
 	},
-	lt(thresholdNumber: number) {
+	lt(thresholdNumber: number | (() => number)) {
+		const getThresholdNumber = createValidatorGetter(thresholdNumber)
+
 		return createNumberValidatorWrapperFactory(
-			value => value < thresholdNumber,
+			value => value < getThresholdNumber(),
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
-					numbers: () => ({ max: thresholdNumber - 1 }),
+					numbers: () => ({ max: getThresholdNumber() - 1 }),
 				})
 		)
 	},
-	lte(thresholdNumber: number) {
+	lte(thresholdNumber: number | (() => number)) {
+		const getThresholdNumber = createValidatorGetter(thresholdNumber)
+
 		return createNumberValidatorWrapperFactory(
-			value => value <= thresholdNumber,
+			value => value <= getThresholdNumber(),
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
-					numbers: () => ({ max: thresholdNumber }),
+					numbers: () => ({ max: getThresholdNumber() }),
 				})
 		)
 	},
-	inside(min: number, max: number) {
+	inside(min: number | (() => number), max: number | (() => number)) {
+		const getMin = createValidatorGetter(min)
+		const getMax = createValidatorGetter(max)
+
 		return createNumberValidatorWrapperFactory(
-			value => value >= min && value <= max,
+			value => value >= getMin() && value <= getMax(),
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
-					numbers: () => ({ min, max }),
+					numbers: () => ({ min: getMin(), max: getMax() }),
 				})
 		)
 	},
-	outside(min: number, max: number) {
+	outside(min: number | (() => number), max: number | (() => number)) {
+		const getMin = createValidatorGetter(min)
+		const getMax = createValidatorGetter(max)
+
 		return createNumberValidatorWrapperFactory(
-			value => value < min && value > max
+			value => value < getMin() && value > getMax()
 		)
 	},
-	neq(thresholdNumber: number) {
+	neq(thresholdNumber: number | (() => number)) {
+		const getThresholdNumber = createValidatorGetter(thresholdNumber)
+
 		return createNumberValidatorWrapperFactory(
-			value => value !== thresholdNumber
+			value => value !== getThresholdNumber()
 		)
 	},
-	eq(thresholdNumber: number) {
+	eq(thresholdNumber: number | (() => number)) {
+		const getThresholdNumber = createValidatorGetter(thresholdNumber)
+
 		return createNumberValidatorWrapperFactory(
-			value => value === thresholdNumber,
+			value => value === getThresholdNumber(),
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
 					numbers: () => ({
-						min: thresholdNumber,
-						max: thresholdNumber,
+						min: getThresholdNumber(),
+						max: getThresholdNumber(),
 					}),
 				})
 		)
