@@ -1,5 +1,8 @@
 import { getExcludedDate, getFormattedDate } from "../utilities"
-import { createDateValidatorWrapperFactory } from "./factories"
+import {
+	createDateValidatorWrapperFactory,
+	createValidatorGetter,
+} from "./factories"
 import { getMatchingHtmlValidator } from "./helpers"
 
 const date = {
@@ -12,14 +15,16 @@ const date = {
 				}),
 			})
 	),
-	gt(thresholdDate: Date) {
+	gt(thresholdDate: Date | (() => Date)) {
+		const getThresholdDate = createValidatorGetter(thresholdDate)
+
 		return createDateValidatorWrapperFactory(
-			value => value > thresholdDate,
+			value => value > getThresholdDate(),
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
 					dates: dateInput => {
 						const excludedDate = getExcludedDate(
-							thresholdDate,
+							getThresholdDate(),
 							dateInput,
 							"+"
 						)
@@ -31,25 +36,29 @@ const date = {
 				})
 		)
 	},
-	gte(thresholdDate: Date) {
+	gte(thresholdDate: Date | (() => Date)) {
+		const getThresholdDate = createValidatorGetter(thresholdDate)
+
 		return createDateValidatorWrapperFactory(
-			value => value >= thresholdDate,
+			value => value >= getThresholdDate(),
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
 					dates: dateInput => ({
-						min: getFormattedDate(thresholdDate, dateInput),
+						min: getFormattedDate(getThresholdDate(), dateInput),
 					}),
 				})
 		)
 	},
-	lt(thresholdDate: Date) {
+	lt(thresholdDate: Date | (() => Date)) {
+		const getThresholdDate = createValidatorGetter(thresholdDate)
+
 		return createDateValidatorWrapperFactory(
-			value => value < thresholdDate,
+			value => value < getThresholdDate(),
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
 					dates: dateInput => {
 						const excludedDate = getExcludedDate(
-							thresholdDate,
+							getThresholdDate(),
 							dateInput,
 							"-"
 						)
@@ -61,47 +70,59 @@ const date = {
 				})
 		)
 	},
-	lte(thresholdDate: Date) {
+	lte(thresholdDate: Date | (() => Date)) {
+		const getThresholdDate = createValidatorGetter(thresholdDate)
+
 		return createDateValidatorWrapperFactory(
-			value => value <= thresholdDate,
+			value => value <= getThresholdDate(),
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
 					dates: dateInput => ({
-						max: getFormattedDate(thresholdDate, dateInput),
+						max: getFormattedDate(getThresholdDate(), dateInput),
 					}),
 				})
 		)
 	},
-	inside(min: Date, max: Date) {
+	inside(min: Date | (() => Date), max: Date | (() => Date)) {
+		const getMin = createValidatorGetter(min)
+		const getMax = createValidatorGetter(max)
+
 		return createDateValidatorWrapperFactory(
 			value => min <= value && value <= max,
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
 					dates: dateInput => ({
-						min: getFormattedDate(min, dateInput),
-						max: getFormattedDate(max, dateInput),
+						min: getFormattedDate(getMin(), dateInput),
+						max: getFormattedDate(getMax(), dateInput),
 					}),
 				})
 		)
 	},
-	outside(min: Date, max: Date) {
+	outside(min: Date | (() => Date), max: Date | (() => Date)) {
+		const getMin = createValidatorGetter(min)
+		const getMax = createValidatorGetter(max)
+
 		return createDateValidatorWrapperFactory(
-			value => value < min || value > max
+			value => value < getMin() || value > getMax()
 		)
 	},
-	neq(thresholdDate: Date) {
+	neq(thresholdDate: Date | (() => Date)) {
+		const getThresholdDate = createValidatorGetter(thresholdDate)
+
 		return createDateValidatorWrapperFactory(
-			value => value !== thresholdDate
+			value => value !== getThresholdDate()
 		)
 	},
-	eq(thresholdDate: Date) {
+	eq(thresholdDate: Date | (() => Date)) {
+		const getThresholdDate = createValidatorGetter(thresholdDate)
+
 		return createDateValidatorWrapperFactory(
-			value => value === thresholdDate,
+			value => value === getThresholdDate(),
 			inputType =>
 				getMatchingHtmlValidator(inputType, {
 					dates: dateInput => ({
-						min: getFormattedDate(thresholdDate, dateInput),
-						max: getFormattedDate(thresholdDate, dateInput),
+						min: getFormattedDate(getThresholdDate(), dateInput),
+						max: getFormattedDate(getThresholdDate(), dateInput),
 					}),
 				})
 		)
