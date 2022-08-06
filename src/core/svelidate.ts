@@ -95,6 +95,11 @@ export default function svelidate<F extends UninitializedForm>(
 		$el: null,
 	}
 
+	forEachFormField($form, formField =>
+		updateFormField(formField, $form, localConfig)
+	)
+	updateFormState($form)
+
 	let lastValues = getFormFieldValues($form)
 	return {
 		subscribe(fn) {
