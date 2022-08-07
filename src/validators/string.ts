@@ -10,8 +10,8 @@ import { getMatchingHtmlValidator } from "./helpers"
 
 const string = {
 	required: createStringValidatorWrapperFactory(
-		(_form, value) => value.length > 0,
-		(_form, inputType) =>
+		value => value.length > 0,
+		inputType =>
 			getMatchingHtmlValidator(inputType, {
 				strings: () => ({
 					required: true,
@@ -22,8 +22,8 @@ const string = {
 			})
 	),
 	email: createStringValidatorWrapperFactory(
-		(_form, value) => new RegExp(svelidateConfig.pattern.email).test(value),
-		(_form, inputType) =>
+		value => new RegExp(svelidateConfig.pattern.email).test(value),
+		inputType =>
 			getMatchingHtmlValidator(inputType, {
 				strings: () => ({
 					pattern: `(?=^${svelidateConfig.pattern.email}$)`,
@@ -35,8 +35,8 @@ const string = {
 			})
 	),
 	upperCase: createStringValidatorWrapperFactory(
-		(_form, value) => value.toLowerCase() !== value,
-		(_form, inputType) =>
+		value => value.toLowerCase() !== value,
+		inputType =>
 			getMatchingHtmlValidator(inputType, {
 				strings: () => ({
 					pattern: "(?=.*[A-Z])",
@@ -44,8 +44,8 @@ const string = {
 			})
 	),
 	lowerCase: createStringValidatorWrapperFactory(
-		(_form, value) => value.toUpperCase() !== value,
-		(_form, inputType) =>
+		value => value.toUpperCase() !== value,
+		inputType =>
 			getMatchingHtmlValidator(inputType, {
 				strings: () => ({
 					pattern: "(?=.*[a-z])",
@@ -53,8 +53,8 @@ const string = {
 			})
 	),
 	number: createStringValidatorWrapperFactory(
-		(_form, value) => /[0-9]/.test(value),
-		(_form, inputType) =>
+		value => /[0-9]/.test(value),
+		inputType =>
 			getMatchingHtmlValidator(inputType, {
 				strings: () => ({
 					pattern: "(?=.*[0-9])",
@@ -62,9 +62,8 @@ const string = {
 			})
 	),
 	symbol: createStringValidatorWrapperFactory(
-		(_form, value) =>
-			new RegExp(svelidateConfig.pattern.symbol).test(value),
-		(_form, inputType) =>
+		value => new RegExp(svelidateConfig.pattern.symbol).test(value),
+		inputType =>
 			getMatchingHtmlValidator(inputType, {
 				strings: () => ({
 					pattern: `(?=.*${svelidateConfig.pattern.symbol})`,
@@ -78,8 +77,8 @@ const string = {
 			/$^/
 		)
 		return createStringValidatorWrapperFactory(
-			(form, value) => getRegex(form).test(value),
-			(form, inputType) =>
+			(value, form) => getRegex(form).test(value),
+			(inputType, form) =>
 				getMatchingHtmlValidator(inputType, {
 					strings: () => ({
 						pattern: `(?=.*${getRegex(form).source})`,
@@ -91,8 +90,8 @@ const string = {
 		const getString = createStringValidatorGetter(str)
 
 		return createStringValidatorWrapperFactory(
-			(form, value) => value === getString(form),
-			(form, inputType) =>
+			(value, form) => value === getString(form),
+			(inputType, form) =>
 				getMatchingHtmlValidator(inputType, {
 					strings: () => ({
 						pattern: `(?=^${getString(form)}$)`,
@@ -104,8 +103,8 @@ const string = {
 		const getString = createStringValidatorGetter(str)
 
 		return createStringValidatorWrapperFactory(
-			(form, value) => value !== getString(form),
-			(form, inputType) =>
+			(value, form) => value !== getString(form),
+			(inputType, form) =>
 				getMatchingHtmlValidator(inputType, {
 					strings: () => ({
 						pattern: `(?!${getString(form)}$)`,
@@ -118,8 +117,8 @@ const string = {
 			const getLength = createNumberValidatorGetter(length)
 
 			return createStringValidatorWrapperFactory(
-				(form, value) => value.length > getLength(form),
-				(form, inputType) =>
+				(value, form) => value.length > getLength(form),
+				(inputType, form) =>
 					getMatchingHtmlValidator(inputType, {
 						strings: () => ({
 							minLength: Math.floor(getLength(form)) + 1,
@@ -134,8 +133,8 @@ const string = {
 			const getLength = createNumberValidatorGetter(length)
 
 			return createStringValidatorWrapperFactory(
-				(form, value) => value.length >= getLength(form),
-				(form, inputType) =>
+				(value, form) => value.length >= getLength(form),
+				(inputType, form) =>
 					getMatchingHtmlValidator(inputType, {
 						strings: () => ({
 							minLength: Math.floor(getLength(form)),
@@ -150,8 +149,8 @@ const string = {
 			const getLength = createNumberValidatorGetter(length)
 
 			return createStringValidatorWrapperFactory(
-				(form, value) => value.length < getLength(form),
-				(form, inputType) =>
+				(value, form) => value.length < getLength(form),
+				(inputType, form) =>
 					getMatchingHtmlValidator(inputType, {
 						strings: () => ({
 							maxLength: Math.floor(getLength(form)) - 1,
@@ -166,8 +165,8 @@ const string = {
 			const getLength = createNumberValidatorGetter(length)
 
 			return createStringValidatorWrapperFactory(
-				(form, value) => value.length <= getLength(form),
-				(form, inputType) =>
+				(value, form) => value.length <= getLength(form),
+				(inputType, form) =>
 					getMatchingHtmlValidator(inputType, {
 						strings: () => ({
 							maxLength: Math.floor(getLength(form)),
@@ -186,10 +185,10 @@ const string = {
 			const getMax = createNumberValidatorGetter(max)
 
 			return createStringValidatorWrapperFactory(
-				(form, value) =>
+				(value, form) =>
 					value.length >= getMin(form) &&
 					value.length <= getMax(form),
-				(form, inputType) =>
+				(inputType, form) =>
 					getMatchingHtmlValidator(inputType, {
 						strings: () => ({
 							minLength: Math.floor(getMin(form)),
@@ -210,9 +209,9 @@ const string = {
 			const getMax = createNumberValidatorGetter(max)
 
 			return createStringValidatorWrapperFactory(
-				(form, value) =>
+				(value, form) =>
 					value.length < getMax(form) && value.length > getMax(form),
-				(form, inputType) =>
+				(inputType, form) =>
 					getMatchingHtmlValidator(inputType, {
 						strings: () => ({
 							pattern: `(?=(.{0,${Math.floor(
@@ -226,8 +225,8 @@ const string = {
 			const getLength = createNumberValidatorGetter(length)
 
 			return createStringValidatorWrapperFactory(
-				(form, value) => value.length !== getLength(form),
-				(form, inputType) =>
+				(value, form) => value.length !== getLength(form),
+				(inputType, form) =>
 					getMatchingHtmlValidator(inputType, {
 						strings: () => ({
 							pattern: `(?=(.{0,${Math.floor(
@@ -243,8 +242,8 @@ const string = {
 			const getLength = createNumberValidatorGetter(length)
 
 			return createStringValidatorWrapperFactory(
-				(form, value) => value.length === getLength(form),
-				(form, inputType) =>
+				(value, form) => value.length === getLength(form),
+				(inputType, form) =>
 					getMatchingHtmlValidator(inputType, {
 						strings: () => ({
 							minLength: Math.floor(getLength(form)),

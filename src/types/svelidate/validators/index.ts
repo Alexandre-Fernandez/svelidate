@@ -2,13 +2,13 @@ import type { SvelidateInputType } from "../../html"
 import type { UnknownSvelidateForm } from "../core/output"
 
 export type JsValidator<T = unknown> = (
-	form: UnknownSvelidateForm,
-	value: T
+	value: T,
+	form: UnknownSvelidateForm
 ) => string | undefined
 
 export type JsValidatorPredicate<T = unknown> = (
-	form: UnknownSvelidateForm,
-	value: T
+	value: T,
+	form: UnknownSvelidateForm
 ) => boolean
 
 export type HtmlValidator = {
@@ -22,7 +22,7 @@ export type HtmlValidator = {
 }
 export type HtmlValidatorMapper<
 	T extends SvelidateInputType = SvelidateInputType
-> = (form: UnknownSvelidateForm, inputType?: T) => HtmlValidator
+> = (inputType: T | undefined, form: UnknownSvelidateForm) => HtmlValidator
 
 export type ValidatorWrapper<
 	T = unknown,

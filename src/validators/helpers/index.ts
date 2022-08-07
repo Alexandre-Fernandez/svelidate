@@ -15,7 +15,7 @@ import type {
 } from "../../types/svelidate/validators"
 
 type MapperMapFunction<T extends HtmlValidatorMapper<any>> = (
-	inputType: NonNullable<Parameters<T>[1]>
+	inputType: NonNullable<Parameters<T>[0]>
 ) => ReturnType<T>
 export type HtmlValidatorMapperMap = {
 	file: MapperMapFunction<HtmlValidatorMapper<HtmlFileInputType>>

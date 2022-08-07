@@ -27,8 +27,8 @@ export function createBooleanValidatorWrapperFactory(
 ) {
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
-			js: (form, value) => {
-				if (jsValidatorPredicate(form, !!value)) return undefined // no error
+			js: (value, form) => {
+				if (jsValidatorPredicate(!!value, form)) return undefined // no error
 				return error
 			},
 			html: htmlValidator,
@@ -41,13 +41,13 @@ export function createStringValidatorWrapperFactory(
 ) {
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
-			js: (form, value) => {
+			js: (value, form) => {
 				const string =
 					typeof value === "string"
 						? value
 						: (value as any)?.toString()
 				if (typeof string !== "string") return error
-				if (jsValidatorPredicate(form, string)) return undefined // no error
+				if (jsValidatorPredicate(string, form)) return undefined // no error
 				return error
 			},
 			html: htmlValidator,
@@ -60,13 +60,13 @@ export function createNumberValidatorWrapperFactory(
 ) {
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
-			js: (form, value) => {
+			js: (value, form) => {
 				const number =
 					typeof value === "number"
 						? value
 						: parseFloat(String(value))
 				if (Number.isNaN(number)) return error
-				if (jsValidatorPredicate(form, number)) return undefined // no error
+				if (jsValidatorPredicate(number, form)) return undefined // no error
 				return error
 			},
 			html: htmlValidator,
@@ -79,10 +79,10 @@ export function createDateValidatorWrapperFactory(
 ) {
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
-			js: (form, value) => {
+			js: (value, form) => {
 				const date = getDate(value)
 				if (!date) return error
-				if (jsValidatorPredicate(form, date)) return undefined // no error
+				if (jsValidatorPredicate(date, form)) return undefined // no error
 				return error
 			},
 			html: htmlValidator,
@@ -95,10 +95,10 @@ export function createFileListValidatorWrapperFactory(
 ) {
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
-			js: (form, value) => {
+			js: (value, form) => {
 				try {
 					if (!(value instanceof FileList)) return error
-					if (jsValidatorPredicate(form, value)) return undefined
+					if (jsValidatorPredicate(value, form)) return undefined
 					return error
 				} catch (err) {
 					return error
@@ -113,8 +113,8 @@ export function createConditionalValidatorWrapper(
 	validator: ValidatorWrapper
 ): ValidatorWrapper {
 	return {
-		js: (form, value) => {
-			if (condition(form, value)) return validator.js(form, value)
+		js: (value, form) => {
+			if (condition(value, form)) return validator.js(value, form)
 			return undefined
 		},
 		html: validator.html,
