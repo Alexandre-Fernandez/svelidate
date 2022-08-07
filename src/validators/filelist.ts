@@ -59,7 +59,7 @@ const filelist = {
 					})
 			),
 			is: (allowedExtensions: FileExtension[] | ValidatorGetterParam) => {
-				const getAllowedExtensions = createValidatorGetter(
+				const [getAllowedExtensions, wasValue] = createValidatorGetter(
 					allowedExtensions,
 					result =>
 						Array.isArray(result) &&
@@ -79,13 +79,14 @@ const filelist = {
 							file: () => ({
 								accept: getAllowedExtensions(form).join(","),
 							}),
-						})
+						}),
+					wasValue
 				)
 			},
 		},
 		size: {
 			gt(size: number | ValidatorGetterParam, unit: ByteUnit = "b") {
-				const getSize = createNumberValidatorGetter(size)
+				const [getSize, wasValue] = createNumberValidatorGetter(size)
 
 				return createFileListValidatorWrapperFactory(
 					(value, form) =>
@@ -93,11 +94,12 @@ const filelist = {
 							value,
 							file => file.size > toBytes(getSize(form), unit)
 						),
-					() => ({})
+					() => ({}),
+					wasValue
 				)
 			},
 			gte(size: number | ValidatorGetterParam, unit: ByteUnit = "b") {
-				const getSize = createNumberValidatorGetter(size)
+				const [getSize, wasValue] = createNumberValidatorGetter(size)
 
 				return createFileListValidatorWrapperFactory(
 					(value, form) =>
@@ -105,11 +107,12 @@ const filelist = {
 							value,
 							file => file.size >= toBytes(getSize(form), unit)
 						),
-					() => ({})
+					() => ({}),
+					wasValue
 				)
 			},
 			lt(size: number | ValidatorGetterParam, unit: ByteUnit = "b") {
-				const getSize = createNumberValidatorGetter(size)
+				const [getSize, wasValue] = createNumberValidatorGetter(size)
 
 				return createFileListValidatorWrapperFactory(
 					(value, form) =>
@@ -117,11 +120,12 @@ const filelist = {
 							value,
 							file => file.size < toBytes(getSize(form), unit)
 						),
-					() => ({})
+					() => ({}),
+					wasValue
 				)
 			},
 			lte(size: number | ValidatorGetterParam, unit: ByteUnit = "b") {
-				const getSize = createNumberValidatorGetter(size)
+				const [getSize, wasValue] = createNumberValidatorGetter(size)
 
 				return createFileListValidatorWrapperFactory(
 					(value, form) =>
@@ -129,7 +133,8 @@ const filelist = {
 							value,
 							file => file.size <= toBytes(getSize(form), unit)
 						),
-					() => ({})
+					() => ({}),
+					wasValue
 				)
 			},
 			inside(
@@ -137,8 +142,8 @@ const filelist = {
 				max: number | ValidatorGetterParam,
 				unit: ByteUnit = "b"
 			) {
-				const getMin = createNumberValidatorGetter(min)
-				const getMax = createNumberValidatorGetter(max)
+				const [getMin, wasMinValue] = createNumberValidatorGetter(min)
+				const [getMax, wasMaxValue] = createNumberValidatorGetter(max)
 
 				return createFileListValidatorWrapperFactory(
 					(value, form) =>
@@ -148,7 +153,8 @@ const filelist = {
 								file.size >= toBytes(getMin(form), unit) &&
 								file.size <= toBytes(getMax(form), unit)
 						),
-					() => ({})
+					() => ({}),
+					wasMinValue && wasMaxValue
 				)
 			},
 			outside(
@@ -156,8 +162,8 @@ const filelist = {
 				max: number | ValidatorGetterParam,
 				unit: ByteUnit = "b"
 			) {
-				const getMin = createNumberValidatorGetter(min)
-				const getMax = createNumberValidatorGetter(max)
+				const [getMin, wasMinValue] = createNumberValidatorGetter(min)
+				const [getMax, wasMaxValue] = createNumberValidatorGetter(max)
 
 				return createFileListValidatorWrapperFactory(
 					(value, form) =>
@@ -167,11 +173,12 @@ const filelist = {
 								file.size < toBytes(getMin(form), unit) ||
 								file.size > toBytes(getMax(form), unit)
 						),
-					() => ({})
+					() => ({}),
+					wasMinValue && wasMaxValue
 				)
 			},
 			neq(size: number | ValidatorGetterParam, unit: ByteUnit = "b") {
-				const getSize = createNumberValidatorGetter(size)
+				const [getSize, wasValue] = createNumberValidatorGetter(size)
 
 				return createFileListValidatorWrapperFactory(
 					(value, form) =>
@@ -179,11 +186,12 @@ const filelist = {
 							value,
 							file => file.size !== toBytes(getSize(form), unit)
 						),
-					() => ({})
+					() => ({}),
+					wasValue
 				)
 			},
 			eq(size: number | ValidatorGetterParam, unit: ByteUnit = "b") {
-				const getSize = createNumberValidatorGetter(size)
+				const [getSize, wasValue] = createNumberValidatorGetter(size)
 
 				return createFileListValidatorWrapperFactory(
 					(value, form) =>
@@ -191,85 +199,94 @@ const filelist = {
 							value,
 							file => file.size === toBytes(getSize(form), unit)
 						),
-					() => ({})
+					() => ({}),
+					wasValue
 				)
 			},
 		},
 	},
 	length: {
 		gt(length: number | ValidatorGetterParam) {
-			const getLength = createNumberValidatorGetter(length)
+			const [getLength, wasValue] = createNumberValidatorGetter(length)
 
 			return createFileListValidatorWrapperFactory(
 				(value, form) => value.length > getLength(form),
-				() => ({})
+				() => ({}),
+				wasValue
 			)
 		},
 		gte(length: number | ValidatorGetterParam) {
-			const getLength = createNumberValidatorGetter(length)
+			const [getLength, wasValue] = createNumberValidatorGetter(length)
 
 			return createFileListValidatorWrapperFactory(
 				(value, form) => value.length >= getLength(form),
-				() => ({})
+				() => ({}),
+				wasValue
 			)
 		},
 		lt(length: number | ValidatorGetterParam) {
-			const getLength = createNumberValidatorGetter(length)
+			const [getLength, wasValue] = createNumberValidatorGetter(length)
 
 			return createFileListValidatorWrapperFactory(
 				(value, form) => value.length < getLength(form),
-				() => ({})
+				() => ({}),
+				wasValue
 			)
 		},
 		lte(length: number | ValidatorGetterParam) {
-			const getLength = createNumberValidatorGetter(length)
+			const [getLength, wasValue] = createNumberValidatorGetter(length)
 
 			return createFileListValidatorWrapperFactory(
 				(value, form) => value.length <= getLength(form),
-				() => ({})
+				() => ({}),
+				wasValue
 			)
 		},
 		inside(
 			min: number | ValidatorGetterParam,
 			max: number | ValidatorGetterParam
 		) {
-			const getMin = createNumberValidatorGetter(min)
-			const getMax = createNumberValidatorGetter(max)
+			const [getMin, wasMinValue] = createNumberValidatorGetter(min)
+			const [getMax, wasMaxValue] = createNumberValidatorGetter(max)
 
 			return createFileListValidatorWrapperFactory(
 				(value, form) =>
 					value.length >= getMin(form) &&
 					value.length <= getMax(form),
-				() => ({})
+				() => ({}),
+				wasMinValue && wasMaxValue
 			)
 		},
 		outside(
 			min: number | ValidatorGetterParam,
 			max: number | ValidatorGetterParam
 		) {
-			const getMin = createNumberValidatorGetter(min)
-			const getMax = createNumberValidatorGetter(max)
+			const [getMin, wasMinValue] = createNumberValidatorGetter(min)
+			const [getMax, wasMaxValue] = createNumberValidatorGetter(max)
 
 			return createFileListValidatorWrapperFactory(
 				(value, form) =>
 					value.length < getMin(form) && value.length > getMax(form),
-				() => ({})
+				() => ({}),
+				wasMinValue && wasMaxValue
 			)
 		},
 		neq(length: number | ValidatorGetterParam) {
-			const getLength = createNumberValidatorGetter(length)
+			const [getLength, wasValue] = createNumberValidatorGetter(length)
 
 			return createFileListValidatorWrapperFactory(
 				(value, form) => value.length !== getLength(form),
-				() => ({})
+				() => ({}),
+				wasValue
 			)
 		},
 		eq(length: number | ValidatorGetterParam) {
-			const getLength = createNumberValidatorGetter(length)
+			const [getLength, wasValue] = createNumberValidatorGetter(length)
 
 			return createFileListValidatorWrapperFactory(
 				(value, form) => value.length === getLength(form),
-				() => ({})
+				() => ({}),
+				wasValue
 			)
 		},
 	},

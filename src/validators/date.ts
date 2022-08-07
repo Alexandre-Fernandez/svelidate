@@ -17,7 +17,8 @@ const date = {
 			})
 	),
 	gt(thresholdDate: Date | ValidatorGetterParam) {
-		const getThresholdDate = createDateValidatorGetter(thresholdDate)
+		const [getThresholdDate, wasValue] =
+			createDateValidatorGetter(thresholdDate)
 
 		return createDateValidatorWrapperFactory(
 			(value, form) => value > getThresholdDate(form),
@@ -34,11 +35,13 @@ const date = {
 							min: getFormattedDate(excludedDate, dateInput),
 						}
 					},
-				})
+				}),
+			wasValue
 		)
 	},
 	gte(thresholdDate: Date | ValidatorGetterParam) {
-		const getThresholdDate = createDateValidatorGetter(thresholdDate)
+		const [getThresholdDate, wasValue] =
+			createDateValidatorGetter(thresholdDate)
 
 		return createDateValidatorWrapperFactory(
 			(value, form) => value >= getThresholdDate(form),
@@ -50,11 +53,13 @@ const date = {
 							dateInput
 						),
 					}),
-				})
+				}),
+			wasValue
 		)
 	},
 	lt(thresholdDate: Date | ValidatorGetterParam) {
-		const getThresholdDate = createDateValidatorGetter(thresholdDate)
+		const [getThresholdDate, wasValue] =
+			createDateValidatorGetter(thresholdDate)
 
 		return createDateValidatorWrapperFactory(
 			(value, form) => value < getThresholdDate(form),
@@ -71,11 +76,13 @@ const date = {
 							max: getFormattedDate(excludedDate, dateInput),
 						}
 					},
-				})
+				}),
+			wasValue
 		)
 	},
 	lte(thresholdDate: Date | ValidatorGetterParam) {
-		const getThresholdDate = createDateValidatorGetter(thresholdDate)
+		const [getThresholdDate, wasValue] =
+			createDateValidatorGetter(thresholdDate)
 
 		return createDateValidatorWrapperFactory(
 			(value, form) => value <= getThresholdDate(form),
@@ -87,12 +94,13 @@ const date = {
 							dateInput
 						),
 					}),
-				})
+				}),
+			wasValue
 		)
 	},
 	inside(min: Date | ValidatorGetterParam, max: Date | ValidatorGetterParam) {
-		const getMin = createDateValidatorGetter(min)
-		const getMax = createDateValidatorGetter(max)
+		const [getMin, wasMinValue] = createDateValidatorGetter(min)
+		const [getMax, wasMaxValue] = createDateValidatorGetter(max)
 
 		return createDateValidatorWrapperFactory(
 			value => min <= value && value <= max,
@@ -102,29 +110,36 @@ const date = {
 						min: getFormattedDate(getMin(form), dateInput),
 						max: getFormattedDate(getMax(form), dateInput),
 					}),
-				})
+				}),
+			wasMinValue && wasMaxValue
 		)
 	},
 	outside(
 		min: Date | ValidatorGetterParam,
 		max: Date | ValidatorGetterParam
 	) {
-		const getMin = createDateValidatorGetter(min)
-		const getMax = createDateValidatorGetter(max)
+		const [getMin, wasMinValue] = createDateValidatorGetter(min)
+		const [getMax, wasMaxValue] = createDateValidatorGetter(max)
 
 		return createDateValidatorWrapperFactory(
-			(value, form) => value < getMin(form) || value > getMax(form)
+			(value, form) => value < getMin(form) || value > getMax(form),
+			() => ({}),
+			wasMinValue && wasMaxValue
 		)
 	},
 	neq(thresholdDate: Date | ValidatorGetterParam) {
-		const getThresholdDate = createDateValidatorGetter(thresholdDate)
+		const [getThresholdDate, wasValue] =
+			createDateValidatorGetter(thresholdDate)
 
 		return createDateValidatorWrapperFactory(
-			(value, form) => value !== getThresholdDate(form)
+			(value, form) => value !== getThresholdDate(form),
+			() => ({}),
+			wasValue
 		)
 	},
 	eq(thresholdDate: Date | ValidatorGetterParam) {
-		const getThresholdDate = createDateValidatorGetter(thresholdDate)
+		const [getThresholdDate, wasValue] =
+			createDateValidatorGetter(thresholdDate)
 
 		return createDateValidatorWrapperFactory(
 			(value, form) => value === getThresholdDate(form),
@@ -140,7 +155,8 @@ const date = {
 							dateInput
 						),
 					}),
-				})
+				}),
+			wasValue
 		)
 	},
 }

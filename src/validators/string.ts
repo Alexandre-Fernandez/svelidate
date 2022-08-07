@@ -71,7 +71,7 @@ const string = {
 			})
 	),
 	regex(regex: RegExp | ValidatorGetterParam) {
-		const getRegex = createValidatorGetter(
+		const [getRegex, wasValue] = createValidatorGetter(
 			regex,
 			result => result instanceof RegExp,
 			/$^/
@@ -83,11 +83,12 @@ const string = {
 					strings: () => ({
 						pattern: `(?=.*${getRegex(form).source})`,
 					}),
-				})
+				}),
+			wasValue
 		)
 	},
 	eq(str: string | ValidatorGetterParam) {
-		const getString = createStringValidatorGetter(str)
+		const [getString, wasValue] = createStringValidatorGetter(str)
 
 		return createStringValidatorWrapperFactory(
 			(value, form) => value === getString(form),
@@ -96,11 +97,12 @@ const string = {
 					strings: () => ({
 						pattern: `(?=^${getString(form)}$)`,
 					}),
-				})
+				}),
+			wasValue
 		)
 	},
-	neq(str: string | (() => string)) {
-		const getString = createStringValidatorGetter(str)
+	neq(str: string | ValidatorGetterParam) {
+		const [getString, wasValue] = createStringValidatorGetter(str)
 
 		return createStringValidatorWrapperFactory(
 			(value, form) => value !== getString(form),
@@ -109,12 +111,13 @@ const string = {
 					strings: () => ({
 						pattern: `(?!${getString(form)}$)`,
 					}),
-				})
+				}),
+			wasValue
 		)
 	},
 	length: {
 		gt(length: number | ValidatorGetterParam) {
-			const getLength = createNumberValidatorGetter(length)
+			const [getLength, wasValue] = createNumberValidatorGetter(length)
 
 			return createStringValidatorWrapperFactory(
 				(value, form) => value.length > getLength(form),
@@ -126,11 +129,12 @@ const string = {
 						textarea: () => ({
 							minLength: Math.floor(getLength(form)) + 1,
 						}),
-					})
+					}),
+				wasValue
 			)
 		},
 		gte(length: number | ValidatorGetterParam) {
-			const getLength = createNumberValidatorGetter(length)
+			const [getLength, wasValue] = createNumberValidatorGetter(length)
 
 			return createStringValidatorWrapperFactory(
 				(value, form) => value.length >= getLength(form),
@@ -142,11 +146,12 @@ const string = {
 						textarea: () => ({
 							minLength: Math.floor(getLength(form)),
 						}),
-					})
+					}),
+				wasValue
 			)
 		},
 		lt(length: number | ValidatorGetterParam) {
-			const getLength = createNumberValidatorGetter(length)
+			const [getLength, wasValue] = createNumberValidatorGetter(length)
 
 			return createStringValidatorWrapperFactory(
 				(value, form) => value.length < getLength(form),
@@ -158,11 +163,12 @@ const string = {
 						textarea: () => ({
 							maxLength: Math.floor(getLength(form)) - 1,
 						}),
-					})
+					}),
+				wasValue
 			)
 		},
 		lte(length: number | ValidatorGetterParam) {
-			const getLength = createNumberValidatorGetter(length)
+			const [getLength, wasValue] = createNumberValidatorGetter(length)
 
 			return createStringValidatorWrapperFactory(
 				(value, form) => value.length <= getLength(form),
@@ -174,15 +180,16 @@ const string = {
 						textarea: () => ({
 							maxLength: Math.floor(getLength(form)),
 						}),
-					})
+					}),
+				wasValue
 			)
 		},
 		inside(
 			min: number | ValidatorGetterParam,
 			max: number | ValidatorGetterParam
 		) {
-			const getMin = createNumberValidatorGetter(min)
-			const getMax = createNumberValidatorGetter(max)
+			const [getMin, wasMinValue] = createNumberValidatorGetter(min)
+			const [getMax, wasMaxValue] = createNumberValidatorGetter(max)
 
 			return createStringValidatorWrapperFactory(
 				(value, form) =>
@@ -198,15 +205,16 @@ const string = {
 							minLength: Math.floor(getMin(form)),
 							maxLength: Math.floor(getMax(form)),
 						}),
-					})
+					}),
+				wasMinValue && wasMaxValue
 			)
 		},
 		outside(
 			min: number | ValidatorGetterParam,
 			max: number | ValidatorGetterParam
 		) {
-			const getMin = createNumberValidatorGetter(min)
-			const getMax = createNumberValidatorGetter(max)
+			const [getMin, wasMinValue] = createNumberValidatorGetter(min)
+			const [getMax, wasMaxValue] = createNumberValidatorGetter(max)
 
 			return createStringValidatorWrapperFactory(
 				(value, form) =>
@@ -218,11 +226,12 @@ const string = {
 								Math.max(0, getMin(form) - 1)
 							)}}|.{${Math.floor(getMax(form) + 1)},})$)`,
 						}),
-					})
+					}),
+				wasMinValue && wasMaxValue
 			)
 		},
 		neq(length: number | ValidatorGetterParam) {
-			const getLength = createNumberValidatorGetter(length)
+			const [getLength, wasValue] = createNumberValidatorGetter(length)
 
 			return createStringValidatorWrapperFactory(
 				(value, form) => value.length !== getLength(form),
@@ -235,11 +244,12 @@ const string = {
 								Math.floor(getLength(form)) + 1
 							)},})$)`,
 						}),
-					})
+					}),
+				wasValue
 			)
 		},
 		eq(length: number | ValidatorGetterParam) {
-			const getLength = createNumberValidatorGetter(length)
+			const [getLength, wasValue] = createNumberValidatorGetter(length)
 
 			return createStringValidatorWrapperFactory(
 				(value, form) => value.length === getLength(form),
@@ -253,7 +263,8 @@ const string = {
 							minLength: Math.floor(getLength(form)),
 							maxLength: Math.floor(getLength(form)),
 						}),
-					})
+					}),
+				wasValue
 			)
 		},
 	},

@@ -1,3 +1,4 @@
+import isBrowser from "$src/environment"
 import type { UnknownSvelidateForm } from "$src/types/svelidate/core/output"
 import type {
 	HtmlValidatorMapper,
@@ -9,36 +10,45 @@ import { getDate } from "../../utilities"
 
 export function createValidatorWrapperFactory(
 	jsValidatorPredicate: JsValidatorPredicate,
-	htmlValidator: HtmlValidatorMapper = () => ({})
+	htmlValidator: HtmlValidatorMapper = () => ({}),
+	isHtmlValidationEnabledWhenNoJs = true
 ) {
+	let validateHtml = true
+	if (!isBrowser && !isHtmlValidationEnabledWhenNoJs) validateHtml = false
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
 			js: (form, value) => {
 				if (jsValidatorPredicate(form, value)) return undefined // no error
 				return error
 			},
-			html: htmlValidator,
+			html: validateHtml ? htmlValidator : () => ({}),
 		})
 }
 
 export function createBooleanValidatorWrapperFactory(
 	jsValidatorPredicate: JsValidatorPredicate<boolean>,
-	htmlValidator: HtmlValidatorMapper = () => ({})
+	htmlValidator: HtmlValidatorMapper = () => ({}),
+	isHtmlValidationEnabledWhenNoJs = true
 ) {
+	let validateHtml = true
+	if (!isBrowser && !isHtmlValidationEnabledWhenNoJs) validateHtml = false
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
 			js: (value, form) => {
 				if (jsValidatorPredicate(!!value, form)) return undefined // no error
 				return error
 			},
-			html: htmlValidator,
+			html: validateHtml ? htmlValidator : () => ({}),
 		})
 }
 
 export function createStringValidatorWrapperFactory(
 	jsValidatorPredicate: JsValidatorPredicate<string>,
-	htmlValidator: HtmlValidatorMapper = () => ({})
+	htmlValidator: HtmlValidatorMapper = () => ({}),
+	isHtmlValidationEnabledWhenNoJs = true
 ) {
+	let validateHtml = true
+	if (!isBrowser && !isHtmlValidationEnabledWhenNoJs) validateHtml = false
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
 			js: (value, form) => {
@@ -50,14 +60,17 @@ export function createStringValidatorWrapperFactory(
 				if (jsValidatorPredicate(string, form)) return undefined // no error
 				return error
 			},
-			html: htmlValidator,
+			html: validateHtml ? htmlValidator : () => ({}),
 		})
 }
 
 export function createNumberValidatorWrapperFactory(
 	jsValidatorPredicate: JsValidatorPredicate<number>,
-	htmlValidator: HtmlValidatorMapper = () => ({})
+	htmlValidator: HtmlValidatorMapper = () => ({}),
+	isHtmlValidationEnabledWhenNoJs = true
 ) {
+	let validateHtml = true
+	if (!isBrowser && !isHtmlValidationEnabledWhenNoJs) validateHtml = false
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
 			js: (value, form) => {
@@ -69,14 +82,17 @@ export function createNumberValidatorWrapperFactory(
 				if (jsValidatorPredicate(number, form)) return undefined // no error
 				return error
 			},
-			html: htmlValidator,
+			html: validateHtml ? htmlValidator : () => ({}),
 		})
 }
 
 export function createDateValidatorWrapperFactory(
 	jsValidatorPredicate: JsValidatorPredicate<Date>,
-	htmlValidator: HtmlValidatorMapper = () => ({})
+	htmlValidator: HtmlValidatorMapper = () => ({}),
+	isHtmlValidationEnabledWhenNoJs = true
 ) {
+	let validateHtml = true
+	if (!isBrowser && !isHtmlValidationEnabledWhenNoJs) validateHtml = false
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
 			js: (value, form) => {
@@ -85,14 +101,17 @@ export function createDateValidatorWrapperFactory(
 				if (jsValidatorPredicate(date, form)) return undefined // no error
 				return error
 			},
-			html: htmlValidator,
+			html: validateHtml ? htmlValidator : () => ({}),
 		})
 }
 
 export function createFileListValidatorWrapperFactory(
 	jsValidatorPredicate: JsValidatorPredicate<FileList>,
-	htmlValidator: HtmlValidatorMapper = () => ({})
+	htmlValidator: HtmlValidatorMapper = () => ({}),
+	isHtmlValidationEnabledWhenNoJs = true
 ) {
+	let validateHtml = true
+	if (!isBrowser && !isHtmlValidationEnabledWhenNoJs) validateHtml = false
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
 			js: (value, form) => {
@@ -104,7 +123,7 @@ export function createFileListValidatorWrapperFactory(
 					return error
 				}
 			},
-			html: htmlValidator,
+			html: validateHtml ? htmlValidator : () => ({}),
 		})
 }
 
@@ -140,15 +159,21 @@ export function createValidatorGetter<T>(
 	value: T extends Function ? never : T | ValidatorGetterParam,
 	resultValidator: (valueFunctionResult: unknown) => boolean,
 	resultFailedValue: T extends Function ? never : T
-) {
+): [
+	(svelidateForm: UnknownSvelidateForm) => T extends Function ? never : T,
+	boolean
+] {
 	if (typeof value === "function") {
-		return (svelidateForm: UnknownSvelidateForm) => {
-			const result = value(svelidateForm)
-			if (!resultValidator(result)) return resultFailedValue
-			return result as T extends Function ? never : T
-		}
+		return [
+			(svelidateForm: UnknownSvelidateForm) => {
+				const result = value(svelidateForm)
+				if (!resultValidator(result)) return resultFailedValue
+				return result as T extends Function ? never : T
+			},
+			false,
+		]
 	}
-	return () => value as T extends Function ? never : T
+	return [() => value as T extends Function ? never : T, true]
 }
 
 export function createStringValidatorGetter(
