@@ -54,3 +54,5 @@ export type NakedSvelidateForm<F extends UninitializedForm> = {
 export type SvelidateForm<F extends UninitializedForm> = {
 	[K in keyof F]: Required<SvelidateField<F[K]["value"]>>
 } & $Meta
+
+export type UnknownSvelidateForm = SvelidateForm<UninitializedForm>

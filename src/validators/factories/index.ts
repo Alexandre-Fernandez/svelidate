@@ -1,6 +1,8 @@
+import type { UnknownSvelidateForm } from "$src/types/svelidate/core/output"
 import type {
 	HtmlValidatorMapper,
 	JsValidatorPredicate,
+	ValidatorGetterParam,
 	ValidatorWrapper,
 } from "../../types/svelidate/validators"
 import { getDate } from "../../utilities"
@@ -11,8 +13,8 @@ export function createValidatorWrapperFactory(
 ) {
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
-			js: value => {
-				if (jsValidatorPredicate(value)) return undefined // no error
+			js: (form, value) => {
+				if (jsValidatorPredicate(form, value)) return undefined // no error
 				return error
 			},
 			html: htmlValidator,
@@ -25,8 +27,8 @@ export function createBooleanValidatorWrapperFactory(
 ) {
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
-			js: value => {
-				if (jsValidatorPredicate(!!value)) return undefined // no error
+			js: (form, value) => {
+				if (jsValidatorPredicate(form, !!value)) return undefined // no error
 				return error
 			},
 			html: htmlValidator,
@@ -39,13 +41,13 @@ export function createStringValidatorWrapperFactory(
 ) {
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
-			js: value => {
+			js: (form, value) => {
 				const string =
 					typeof value === "string"
 						? value
 						: (value as any)?.toString()
 				if (typeof string !== "string") return error
-				if (jsValidatorPredicate(string)) return undefined // no error
+				if (jsValidatorPredicate(form, string)) return undefined // no error
 				return error
 			},
 			html: htmlValidator,
@@ -58,13 +60,13 @@ export function createNumberValidatorWrapperFactory(
 ) {
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
-			js: value => {
+			js: (form, value) => {
 				const number =
 					typeof value === "number"
 						? value
 						: parseFloat(String(value))
 				if (Number.isNaN(number)) return error
-				if (jsValidatorPredicate(number)) return undefined // no error
+				if (jsValidatorPredicate(form, number)) return undefined // no error
 				return error
 			},
 			html: htmlValidator,
@@ -77,10 +79,10 @@ export function createDateValidatorWrapperFactory(
 ) {
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
-			js: value => {
+			js: (form, value) => {
 				const date = getDate(value)
 				if (!date) return error
-				if (jsValidatorPredicate(date)) return undefined // no error
+				if (jsValidatorPredicate(form, date)) return undefined // no error
 				return error
 			},
 			html: htmlValidator,
@@ -93,10 +95,10 @@ export function createFileListValidatorWrapperFactory(
 ) {
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
-			js: value => {
+			js: (form, value) => {
 				try {
 					if (!(value instanceof FileList)) return error
-					if (jsValidatorPredicate(value)) return undefined
+					if (jsValidatorPredicate(form, value)) return undefined
 					return error
 				} catch (err) {
 					return error
@@ -111,8 +113,8 @@ export function createConditionalValidatorWrapper(
 	validator: ValidatorWrapper
 ): ValidatorWrapper {
 	return {
-		js: (value: unknown) => {
-			if (condition(value)) return validator.js(value)
+		js: (form, value) => {
+			if (condition(form, value)) return validator.js(form, value)
 			return undefined
 		},
 		html: validator.html,
@@ -134,9 +136,37 @@ export function validateIf<T extends ValidatorWrapper | ValidatorWrapper[]>(
 	) as T
 }
 
-export function createValidatorGetter<T>(value: T) {
-	return (typeof value === "function" ? value : () => value) as Extract<
-		T,
-		Function
-	>
+export function createValidatorGetter<T>(
+	value: T extends Function ? never : T | ValidatorGetterParam,
+	resultValidator: (valueFunctionResult: unknown) => boolean,
+	resultFailedValue: T extends Function ? never : T
+) {
+	if (typeof value === "function") {
+		return (svelidateForm: UnknownSvelidateForm) => {
+			const result = value(svelidateForm)
+			if (!resultValidator(result)) return resultFailedValue
+			return result as T extends Function ? never : T
+		}
+	}
+	return () => value as T extends Function ? never : T
+}
+
+export function createStringValidatorGetter(
+	value: string | ValidatorGetterParam
+) {
+	return createValidatorGetter(
+		value,
+		result => typeof result === "string",
+		""
+	)
+}
+
+export function createNumberValidatorGetter(
+	value: number | ValidatorGetterParam
+) {
+	return createValidatorGetter(
+		value,
+		result => typeof result === "number",
+		-1
+	)
 }

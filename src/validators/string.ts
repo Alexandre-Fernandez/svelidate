@@ -1,5 +1,8 @@
+import type { ValidatorGetterParam } from "$src/types/svelidate/validators"
 import { svelidateConfig } from "../config"
 import {
+	createNumberValidatorGetter,
+	createStringValidatorGetter,
 	createStringValidatorWrapperFactory,
 	createValidatorGetter,
 } from "./factories"
@@ -7,8 +10,8 @@ import { getMatchingHtmlValidator } from "./helpers"
 
 const string = {
 	required: createStringValidatorWrapperFactory(
-		value => value.length > 0,
-		inputType =>
+		(_form, value) => value.length > 0,
+		(_form, inputType) =>
 			getMatchingHtmlValidator(inputType, {
 				strings: () => ({
 					required: true,
@@ -19,8 +22,8 @@ const string = {
 			})
 	),
 	email: createStringValidatorWrapperFactory(
-		value => new RegExp(svelidateConfig.pattern.email).test(value),
-		inputType =>
+		(_form, value) => new RegExp(svelidateConfig.pattern.email).test(value),
+		(_form, inputType) =>
 			getMatchingHtmlValidator(inputType, {
 				strings: () => ({
 					pattern: `(?=^${svelidateConfig.pattern.email}$)`,
@@ -32,8 +35,8 @@ const string = {
 			})
 	),
 	upperCase: createStringValidatorWrapperFactory(
-		value => value.toLowerCase() !== value,
-		inputType =>
+		(_form, value) => value.toLowerCase() !== value,
+		(_form, inputType) =>
 			getMatchingHtmlValidator(inputType, {
 				strings: () => ({
 					pattern: "(?=.*[A-Z])",
@@ -41,8 +44,8 @@ const string = {
 			})
 	),
 	lowerCase: createStringValidatorWrapperFactory(
-		value => value.toUpperCase() !== value,
-		inputType =>
+		(_form, value) => value.toUpperCase() !== value,
+		(_form, inputType) =>
 			getMatchingHtmlValidator(inputType, {
 				strings: () => ({
 					pattern: "(?=.*[a-z])",
@@ -50,8 +53,8 @@ const string = {
 			})
 	),
 	number: createStringValidatorWrapperFactory(
-		value => /[0-9]/.test(value),
-		inputType =>
+		(_form, value) => /[0-9]/.test(value),
+		(_form, inputType) =>
 			getMatchingHtmlValidator(inputType, {
 				strings: () => ({
 					pattern: "(?=.*[0-9])",
@@ -59,184 +62,197 @@ const string = {
 			})
 	),
 	symbol: createStringValidatorWrapperFactory(
-		value => new RegExp(svelidateConfig.pattern.symbol).test(value),
-		inputType =>
+		(_form, value) =>
+			new RegExp(svelidateConfig.pattern.symbol).test(value),
+		(_form, inputType) =>
 			getMatchingHtmlValidator(inputType, {
 				strings: () => ({
 					pattern: `(?=.*${svelidateConfig.pattern.symbol})`,
 				}),
 			})
 	),
-	regex(regex: RegExp | (() => RegExp)) {
-		const getRegex = createValidatorGetter(regex)
-
+	regex(regex: RegExp | ValidatorGetterParam) {
+		const getRegex = createValidatorGetter(
+			regex,
+			result => result instanceof RegExp,
+			/$^/
+		)
 		return createStringValidatorWrapperFactory(
-			value => getRegex().test(value),
-			inputType =>
+			(form, value) => getRegex(form).test(value),
+			(form, inputType) =>
 				getMatchingHtmlValidator(inputType, {
 					strings: () => ({
-						pattern: `(?=.*${getRegex().source})`,
+						pattern: `(?=.*${getRegex(form).source})`,
 					}),
 				})
 		)
 	},
-	eq(str: string | (() => string)) {
-		const getString = createValidatorGetter(str)
+	eq(str: string | ValidatorGetterParam) {
+		const getString = createStringValidatorGetter(str)
 
 		return createStringValidatorWrapperFactory(
-			value => value === getString(),
-			inputType =>
+			(form, value) => value === getString(form),
+			(form, inputType) =>
 				getMatchingHtmlValidator(inputType, {
 					strings: () => ({
-						pattern: `(?=^${getString()}$)`,
+						pattern: `(?=^${getString(form)}$)`,
 					}),
 				})
 		)
 	},
 	neq(str: string | (() => string)) {
-		const getString = createValidatorGetter(str)
+		const getString = createStringValidatorGetter(str)
 
 		return createStringValidatorWrapperFactory(
-			value => value !== getString(),
-			inputType =>
+			(form, value) => value !== getString(form),
+			(form, inputType) =>
 				getMatchingHtmlValidator(inputType, {
 					strings: () => ({
-						pattern: `(?!${getString()}$)`,
+						pattern: `(?!${getString(form)}$)`,
 					}),
 				})
 		)
 	},
 	length: {
-		gt(length: number | (() => number)) {
-			const getLength = createValidatorGetter(length)
+		gt(length: number | ValidatorGetterParam) {
+			const getLength = createNumberValidatorGetter(length)
 
 			return createStringValidatorWrapperFactory(
-				value => value.length > getLength(),
-				inputType =>
+				(form, value) => value.length > getLength(form),
+				(form, inputType) =>
 					getMatchingHtmlValidator(inputType, {
 						strings: () => ({
-							minLength: Math.floor(getLength()) + 1,
+							minLength: Math.floor(getLength(form)) + 1,
 						}),
 						textarea: () => ({
-							minLength: Math.floor(getLength()) + 1,
+							minLength: Math.floor(getLength(form)) + 1,
 						}),
 					})
 			)
 		},
-		gte(length: number | (() => number)) {
-			const getLength = createValidatorGetter(length)
+		gte(length: number | ValidatorGetterParam) {
+			const getLength = createNumberValidatorGetter(length)
 
 			return createStringValidatorWrapperFactory(
-				value => value.length >= getLength(),
-				inputType =>
+				(form, value) => value.length >= getLength(form),
+				(form, inputType) =>
 					getMatchingHtmlValidator(inputType, {
 						strings: () => ({
-							minLength: Math.floor(getLength()),
+							minLength: Math.floor(getLength(form)),
 						}),
 						textarea: () => ({
-							minLength: Math.floor(getLength()),
+							minLength: Math.floor(getLength(form)),
 						}),
 					})
 			)
 		},
-		lt(length: number | (() => number)) {
-			const getLength = createValidatorGetter(length)
+		lt(length: number | ValidatorGetterParam) {
+			const getLength = createNumberValidatorGetter(length)
 
 			return createStringValidatorWrapperFactory(
-				value => value.length < getLength(),
-				inputType =>
+				(form, value) => value.length < getLength(form),
+				(form, inputType) =>
 					getMatchingHtmlValidator(inputType, {
 						strings: () => ({
-							maxLength: Math.floor(getLength()) - 1,
+							maxLength: Math.floor(getLength(form)) - 1,
 						}),
 						textarea: () => ({
-							maxLength: Math.floor(getLength()) - 1,
+							maxLength: Math.floor(getLength(form)) - 1,
 						}),
 					})
 			)
 		},
-		lte(length: number | (() => number)) {
-			const getLength = createValidatorGetter(length)
+		lte(length: number | ValidatorGetterParam) {
+			const getLength = createNumberValidatorGetter(length)
 
 			return createStringValidatorWrapperFactory(
-				value => value.length <= getLength(),
-				inputType =>
+				(form, value) => value.length <= getLength(form),
+				(form, inputType) =>
 					getMatchingHtmlValidator(inputType, {
 						strings: () => ({
-							maxLength: Math.floor(getLength()),
+							maxLength: Math.floor(getLength(form)),
 						}),
 						textarea: () => ({
-							maxLength: Math.floor(getLength()),
+							maxLength: Math.floor(getLength(form)),
 						}),
 					})
 			)
 		},
-		inside(min: number | (() => number), max: number | (() => number)) {
-			const getMin = createValidatorGetter(min)
-			const getMax = createValidatorGetter(max)
+		inside(
+			min: number | ValidatorGetterParam,
+			max: number | ValidatorGetterParam
+		) {
+			const getMin = createNumberValidatorGetter(min)
+			const getMax = createNumberValidatorGetter(max)
 
 			return createStringValidatorWrapperFactory(
-				value => value.length >= getMin() && value.length <= getMax(),
-				inputType =>
+				(form, value) =>
+					value.length >= getMin(form) &&
+					value.length <= getMax(form),
+				(form, inputType) =>
 					getMatchingHtmlValidator(inputType, {
 						strings: () => ({
-							minLength: Math.floor(getMin()),
-							maxLength: Math.floor(getMax()),
+							minLength: Math.floor(getMin(form)),
+							maxLength: Math.floor(getMax(form)),
 						}),
 						textarea: () => ({
-							minLength: Math.floor(getMin()),
-							maxLength: Math.floor(getMax()),
+							minLength: Math.floor(getMin(form)),
+							maxLength: Math.floor(getMax(form)),
 						}),
 					})
 			)
 		},
-		outside(min: number | (() => number), max: number | (() => number)) {
-			const getMin = createValidatorGetter(min)
-			const getMax = createValidatorGetter(max)
+		outside(
+			min: number | ValidatorGetterParam,
+			max: number | ValidatorGetterParam
+		) {
+			const getMin = createNumberValidatorGetter(min)
+			const getMax = createNumberValidatorGetter(max)
 
 			return createStringValidatorWrapperFactory(
-				value => value.length < getMax() && value.length > getMax(),
-				inputType =>
+				(form, value) =>
+					value.length < getMax(form) && value.length > getMax(form),
+				(form, inputType) =>
 					getMatchingHtmlValidator(inputType, {
 						strings: () => ({
 							pattern: `(?=(.{0,${Math.floor(
-								Math.max(0, getMin() - 1)
-							)}}|.{${Math.floor(getMax() + 1)},})$)`,
+								Math.max(0, getMin(form) - 1)
+							)}}|.{${Math.floor(getMax(form) + 1)},})$)`,
 						}),
 					})
 			)
 		},
-		neq(length: number | (() => number)) {
-			const getLength = createValidatorGetter(length)
+		neq(length: number | ValidatorGetterParam) {
+			const getLength = createNumberValidatorGetter(length)
 
 			return createStringValidatorWrapperFactory(
-				value => value.length !== getLength(),
-				inputType =>
+				(form, value) => value.length !== getLength(form),
+				(form, inputType) =>
 					getMatchingHtmlValidator(inputType, {
 						strings: () => ({
 							pattern: `(?=(.{0,${Math.floor(
-								Math.max(Math.floor(getLength()) - 1, 0)
+								Math.max(Math.floor(getLength(form)) - 1, 0)
 							)}}|.{${Math.floor(
-								Math.floor(getLength()) + 1
+								Math.floor(getLength(form)) + 1
 							)},})$)`,
 						}),
 					})
 			)
 		},
-		eq(length: number | (() => number)) {
-			const getLength = createValidatorGetter(length)
+		eq(length: number | ValidatorGetterParam) {
+			const getLength = createNumberValidatorGetter(length)
 
 			return createStringValidatorWrapperFactory(
-				value => value.length === getLength(),
-				inputType =>
+				(form, value) => value.length === getLength(form),
+				(form, inputType) =>
 					getMatchingHtmlValidator(inputType, {
 						strings: () => ({
-							minLength: Math.floor(getLength()),
-							maxLength: Math.floor(getLength()),
+							minLength: Math.floor(getLength(form)),
+							maxLength: Math.floor(getLength(form)),
 						}),
 						textarea: () => ({
-							minLength: Math.floor(getLength()),
-							maxLength: Math.floor(getLength()),
+							minLength: Math.floor(getLength(form)),
+							maxLength: Math.floor(getLength(form)),
 						}),
 					})
 			)

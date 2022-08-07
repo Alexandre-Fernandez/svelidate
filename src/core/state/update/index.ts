@@ -42,12 +42,13 @@ export function updateFormField<F extends UninitializedForm>(
 	formField.validators.forEach(validator => {
 		// validate js
 		if (isBrowser && mode !== "html-only") {
-			const error = validator.js(formField.value)
+			const error = validator.js(form, formField.value)
 			if (error !== undefined) errors.push(error)
 		}
 		// validate html
 		if (!formField.type) return
 		const { pattern: lookahead, ...localValidator } = validator.html(
+			form,
 			formField.type
 		)
 		if (lookahead && isLookahead(lookahead)) pattern += lookahead
