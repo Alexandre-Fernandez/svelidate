@@ -1,108 +1,129 @@
+import isBrowser from "$src/environment"
+import type { UnknownSvelidateForm } from "$src/types/svelidate/core/output"
 import type {
 	HtmlValidatorMapper,
 	JsValidatorPredicate,
+	ValidatorGetterParam,
 	ValidatorWrapper,
 } from "../../types/svelidate/validators"
 import { getDate } from "../../utilities"
 
 export function createValidatorWrapperFactory(
 	jsValidatorPredicate: JsValidatorPredicate,
-	htmlValidator: HtmlValidatorMapper = () => ({})
+	htmlValidator: HtmlValidatorMapper = () => ({}),
+	isHtmlValidationEnabledWhenNoJs = true
 ) {
+	let validateHtml = true
+	if (!isBrowser && !isHtmlValidationEnabledWhenNoJs) validateHtml = false
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
-			js: value => {
-				if (jsValidatorPredicate(value)) return undefined // no error
+			js: (form, value) => {
+				if (jsValidatorPredicate(form, value)) return undefined // no error
 				return error
 			},
-			html: htmlValidator,
+			html: validateHtml ? htmlValidator : () => ({}),
 		})
 }
 
 export function createBooleanValidatorWrapperFactory(
 	jsValidatorPredicate: JsValidatorPredicate<boolean>,
-	htmlValidator: HtmlValidatorMapper = () => ({})
+	htmlValidator: HtmlValidatorMapper = () => ({}),
+	isHtmlValidationEnabledWhenNoJs = true
 ) {
+	let validateHtml = true
+	if (!isBrowser && !isHtmlValidationEnabledWhenNoJs) validateHtml = false
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
-			js: value => {
-				if (jsValidatorPredicate(!!value)) return undefined // no error
+			js: (value, form) => {
+				if (jsValidatorPredicate(!!value, form)) return undefined // no error
 				return error
 			},
-			html: htmlValidator,
+			html: validateHtml ? htmlValidator : () => ({}),
 		})
 }
 
 export function createStringValidatorWrapperFactory(
 	jsValidatorPredicate: JsValidatorPredicate<string>,
-	htmlValidator: HtmlValidatorMapper = () => ({})
+	htmlValidator: HtmlValidatorMapper = () => ({}),
+	isHtmlValidationEnabledWhenNoJs = true
 ) {
+	let validateHtml = true
+	if (!isBrowser && !isHtmlValidationEnabledWhenNoJs) validateHtml = false
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
-			js: value => {
+			js: (value, form) => {
 				const string =
 					typeof value === "string"
 						? value
 						: (value as any)?.toString()
 				if (typeof string !== "string") return error
-				if (jsValidatorPredicate(string)) return undefined // no error
+				if (jsValidatorPredicate(string, form)) return undefined // no error
 				return error
 			},
-			html: htmlValidator,
+			html: validateHtml ? htmlValidator : () => ({}),
 		})
 }
 
 export function createNumberValidatorWrapperFactory(
 	jsValidatorPredicate: JsValidatorPredicate<number>,
-	htmlValidator: HtmlValidatorMapper = () => ({})
+	htmlValidator: HtmlValidatorMapper = () => ({}),
+	isHtmlValidationEnabledWhenNoJs = true
 ) {
+	let validateHtml = true
+	if (!isBrowser && !isHtmlValidationEnabledWhenNoJs) validateHtml = false
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
-			js: value => {
+			js: (value, form) => {
 				const number =
 					typeof value === "number"
 						? value
 						: parseFloat(String(value))
 				if (Number.isNaN(number)) return error
-				if (jsValidatorPredicate(number)) return undefined // no error
+				if (jsValidatorPredicate(number, form)) return undefined // no error
 				return error
 			},
-			html: htmlValidator,
+			html: validateHtml ? htmlValidator : () => ({}),
 		})
 }
 
 export function createDateValidatorWrapperFactory(
 	jsValidatorPredicate: JsValidatorPredicate<Date>,
-	htmlValidator: HtmlValidatorMapper = () => ({})
+	htmlValidator: HtmlValidatorMapper = () => ({}),
+	isHtmlValidationEnabledWhenNoJs = true
 ) {
+	let validateHtml = true
+	if (!isBrowser && !isHtmlValidationEnabledWhenNoJs) validateHtml = false
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
-			js: value => {
+			js: (value, form) => {
 				const date = getDate(value)
 				if (!date) return error
-				if (jsValidatorPredicate(date)) return undefined // no error
+				if (jsValidatorPredicate(date, form)) return undefined // no error
 				return error
 			},
-			html: htmlValidator,
+			html: validateHtml ? htmlValidator : () => ({}),
 		})
 }
 
 export function createFileListValidatorWrapperFactory(
 	jsValidatorPredicate: JsValidatorPredicate<FileList>,
-	htmlValidator: HtmlValidatorMapper = () => ({})
+	htmlValidator: HtmlValidatorMapper = () => ({}),
+	isHtmlValidationEnabledWhenNoJs = true
 ) {
+	let validateHtml = true
+	if (!isBrowser && !isHtmlValidationEnabledWhenNoJs) validateHtml = false
 	return (error = ""): ValidatorWrapper =>
 		Object.freeze({
-			js: value => {
+			js: (value, form) => {
 				try {
 					if (!(value instanceof FileList)) return error
-					if (jsValidatorPredicate(value)) return undefined
+					if (jsValidatorPredicate(value, form)) return undefined
 					return error
 				} catch (err) {
 					return error
 				}
 			},
-			html: htmlValidator,
+			html: validateHtml ? htmlValidator : () => ({}),
 		})
 }
 
@@ -111,8 +132,8 @@ export function createConditionalValidatorWrapper(
 	validator: ValidatorWrapper
 ): ValidatorWrapper {
 	return {
-		js: (value: unknown) => {
-			if (condition(value)) return validator.js(value)
+		js: (value, form) => {
+			if (condition(value, form)) return validator.js(value, form)
 			return undefined
 		},
 		html: validator.html,
@@ -132,4 +153,53 @@ export function validateIf<T extends ValidatorWrapper | ValidatorWrapper[]>(
 		condition,
 		validators as ValidatorWrapper
 	) as T
+}
+
+export function createValidatorGetter<T>(
+	value: T extends Function ? never : T | ValidatorGetterParam,
+	resultValidator: (valueFunctionResult: unknown) => boolean,
+	resultFailedValue: T extends Function ? never : T
+): [
+	(svelidateForm: UnknownSvelidateForm) => T extends Function ? never : T,
+	boolean
+] {
+	if (typeof value === "function") {
+		return [
+			(svelidateForm: UnknownSvelidateForm) => {
+				const result = value(svelidateForm)
+				if (!resultValidator(result)) return resultFailedValue
+				return result as T extends Function ? never : T
+			},
+			false,
+		]
+	}
+	return [() => value as T extends Function ? never : T, true]
+}
+
+export function createStringValidatorGetter(
+	value: string | ValidatorGetterParam
+) {
+	return createValidatorGetter(
+		value,
+		result => typeof result === "string",
+		""
+	)
+}
+
+export function createNumberValidatorGetter(
+	value: number | ValidatorGetterParam
+) {
+	return createValidatorGetter(
+		value,
+		result => typeof result === "number",
+		-1
+	)
+}
+
+export function createDateValidatorGetter(value: Date | ValidatorGetterParam) {
+	return createValidatorGetter(
+		value,
+		result => result instanceof Date,
+		new Date(0)
+	)
 }

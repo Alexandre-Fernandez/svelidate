@@ -23,6 +23,7 @@
 		"import/no-mutable-exports": "off",
 		"no-param-reassign": [2, { "props": false }],
 		"@typescript-eslint/no-empty-function": "off",
-		"@typescript-eslint/no-explicit-any": "off"
+		"@typescript-eslint/no-explicit-any": "off",
+		"@typescript-eslint/ban-types": "off"
 	}
 }

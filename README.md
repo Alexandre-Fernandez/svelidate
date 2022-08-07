@@ -19,7 +19,7 @@ pnpm add svelidate
 
 ```svelte
 <script lang="ts">
-	import { svelidate, string } from "svelidate"
+	import { svelidate, string } from "$src"
 
 	const form = svelidate({
 		email: {
@@ -28,7 +28,7 @@ pnpm add svelidate
 			HTML5 validation generation. By default HTML5 validation will only
 			work when JS is disabled */,
 			validators: [
-				string.required("This field is required."),
+				string.required("The e-mail field is required."),
 				string.email("Please enter a valid email."),
 			],
 		},
@@ -36,39 +36,59 @@ pnpm add svelidate
 			value: "",
 			type: "password",
 			validators: [
-				string.required("This field is required."),
-				string.lowerCase("Password needs to have atleast one lower case letter."),
-				string.upperCase("Password needs to have atleast one upper case letter."),
+				string.required("The password field is required."),
+				string.lowerCase(
+					"Password needs to have atleast one lower case letter."
+				),
+				string.upperCase(
+					"Password needs to have atleast one upper case letter."
+				),
 				string.number("Password needs to have atleast one number."),
 				string.symbol("Password needs to have one symbol."),
-				string.length.gt(6)("Password needs to have more than 6 characters."),
+				string.length.gt(6)(
+					"Password needs to have more than 6 characters."
+				),
+			],
+		},
+		confirmation: {
+			value: "",
+			type: "password",
+			validators: [
+				string.required("The password confirmation field is required."),
+				string.eq(form => form.password.value)(
+					"Password confirmation must be equal to the password field."
+				),
 			],
 		},
 	})
 
-	$form.$on.submit = () => {/* handle submit... */}
+	$form.$on.submit = () => {
+		/* handle submit... */
+	}
 </script>
 
 <form bind:this={$form.$el}>
-	<ul> <!-- displaying email errors -->
-		{#each $form.email.errors as error}
+	<ul>
+		{#each $form.$st.errors as error}
 			<li>{error}</li>
 		{/each}
 	</ul>
+
 	<input
 		bind:value={$form.email.value}
 		{...$form.email.attributes}
 		type="email"
 	/>
 
-	<ul> <!-- displaying password errors -->
-		{#each $form.password.errors as error}
-			<li>{error}</li>
-		{/each}
-	</ul>
 	<input
 		bind:value={$form.password.value}
 		{...$form.password.attributes}
+		type="password"
+	/>
+
+	<input
+		bind:value={$form.confirmation.value}
+		{...$form.confirmation.attributes}
 		type="password"
 	/>
 
@@ -80,9 +100,21 @@ pnpm add svelidate
 		background: lightgreen;
 	}
 	input:invalid {
-		background: lightpink;
+		background: lightcoral;
+	}
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style-position: inside;
+	}
+	form {
+		display: flex;
+		flex-direction: column;
+		width: 32rem;
+		gap: 1rem;
 	}
 </style>
+
 ```
 
 ## Configuration
@@ -183,7 +215,7 @@ Not an object, but a reference to the HTML form element, meant to be binded.
 
 Fields are used to describe your inputs and create your svelidate form.
 The only required property is `value` which should be binded to an input.
-If you want your field to be able to have html validation you will need to set `field.attributes.type` to the corresponding input type.
+If you want your field to be able to have html validation you will need to set `field.type` to the corresponding input type.
 
 ```ts
 {

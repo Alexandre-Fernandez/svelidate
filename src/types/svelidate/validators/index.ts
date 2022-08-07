@@ -1,8 +1,15 @@
 import type { SvelidateInputType } from "../../html"
+import type { UnknownSvelidateForm } from "../core/output"
 
-export type JsValidator<T = unknown> = (value: T) => string | undefined
+export type JsValidator<T = unknown> = (
+	value: T,
+	form: UnknownSvelidateForm
+) => string | undefined
 
-export type JsValidatorPredicate<T = unknown> = (value: T) => boolean
+export type JsValidatorPredicate<T = unknown> = (
+	value: T,
+	form: UnknownSvelidateForm
+) => boolean
 
 export type HtmlValidator = {
 	required?: boolean
@@ -15,7 +22,7 @@ export type HtmlValidator = {
 }
 export type HtmlValidatorMapper<
 	T extends SvelidateInputType = SvelidateInputType
-> = (inputType?: T) => HtmlValidator
+> = (inputType: T | undefined, form: UnknownSvelidateForm) => HtmlValidator
 
 export type ValidatorWrapper<
 	T = unknown,
@@ -24,3 +31,7 @@ export type ValidatorWrapper<
 	js: JsValidator<T>
 	html: HtmlValidatorMapper<I>
 }>
+
+export type ValidatorGetterParam = (
+	svelidateForm: UnknownSvelidateForm
+) => unknown
