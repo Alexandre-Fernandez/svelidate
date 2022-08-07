@@ -170,3 +170,11 @@ export function createNumberValidatorGetter(
 		-1
 	)
 }
+
+export function createDateValidatorGetter(value: Date | ValidatorGetterParam) {
+	return createValidatorGetter(
+		value,
+		result => result instanceof Date,
+		new Date(0)
+	)
+}
