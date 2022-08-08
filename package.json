@@ -1,6 +1,6 @@
 {
 	"name": "svelidate",
-	"version": "3.0.1",
+	"version": "3.0.2",
 	"description": "Simple and lightweight form validation for Svelte with no dependencies",
 	"author": "alexandre-fernandez",
 	"license": "MIT",
