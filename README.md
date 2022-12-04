@@ -15,7 +15,7 @@ pnpm add svelidate
 
 ## Usage
 
--   Star the [github repo](https://github.com/svelidate/svelidate) 😎
+-   Star the [github repo](https://github.com/alexandre-fernandez/svelidate) 😎
 
 ```ts
 <script lang="ts">

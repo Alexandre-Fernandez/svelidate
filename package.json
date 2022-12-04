@@ -6,7 +6,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/svelidate/svelidate"
+		"url": "https://github.com/alexandre-fernandez/svelidate"
 	},
 	"keywords": [
 		"svelte",
